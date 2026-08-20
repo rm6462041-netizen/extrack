@@ -8,6 +8,16 @@ function normalizeSymbolName(symbolName) {
     .replace(/[^A-Z0-9]/g, '');
 }
 
+function cacheAssets(assetsData) {
+  const assets = assetsData?.asset || assetsData?.assets || [];
+  assets.forEach((asset) => {
+    const id = Number(asset.assetId);
+    if (Number.isFinite(id)) {
+      ctraderConfig.assets.set(id, asset.name || asset.displayName);
+    }
+  });
+}
+
 function cacheSymbols(symbolsData) {
   if (!symbolsData?.symbols?.length && !symbolsData?.symbol?.length) {
     return;
@@ -21,6 +31,9 @@ function cacheSymbols(symbolsData) {
       return;
     }
 
+    const baseAsset = symbol.baseAsset || (symbol.baseAssetId ? ctraderConfig.assets.get(Number(symbol.baseAssetId)) : null);
+    const quoteAsset = symbol.quoteAsset || (symbol.quoteAssetId ? ctraderConfig.assets.get(Number(symbol.quoteAssetId)) : null);
+
     ctraderConfig.symbols.set(id, {
       id,
       name: symbol.symbolName,
@@ -28,6 +41,8 @@ function cacheSymbols(symbolsData) {
       requestSymbol: symbol.symbolName,
       normalizedName: normalizeSymbolName(symbol.symbolName),
       description: symbol.description,
+      baseAsset,
+      quoteAsset,
       digits: Number.isFinite(Number(symbol.digits)) ? Number(symbol.digits) : null,
       pipPosition: Number.isFinite(Number(symbol.pipPosition)) ? Number(symbol.pipPosition) : null,
     });
@@ -44,6 +59,9 @@ function cacheSymbolDetails(symbols = []) {
     if (!Number.isFinite(id)) return;
 
     const existing = ctraderConfig.symbols.get(id) || {};
+    const baseAsset = symbol.baseAsset || (symbol.baseAssetId ? ctraderConfig.assets.get(Number(symbol.baseAssetId)) : existing.baseAsset ?? null);
+    const quoteAsset = symbol.quoteAsset || (symbol.quoteAssetId ? ctraderConfig.assets.get(Number(symbol.quoteAssetId)) : existing.quoteAsset ?? null);
+
     ctraderConfig.symbols.set(id, {
       ...existing,
       id,
@@ -52,6 +70,8 @@ function cacheSymbolDetails(symbols = []) {
       requestSymbol: existing.requestSymbol || symbol.symbolName || symbol.name,
       normalizedName: existing.normalizedName || normalizeSymbolName(symbol.symbolName || symbol.name),
       description: existing.description || symbol.description,
+      baseAsset,
+      quoteAsset,
       digits: Number.isFinite(Number(symbol.digits)) ? Number(symbol.digits) : existing.digits ?? null,
       pipPosition: Number.isFinite(Number(symbol.pipPosition)) ? Number(symbol.pipPosition) : existing.pipPosition ?? null,
     });
@@ -99,6 +119,7 @@ function trendbarToBinanceKline(trendbar) {
 }
 
 module.exports = {
+  cacheAssets,
   cacheSymbols,
   cacheSymbolDetails,
   findExactSymbolMatch,

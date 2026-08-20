@@ -3,12 +3,12 @@ const { normalizeStoredSymbol } = require('../../shared/utils/symbols');
 const {
   CTRADER_INTERVALS,
   CTRADER_PERIODS,
+  MAX_RECONNECT_ATTEMPTS,
   PRICE_SCALE,
 } = require('./constants');
 const { getAccounts } = require('./accounts.service');
 const { loadProtos: loadProtobufRoot } = require('./proto.service');
 const { createProtocolClient } = require('./protocol.client');
-const { registerCtraderRoutes: registerRoutes } = require('./routes');
 const {
   cacheSymbols,
   cacheSymbolDetails,
@@ -255,24 +255,17 @@ function stopHeartbeat() {
 
 async function reconnect() {
   if (connectionState.isConnecting) return;
-  if (connectionState.reconnectTimer) return;
+  if (connectionState.reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) return;
 
   connectionState.reconnectAttempts += 1;
-  const delayMs = Math.min(30000, 1000 * (2 ** Math.min(connectionState.reconnectAttempts - 1, 5)));
 
-  connectionState.reconnectTimer = setTimeout(async () => {
-    connectionState.reconnectTimer = null;
+  setTimeout(async () => {
     await connectSocket();
-  }, delayMs);
+  }, 5000);
 }
 
 async function connectSocket() {
   if (connectionState.isConnecting) return;
-
-  if (connectionState.reconnectTimer) {
-    clearTimeout(connectionState.reconnectTimer);
-    connectionState.reconnectTimer = null;
-  }
 
   connectionState.isConnecting = true;
 
@@ -289,7 +282,7 @@ async function connectSocket() {
 
     const tokenReady = await ensureValidToken();
     if (!tokenReady) {
-      throw new Error(`cTrader access token could not be refreshed${tokenState.lastRefreshError ? `: ${tokenState.lastRefreshError}` : ''}`);
+      throw new Error('cTrader access token could not be refreshed');
     }
 
     await getAccounts();
@@ -306,11 +299,8 @@ async function connectSocket() {
     connectionState.ws = new WebSocket(url);
 
     connectionState.ws.on('open', () => {
+      connectionState.reconnectAttempts = 0;
       connectionState.isConnecting = false;
-      connectionState.lastConnectError = '';
-      if (process.env.CTRADER_DEBUG === 'true') {
-        console.info('ctrader.socket.open', { isDemo: ctraderConfig.isDemo, accountId: ctraderConfig.accountId });
-      }
       sendAppAuth();
       startHeartbeat();
     });
@@ -319,32 +309,17 @@ async function connectSocket() {
       handleMessage(data);
     });
 
-    connectionState.ws.on('error', (error) => {
-      connectionState.lastConnectError = error.message || 'WebSocket error';
-      if (process.env.CTRADER_DEBUG === 'true') {
-        console.warn('ctrader.socket.error', connectionState.lastConnectError);
-      }
-    });
+    connectionState.ws.on('error', () => {});
 
-    connectionState.ws.on('close', (code, reason) => {
+    connectionState.ws.on('close', () => {
       connectionState.isConnecting = false;
-      ctraderConfig.isAppAuthed = false;
-      ctraderConfig.isAccountAuthed = false;
-      ctraderConfig.liveTickSubscriptions.clear();
-      ctraderConfig.depthSubscriptions.clear();
-      ctraderConfig.liveTrendbarSubscriptions.clear();
-      connectionState.lastConnectError = `WebSocket closed${code ? ` code=${code}` : ''}${reason ? ` reason=${reason}` : ''}`;
-      if (process.env.CTRADER_DEBUG === 'true') {
-        console.warn('ctrader.socket.close', { code, reason: String(reason || '') });
-      }
       stopHeartbeat();
       reconnect();
     });
   } catch (err) {
     connectionState.isConnecting = false;
-    connectionState.lastConnectError = err.message;
-    if (process.env.CTRADER_DEBUG === 'true') {
-      console.warn('ctrader.connect.failed', { error: err.message, tokenError: tokenState.lastRefreshError || null });
+    if (err.message.includes('access token could not be refreshed')) {
+      return;
     }
     reconnect();
   }
@@ -366,7 +341,7 @@ async function waitForSocketReady(timeoutMs = 20000) {
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
 
-  throw new Error(`cTrader connection is not ready (ws=${connectionState.ws ? connectionState.ws.readyState : 'none'}, appAuthed=${ctraderConfig.isAppAuthed}, accountAuthed=${ctraderConfig.isAccountAuthed}, accountId=${ctraderConfig.accountId || 'none'}, isDemo=${ctraderConfig.isDemo}, tokenError=${tokenState.lastRefreshError || 'none'}, connectError=${connectionState.lastConnectError || 'none'}, apiError=${connectionState.lastApiError || 'none'})`);
+  throw new Error('cTrader connection is not ready');
 }
 
 async function ensureCtraderReady() {
@@ -547,45 +522,8 @@ async function getSymbolById(symbolId) {
 
   return {
     symbols: raw.symbol || raw.symbols || [],
-    archivedSymbols: raw.archivedSymbol || raw.archivedSymbols || [],
     raw: toPlain('ProtoOASymbolByIdRes', raw),
   };
-}
-
-async function getAssets() {
-  await ensureCtraderReady();
-  const raw = await protocol.requestMessage(2112, getAccountIdPayload());
-  return { assets: raw.asset || raw.assets || [], raw: toPlain('ProtoOAAssetListRes', raw) };
-}
-
-async function getAssetClasses() {
-  await ensureCtraderReady();
-  const raw = await protocol.requestMessage(2153, getAccountIdPayload());
-  return { assetClasses: raw.assetClass || raw.assetClasses || [], raw: toPlain('ProtoOAAssetClassListRes', raw) };
-}
-
-async function getSymbolCategories() {
-  await ensureCtraderReady();
-  const raw = await protocol.requestMessage(2160, getAccountIdPayload());
-  return {
-    symbolCategories: raw.symbolCategory || raw.symbolCategories || [],
-    raw: toPlain('ProtoOASymbolCategoryListRes', raw),
-  };
-}
-
-async function getConversionSymbols(firstAssetId, lastAssetId) {
-  await ensureCtraderReady();
-  const first = parseFiniteInteger(firstAssetId);
-  const last = parseFiniteInteger(lastAssetId);
-  if (!first || !last) throw createHttpError('firstAssetId and lastAssetId are required', 400);
-
-  const raw = await protocol.requestMessage(2118, {
-    ...getAccountIdPayload(),
-    firstAssetId: first,
-    lastAssetId: last,
-  });
-
-  return { symbols: raw.symbol || raw.symbols || [], raw: toPlain('ProtoOASymbolsForConversionRes', raw) };
 }
 
 async function fetchOneTickSide(symbolId, type, fromTimestamp, toTimestamp) {
@@ -622,23 +560,62 @@ async function fetchCtraderTicks({ symbol, fromTimestamp, toTimestamp, type = 'b
       symbolId,
       symbolName: getSymbolName(symbolId),
       type: 'bidask',
-      bid: bid.ticks.slice(0, maxRows),
-      ask: ask.ticks.slice(0, maxRows),
-      hasMore: bid.hasMore || ask.hasMore,
-      raw: { bid: bid.raw, ask: ask.raw },
+      bidTicks: (bid.ticks || []).slice(-maxRows),
+      askTicks: (ask.ticks || []).slice(-maxRows),
     };
   }
 
-  const quoteType = normalizedType === 'ask' ? 2 : 1;
-  const result = await fetchOneTickSide(symbolId, quoteType, from, to);
-
+  const sideType = normalizedType === 'ask' ? 2 : 1;
+  const result = await fetchOneTickSide(symbolId, sideType, from, to);
   return {
     symbolId,
     symbolName: getSymbolName(symbolId),
-    type: quoteType === 2 ? 'ask' : 'bid',
-    ticks: result.ticks.slice(0, maxRows),
-    hasMore: result.hasMore,
-    raw: result.raw,
+    type: normalizedType === 'ask' ? 'ask' : 'bid',
+    ticks: (result.ticks || []).slice(-maxRows),
+  };
+}
+
+async function subscribeSpotsBatch(symbolIds = []) {
+  if (!symbolIds.length) return { subscribed: 0 };
+  const numericIds = symbolIds.map(Number).filter((id) => Number.isFinite(id) && id > 0);
+  if (!numericIds.length) return { subscribed: 0 };
+
+  const raw = await protocol.requestMessage(2127, {
+    ...getAccountIdPayload(),
+    symbolId: numericIds,
+    subscribeToSpotTimestamp: true,
+  });
+
+  numericIds.forEach((id) => {
+    ctraderConfig.liveTickSubscriptions.add(makeSubscriptionKey(id));
+  });
+
+  return { subscribed: numericIds.length, raw: toPlain('ProtoOASubscribeSpotsRes', raw) };
+}
+
+async function subscribeAllSymbols(batchSize = 50, delayMs = 60) {
+  await ensureCtraderReady();
+  const allSymbols = await getSymbols();
+  const allIds = allSymbols.map((s) => Number(s.id || s.symbolId)).filter((id) => Number.isFinite(id) && id > 0);
+
+  console.info(`[cTrader] 24/7 Subscribing ${allIds.length} symbols in batches of ${batchSize}...`);
+
+  for (let i = 0; i < allIds.length; i += batchSize) {
+    const chunk = allIds.slice(i, i + batchSize);
+    try {
+      await subscribeSpotsBatch(chunk);
+    } catch (err) {
+      console.warn(`[cTrader] Batch subscription error (${i}-${i + chunk.length}): ${err.message}`);
+    }
+    if (i + batchSize < allIds.length && delayMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+
+  console.info(`[cTrader] 24/7 Active Subscriptions: ${ctraderConfig.liveTickSubscriptions.size} symbols live.`);
+  return {
+    totalSubscribed: ctraderConfig.liveTickSubscriptions.size,
+    totalAvailable: allIds.length,
   };
 }
 
@@ -653,30 +630,6 @@ async function subscribeLiveTicks(symbol) {
   return { symbolId, symbolName: getSymbolName(symbolId), subscribed: true, raw: toPlain('ProtoOASubscribeSpotsRes', raw) };
 }
 
-async function subscribeLiveTickIds(symbolIds = []) {
-  await ensureCtraderReady();
-
-  const ids = Array.from(new Set(symbolIds.map(Number).filter(Number.isFinite)));
-  const configuredBatchSize = Number(process.env.CTRADER_SUBSCRIBE_BATCH_SIZE);
-  const batchSize = Number.isFinite(configuredBatchSize)
-    ? Math.min(Math.max(configuredBatchSize, 1), 50)
-    : 50;
-  let subscribed = 0;
-
-  for (let index = 0; index < ids.length; index += batchSize) {
-    const batch = ids.slice(index, index + batchSize);
-    await protocol.requestMessage(2127, {
-      ...getAccountIdPayload(),
-      symbolId: batch,
-      subscribeToSpotTimestamp: true,
-    });
-    batch.forEach((symbolId) => ctraderConfig.liveTickSubscriptions.add(makeSubscriptionKey(symbolId)));
-    subscribed += batch.length;
-  }
-
-  return { subscribed };
-}
-
 async function unsubscribeLiveTicks(symbol) {
   const symbolId = await ensureSymbolId(symbol);
   const raw = await protocol.requestMessage(2129, {
@@ -685,205 +638,6 @@ async function unsubscribeLiveTicks(symbol) {
   });
   ctraderConfig.liveTickSubscriptions.delete(makeSubscriptionKey(symbolId));
   return { symbolId, symbolName: getSymbolName(symbolId), subscribed: false, raw: toPlain('ProtoOAUnsubscribeSpotsRes', raw) };
-}
-
-async function subscribeLiveTrendbar(symbol, interval = '1m') {
-  const period = CTRADER_INTERVALS[interval];
-  if (!period) throw createHttpError(`Unsupported cTrader interval: ${interval}`, 400);
-  const symbolId = await ensureSymbolId(symbol);
-  await subscribeLiveTicks(symbol);
-  const raw = await protocol.requestMessage(2135, {
-    ...getAccountIdPayload(),
-    symbolId,
-    period,
-  });
-  ctraderConfig.liveTrendbarSubscriptions.add(makeSubscriptionKey(symbolId, interval));
-  return { symbolId, symbolName: getSymbolName(symbolId), interval, subscribed: true, raw: toPlain('ProtoOASubscribeLiveTrendbarRes', raw) };
-}
-
-async function unsubscribeLiveTrendbar(symbol, interval = '1m') {
-  const period = CTRADER_INTERVALS[interval];
-  if (!period) throw createHttpError(`Unsupported cTrader interval: ${interval}`, 400);
-  const symbolId = await ensureSymbolId(symbol);
-  const raw = await protocol.requestMessage(2136, {
-    ...getAccountIdPayload(),
-    symbolId,
-    period,
-  });
-  ctraderConfig.liveTrendbarSubscriptions.delete(makeSubscriptionKey(symbolId, interval));
-  return { symbolId, symbolName: getSymbolName(symbolId), interval, subscribed: false, raw: toPlain('ProtoOAUnsubscribeLiveTrendbarRes', raw) };
-}
-
-async function subscribeDepth(symbol) {
-  const symbolId = await ensureSymbolId(symbol);
-  const raw = await protocol.requestMessage(2156, {
-    ...getAccountIdPayload(),
-    symbolId: [symbolId],
-  });
-  ctraderConfig.depthSubscriptions.add(makeSubscriptionKey(symbolId));
-  return { symbolId, symbolName: getSymbolName(symbolId), subscribed: true, raw: toPlain('ProtoOASubscribeDepthQuotesRes', raw) };
-}
-
-async function unsubscribeDepth(symbol) {
-  const symbolId = await ensureSymbolId(symbol);
-  const raw = await protocol.requestMessage(2158, {
-    ...getAccountIdPayload(),
-    symbolId: [symbolId],
-  });
-  ctraderConfig.depthSubscriptions.delete(makeSubscriptionKey(symbolId));
-  return { symbolId, symbolName: getSymbolName(symbolId), subscribed: false, raw: toPlain('ProtoOAUnsubscribeDepthQuotesRes', raw) };
-}
-
-async function getTrader() {
-  await ensureCtraderReady();
-  const raw = await protocol.requestMessage(2121, getAccountIdPayload());
-  return { trader: raw.trader || null, raw: toPlain('ProtoOATraderRes', raw) };
-}
-
-async function reconcileAccount() {
-  await ensureCtraderReady();
-  const raw = await protocol.requestMessage(2124, {
-    ...getAccountIdPayload(),
-    returnProtectionOrders: true,
-  });
-  return {
-    positions: raw.position || raw.positions || [],
-    orders: raw.order || raw.orders || [],
-    raw: toPlain('ProtoOAReconcileRes', raw),
-  };
-}
-
-async function getOrderList({ fromTimestamp, toTimestamp } = {}) {
-  await ensureCtraderReady();
-  const from = parseTimestamp(fromTimestamp);
-  const to = parseTimestamp(toTimestamp);
-  const raw = await protocol.requestMessage(2175, {
-    ...getAccountIdPayload(),
-    ...(from !== undefined ? { fromTimestamp: from } : {}),
-    ...(to !== undefined ? { toTimestamp: to } : {}),
-  });
-  return { orders: raw.order || raw.orders || [], hasMore: Boolean(raw.hasMore), raw: toPlain('ProtoOAOrderListRes', raw) };
-}
-
-async function getOrderDetails(orderId) {
-  await ensureCtraderReady();
-  const id = parseFiniteInteger(orderId);
-  if (!id) throw createHttpError('Valid orderId is required', 400);
-  const raw = await protocol.requestMessage(2181, { ...getAccountIdPayload(), orderId: id });
-  return { order: raw.order || null, deals: raw.deal || raw.deals || [], raw: toPlain('ProtoOAOrderDetailsRes', raw) };
-}
-
-async function getOrdersByPositionId(positionId, { fromTimestamp, toTimestamp } = {}) {
-  await ensureCtraderReady();
-  const id = parseFiniteInteger(positionId);
-  if (!id) throw createHttpError('Valid positionId is required', 400);
-  const from = parseTimestamp(fromTimestamp);
-  const to = parseTimestamp(toTimestamp);
-  const raw = await protocol.requestMessage(2183, {
-    ...getAccountIdPayload(),
-    positionId: id,
-    ...(from !== undefined ? { fromTimestamp: from } : {}),
-    ...(to !== undefined ? { toTimestamp: to } : {}),
-  });
-  return { orders: raw.order || raw.orders || [], hasMore: Boolean(raw.hasMore), raw: toPlain('ProtoOAOrderListByPositionIdRes', raw) };
-}
-
-async function getDeals({ fromTimestamp, toTimestamp, maxRows } = {}) {
-  await ensureCtraderReady();
-  const from = parseTimestamp(fromTimestamp);
-  const to = parseTimestamp(toTimestamp);
-  const raw = await protocol.requestMessage(2133, {
-    ...getAccountIdPayload(),
-    ...(from !== undefined ? { fromTimestamp: from } : {}),
-    ...(to !== undefined ? { toTimestamp: to } : {}),
-    maxRows: Math.min(Math.max(parseFiniteInteger(maxRows, 1000), 1), 5000),
-  });
-  return { deals: raw.deal || raw.deals || [], hasMore: Boolean(raw.hasMore), raw: toPlain('ProtoOADealListRes', raw) };
-}
-
-async function getDealsByPositionId(positionId, { fromTimestamp, toTimestamp } = {}) {
-  await ensureCtraderReady();
-  const id = parseFiniteInteger(positionId);
-  if (!id) throw createHttpError('Valid positionId is required', 400);
-  const from = parseTimestamp(fromTimestamp);
-  const to = parseTimestamp(toTimestamp);
-  const raw = await protocol.requestMessage(2179, {
-    ...getAccountIdPayload(),
-    positionId: id,
-    ...(from !== undefined ? { fromTimestamp: from } : {}),
-    ...(to !== undefined ? { toTimestamp: to } : {}),
-  });
-  return { deals: raw.deal || raw.deals || [], hasMore: Boolean(raw.hasMore), raw: toPlain('ProtoOADealListByPositionIdRes', raw) };
-}
-
-async function getDealOffsets({ dealId }) {
-  await ensureCtraderReady();
-  const id = parseFiniteInteger(dealId);
-  if (!id) throw createHttpError('Valid dealId is required', 400);
-  const raw = await protocol.requestMessage(2185, { ...getAccountIdPayload(), dealId: id });
-  return {
-    offsetBy: raw.offsetBy || [],
-    offsetting: raw.offsetting || [],
-    raw: toPlain('ProtoOADealOffsetListRes', raw),
-  };
-}
-
-async function getCashFlowHistory({ fromTimestamp, toTimestamp } = {}) {
-  await ensureCtraderReady();
-  const from = parseTimestamp(fromTimestamp);
-  const to = parseTimestamp(toTimestamp) || Date.now();
-  if (from === undefined) throw createHttpError('fromTimestamp is required', 400);
-  const raw = await protocol.requestMessage(2143, {
-    ...getAccountIdPayload(),
-    fromTimestamp: from,
-    toTimestamp: to,
-  });
-  return {
-    depositWithdrawals: raw.depositWithdraw || raw.depositWithdrawals || [],
-    raw: toPlain('ProtoOACashFlowHistoryListRes', raw),
-  };
-}
-
-async function getPositionUnrealizedPnL(positionId) {
-  await ensureCtraderReady();
-  const id = parseFiniteInteger(positionId);
-  const raw = await protocol.requestMessage(2187, getAccountIdPayload());
-  const positions = raw.positionUnrealizedPnL || [];
-  return {
-    positions: id ? positions.filter((position) => Number(position.positionId) === id) : positions,
-    moneyDigits: raw.moneyDigits,
-    raw: toPlain('ProtoOAGetPositionUnrealizedPnLRes', raw),
-  };
-}
-
-async function getExpectedMargin({ symbol, volume }) {
-  await ensureCtraderReady();
-  const symbolId = await ensureSymbolId(symbol);
-  const normalizedVolume = parseFiniteInteger(volume);
-  if (!normalizedVolume) throw createHttpError('Valid volume is required', 400);
-  const raw = await protocol.requestMessage(2139, {
-    ...getAccountIdPayload(),
-    symbolId,
-    volume: [normalizedVolume],
-  });
-  return { margins: raw.margin || raw.margins || [], moneyDigits: raw.moneyDigits, raw: toPlain('ProtoOAExpectedMarginRes', raw) };
-}
-
-async function getMarginCallList() {
-  await ensureCtraderReady();
-  const raw = await protocol.requestMessage(2167, getAccountIdPayload());
-  return { marginCalls: raw.marginCall || raw.marginCalls || [], raw: toPlain('ProtoOAMarginCallListRes', raw) };
-}
-
-async function getDynamicLeverage(symbol) {
-  await ensureCtraderReady();
-  const symbolId = await ensureSymbolId(symbol);
-  const symbolData = await getSymbolById(symbolId);
-  const symbolDetails = symbolData.symbols?.[0];
-  const leverageId = parseFiniteInteger(symbolDetails?.leverageId);
-  if (!leverageId) throw createHttpError(`Dynamic leverage not available for symbol: ${symbol}`, 404);
-  const raw = await protocol.requestMessage(2177, { ...getAccountIdPayload(), leverageId });
-  return { symbolId, symbolName: getSymbolName(symbolId), leverageId, leverage: raw.leverage || null, raw: toPlain('ProtoOAGetDynamicLeverageByIDRes', raw) };
 }
 
 function handleEvent(decoded, typeName, handler) {
@@ -911,9 +665,6 @@ function handleMessage(data) {
     switch (decoded.payloadType) {
       case 2101:
         ctraderConfig.isAppAuthed = true;
-        if (process.env.CTRADER_DEBUG === 'true') {
-          console.info('ctrader.auth.app.ok');
-        }
         setTimeout(() => sendAccountAuth(), 500);
         break;
 
@@ -922,28 +673,8 @@ function handleMessage(data) {
           const AccAuthRes = root.lookupType('ProtoOAAccountAuthRes');
           AccAuthRes.decode(decoded.payload);
           ctraderConfig.isAccountAuthed = true;
-          connectionState.reconnectAttempts = 0;
-          if (process.env.CTRADER_DEBUG === 'true') {
-            console.info('ctrader.auth.account.ok');
-          }
         } catch (_err) {
           ctraderConfig.isAccountAuthed = true;
-          connectionState.reconnectAttempts = 0;
-        }
-        break;
-
-      case 2142:
-        try {
-          const ErrorRes = root.lookupType('ProtoOAErrorRes');
-          const errorData = ErrorRes.decode(decoded.payload);
-          connectionState.lastApiError = errorData.description || errorData.errorCode || 'cTrader API error';
-          console.warn('ctrader.api.error', {
-            code: errorData.errorCode || null,
-            description: errorData.description || null,
-          });
-        } catch (error) {
-          connectionState.lastApiError = error.message;
-          console.warn('ctrader.api.error_decode_failed', error.message);
         }
         break;
 
@@ -961,109 +692,46 @@ function handleMessage(data) {
             } catch (_error) {}
           }
           normalizeTrendbarEvent(event);
-          if (process.env.CTRADER_DEBUG === 'true' || process.env.FEED_PRINT_TICKS === 'true') {
-            console.info('ctrader.spot', { symbol: tick.symbolName, bid: tick.bid, ask: tick.ask });
-          }
         });
-        break;
-
-      case 2138:
-        try {
-          const TrendRes = root.lookupType('ProtoOAGetTrendbarsRes');
-          const trendData = TrendRes.decode(decoded.payload);
-
-          const trendbars = trendData.trendbar || trendData.trendbars || [];
-          if (trendbars.length > 0) {
-            const candles = trendbars.map((candle) => ({
-              time: Number(candle.utcTimestamp) / 1000,
-              open: candle.open,
-              high: candle.high,
-              low: candle.low,
-              close: candle.close,
-            }));
-
-            if (candles.length > 0) {
-              global.lastCandles = candles;
-            }
-          }
-        } catch (err) {
-        }
         break;
 
       case 2142:
         handleEvent(decoded, 'ProtoOAErrorRes', (errorData) => {
-          tokenState.lastRefreshError = errorData.errorCode || '';
-        });
-        break;
-
-      case 2155:
-        handleEvent(decoded, 'ProtoOADepthEvent', (event) => {
-          const depth = normalizeDepthEvent(event);
-          ctraderConfig.latestDepth.set(depth.symbolId, depth);
-        });
-        break;
-
-      case 2123:
-        handleEvent(decoded, 'ProtoOATraderUpdatedEvent', (event) => {
-          ctraderConfig.latestTraderUpdate = toPlain('ProtoOATraderUpdatedEvent', event);
-        });
-        break;
-
-      case 2126:
-        handleEvent(decoded, 'ProtoOAExecutionEvent', (event) => {
-          ctraderConfig.latestExecutionEvent = toPlain('ProtoOAExecutionEvent', event);
-        });
-        break;
-
-      case 2132:
-        handleEvent(decoded, 'ProtoOAOrderErrorEvent', (event) => {
-          ctraderConfig.latestOrderError = toPlain('ProtoOAOrderErrorEvent', event);
-        });
-        break;
-
-      case 2141:
-        handleEvent(decoded, 'ProtoOAMarginChangedEvent', (event) => {
-          ctraderConfig.latestMarginChanged = toPlain('ProtoOAMarginChangedEvent', event);
+          const errorCode = errorData.errorCode || '';
+          tokenState.lastRefreshError = errorCode;
+          if (errorCode === 'CH_ACCESS_TOKEN_INVALID') {
+            console.warn('ctrader.account_auth_failed.invalid_token', 'Access token is invalid. Clearing token and forcing refresh.');
+            ctraderConfig.accessToken = '';
+            ctraderConfig.expiresAt = 0;
+            if (connectionState.ws) {
+              connectionState.ws.close();
+            }
+          }
         });
         break;
 
       case 2147:
-        handleEvent(decoded, 'ProtoOAAccountsTokenInvalidatedEvent', (event) => {
+        handleEvent(decoded, 'ProtoOAAccountsTokenInvalidatedEvent', (_event) => {
           tokenState.lastRefreshError = 'cTrader accounts token invalidated';
-          tokenState.loadedFromStore = false;
+          console.warn('ctrader.token_invalidated_event', 'Access token invalidated event received. Clearing token and forcing refresh.');
+          ctraderConfig.accessToken = '';
           ctraderConfig.expiresAt = 0;
-          ctraderConfig.latestTokenInvalidatedEvent = toPlain('ProtoOAAccountsTokenInvalidatedEvent', event);
-          if (connectionState.ws) connectionState.ws.close();
-        });
-        break;
-
-      case 2148:
-        handleEvent(decoded, 'ProtoOAClientDisconnectEvent', (event) => {
-          ctraderConfig.latestClientDisconnectEvent = toPlain('ProtoOAClientDisconnectEvent', event);
-        });
-        break;
-
-      case 2164:
-        handleEvent(decoded, 'ProtoOAAccountDisconnectEvent', (event) => {
-          ctraderConfig.isAccountAuthed = false;
-          ctraderConfig.latestAccountDisconnectEvent = toPlain('ProtoOAAccountDisconnectEvent', event);
+          if (connectionState.ws) {
+            connectionState.ws.close();
+          }
         });
         break;
 
       default:
         break;
     }
-  } catch (err) {
+  } catch (_err) {
+    // Suppress frame decode errors
   }
 }
 
 function cleanup() {
   stopHeartbeat();
-
-  if (connectionState.reconnectTimer) {
-    clearTimeout(connectionState.reconnectTimer);
-    connectionState.reconnectTimer = null;
-  }
 
   if (connectionState.ws) {
     connectionState.ws.removeAllListeners();
@@ -1074,50 +742,8 @@ function cleanup() {
   ctraderConfig.isAppAuthed = false;
   ctraderConfig.isAccountAuthed = false;
   ctraderConfig.liveTickSubscriptions.clear();
-  ctraderConfig.depthSubscriptions.clear();
-  ctraderConfig.chartLiveConsumers.clear();
-  ctraderConfig.liveTrendbarSubscriptions.clear();
   connectionState.isConnecting = false;
   connectionState.reconnectAttempts = 0;
-}
-
-function registerCtraderRoutes(app) {
-  registerRoutes(app, {
-    cleanup,
-    connectSocket,
-    ensureCtraderReady,
-    fetchCtraderKlines,
-    fetchCtraderTicks,
-    getAssetClasses,
-    getAssets,
-    getCashFlowHistory,
-    getConversionSymbols,
-    getDealOffsets,
-    getDeals,
-    getDealsByPositionId,
-    getDynamicLeverage,
-    getExpectedMargin,
-    getLiveMarketSnapshot,
-    getMarginCallList,
-    getOrderDetails,
-    getOrderList,
-    getOrdersByPositionId,
-    getPositionUnrealizedPnL,
-    getSymbolById,
-    getSymbolCategories,
-    getSymbols,
-    getTrader,
-    getWatchlistQuotes,
-    loadProtos,
-    reconcileAccount,
-    subscribeDepth,
-    subscribeLiveTickIds,
-    subscribeLiveTicks,
-    subscribeLiveTrendbar,
-    unsubscribeDepth,
-    unsubscribeLiveTicks,
-    unsubscribeLiveTrendbar,
-  });
 }
 
 module.exports = {
@@ -1127,36 +753,14 @@ module.exports = {
   ensureCtraderTokenStore,
   fetchCtraderKlines,
   fetchCtraderTicks,
-  getAssetClasses,
-  getAssets,
-  getCashFlowHistory,
-  getConversionSymbols,
-  getDealOffsets,
-  getDeals,
-  getDealsByPositionId,
-  getDynamicLeverage,
-  getExpectedMargin,
   getLiveMarketSnapshot,
-  getMarginCallList,
-  getOrderDetails,
-  getOrderList,
-  getOrdersByPositionId,
-  getPositionUnrealizedPnL,
   getSymbolById,
-  getSymbolCategories,
   getSymbols,
-  getTrader,
   getWatchlistQuotes,
   loadProtos,
-  reconcileAccount,
-  registerCtraderRoutes,
-  requestCandles,
   requestSymbolsAsync,
-  subscribeDepth,
-  subscribeLiveTickIds,
+  subscribeAllSymbols,
   subscribeLiveTicks,
-  subscribeLiveTrendbar,
-  unsubscribeDepth,
+  subscribeSpotsBatch,
   unsubscribeLiveTicks,
-  unsubscribeLiveTrendbar,
 };
