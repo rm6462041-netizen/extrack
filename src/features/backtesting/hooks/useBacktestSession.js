@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import api from '../../../utils/serve';
+import api from '../../../utils/common/serve';
 import { useAuth } from '../../../context/AuthContext';
 import {
   DEFAULT_OHLCV_CHUNK_LIMIT,

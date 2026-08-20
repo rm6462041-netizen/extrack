@@ -1,5 +1,5 @@
-import api from '../../utils/serve';
-import { WS_URL } from '../../utils/constants';
+import api from '../../utils/common/serve';
+import { WS_URL } from '../../utils/common/constants';
 
 const subscriptions = new Set();
 let socket = null;

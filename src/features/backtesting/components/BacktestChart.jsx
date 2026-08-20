@@ -11,6 +11,7 @@ import {
   ohlcvChunkQueryKey,
 } from '../data/ohlcvChunks';
 import BacktestPlaybackControls from './BacktestPlaybackControls';
+import { TradingChartFooter, TradingChartHeader } from '../../../components/Common/TradingChartChrome/TradingChartChrome';
 import {
   applyTheme,
   createChartInstance,
@@ -33,7 +34,7 @@ function _formatTime(value) {
   return new Date(Number(value) * 1000).toLocaleString();
 }
 
-const TIMEFRAMES = ['1m', '5m', '15m', '30m', '1h', '4h', '1D'];
+const TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h', '1d'];
 
 function getActivePositionLines(openPositions = []) {
   const position = openPositions.length ? openPositions[openPositions.length - 1] : null;
@@ -79,6 +80,7 @@ function BacktestChart({
   onStep,
   onSpeedChange,
 }) {
+  const chartShellRef = useRef(null);
   const containerRef = useRef(null);
   const instanceRef = useRef(null);
   const chartDataRef = useRef([]);
@@ -93,6 +95,7 @@ function BacktestChart({
   const queryClient = useQueryClient();
   const [_crosshair, setCrosshair] = useState({ price: null, time: null });
   const [isLoadingPast, setIsLoadingPast] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const activePositionLines = useMemo(
     () => getActivePositionLines(openPositions),
     [openPositions]
@@ -287,10 +290,45 @@ function BacktestChart({
     setMarkers(instanceRef.current, openPositions, closedPositions);
   }, [closedPositions, openPositions]);
 
+  useEffect(() => {
+    const handleFullscreenChange = () => setIsFullscreen(document.fullscreenElement === chartShellRef.current);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = async () => {
+    if (!chartShellRef.current) return;
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await chartShellRef.current.requestFullscreen();
+  };
+
+  const saveSnapshot = () => {
+    const canvas = instanceRef.current?.chart?.takeScreenshot?.();
+    if (!canvas) return;
+    const link = document.createElement('a');
+    link.download = `${symbol}-${timeframe}-backtest.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+
   return (
-    <section className="backtest-chart-panel">
+    <section className={`backtest-chart-panel chart${isFullscreen ? ' chart--fullscreen' : ''}`} ref={chartShellRef}>
+      <TradingChartHeader
+        title={symbol}
+        timeframe={timeframe}
+        timeframes={TIMEFRAMES}
+        onTimeframeChange={onTimeframeChange}
+        candle={currentCandle}
+        priceDigits={5}
+        replayActive={isPlaying}
+        replayDisabled={false}
+        onReplay={onTogglePlay}
+        onFullscreen={toggleFullscreen}
+        onSnapshot={saveSnapshot}
+        isFullscreen={isFullscreen}
+      />
       <div className="backtest-chart-meta">
-        <div className="backtest-chart-timeframes">
+        <div className="backtest-chart-timeframes" hidden>
           {TIMEFRAMES.map((item) => (
             <button
               key={item}
@@ -303,7 +341,7 @@ function BacktestChart({
           ))}
         </div>
 
-        <div className="backtest-chart-price-info">
+        <div className="backtest-chart-price-info" hidden>
           <span>O</span><strong>{formatPrice(currentCandle?.open)}</strong>
           <span>H</span><strong>{formatPrice(currentCandle?.high)}</strong>
           <span>L</span><strong>{formatPrice(currentCandle?.low)}</strong>
@@ -368,6 +406,14 @@ function BacktestChart({
           onSpeedChange={onSpeedChange}
         />
       </div>
+      <TradingChartFooter
+        chartApi={instanceRef.current?.chart}
+        timeframe={timeframe}
+        timeframes={TIMEFRAMES}
+        onTimeframeChange={onTimeframeChange}
+        onFit={() => instanceRef.current?.chart?.timeScale().fitContent()}
+        onGoToTrade={() => instanceRef.current?.chart?.timeScale().fitContent()}
+      />
     </section>
   );
 }

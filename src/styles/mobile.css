@@ -1,6 +1,6 @@
 @media (min-width: 769px) and (max-width: 1023px) {
   .main-content {
-    padding: 12px 10px 28px;
+    padding: 0 10px 28px;
   }
 
   .dashboard-header {
@@ -54,7 +54,7 @@
     min-height: 100dvh;
     height: 100dvh;
     margin: 0;
-    padding: 10px 8px calc(128px + env(safe-area-inset-bottom, 0px));
+    padding: 0 8px calc(128px + env(safe-area-inset-bottom, 0px));
     overflow-x: hidden;
     overflow-y: auto;
     scroll-padding-bottom: calc(128px + env(safe-area-inset-bottom, 0px));
@@ -64,59 +64,7 @@
   }
 
   .main-content:has(.dashboard-header) {
-    padding-top: 118px;
-  }
-
-  .dashboard.app-route-dashboard .main-content {
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  .dashboard.app-route-chart .main-content {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: 100vh !important;
-    min-height: 100vh !important;
-    margin-left: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-  }
-
-  .dashboard.app-route-chart > .sidebar,
-  .dashboard.app-route-chart > .sidebar-toggle,
-  .dashboard.app-route-chart .app-shell-header-logo {
-    display: none !important;
-  }
-
-  .app-shell-header-logo {
-    display: none !important;
-  }
-
-  .app-page-header:not(.dashboard-header) .app-page-header__left {
-    padding-left: 44px;
-  }
-
-  .dashboard.app-route-analytics > .sidebar-toggle,
-  .dashboard.app-route-economic-calendar > .sidebar-toggle,
-  .dashboard:not(.app-route-dashboard) > .sidebar-toggle {
-    display: none !important;
-  }
-
-  .dashboard.app-route-analytics .app-page-header:not(.dashboard-header) .app-page-header__left,
-  .dashboard.app-route-economic-calendar .app-page-header:not(.dashboard-header) .app-page-header__left,
-  .dashboard:not(.app-route-dashboard) .app-page-header:not(.dashboard-header) .app-page-header__left {
-    padding-left: 0;
-  }
-
-  .dashboard-header {
-    position: relative;
-    gap: 8px;
-    margin-bottom: 4px;
-    padding-top: 0;
-  }
-
-  .dashboard-header__title-row {
-    min-height: 30px;
+    padding-top: 66px;
   }
 
   .dashboard-header__title-row .app-page-title {
@@ -199,9 +147,9 @@
 
   .toolbar-primary {
     min-height: 40px;
-    background: linear-gradient(135deg, var(--button-bg), var(--primary));
-    color: #ffffff;
-    box-shadow: 0 18px 34px -24px rgba(37, 99, 235, 0.48);
+    background: linear-gradient(135deg, var(--button-bg), color-mix(in srgb, var(--button-bg) 76%, var(--accent-success-strong) 24%));
+    color: var(--button-text);
+    box-shadow: 0 18px 34px -24px rgba(17, 23, 20, 0.48);
   }
 
   .metric-card {
@@ -381,24 +329,6 @@
   .dashboard > .sidebar-toggle {
     position: fixed;
   }
-
-  .dashboard > .sidebar-toggle .sidebar-toggle__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 11px;
-    margin-left: 0;
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-    font-size: 24px;
-    line-height: 1;
-    color: inherit;
-    backdrop-filter: none;
-  }
-
 
   .dashboard > .sidebar {
     right: 0;
@@ -629,9 +559,10 @@
   }
 
   .dashboard > .sidebar .nav-item.active {
-    background: var(--accent-info-soft);
-    color: var(--primary-dark);
+    background: color-mix(in srgb, var(--accent-ink) 8%, var(--bg-card));
+    color: var(--accent-ink);
     border-left-color: transparent;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-ink) 10%, transparent);
   }
 
   .dashboard > .sidebar .sidebar-settings-group {
@@ -659,8 +590,13 @@
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
+  .main-content {
+    padding-bottom: 12px;
+    scroll-padding-bottom: 12px;
+  }
+
   .main-content:has(.dashboard-header) {
-    padding-top: 74px;
+    padding-top: 66px;
   }
 
   .app-shell-header-logo {
@@ -685,14 +621,16 @@
 
   .dashboard-header .app-page-header__left {
     display: flex !important;
-    position: fixed;
+    position: absolute !important;
     top: 0;
-    left: 60px;
-    right: 176px;
+    left: 12px !important;
+    right: auto !important;
     height: 56px;
     align-items: center;
     min-width: 0;
+    max-width: calc(100vw - 110px);
     z-index: 8002;
+    padding-left: 0 !important;
   }
 
   .dashboard-header .app-page-title {
@@ -816,48 +754,47 @@
     flex: 0 0 auto;
     pointer-events: auto;
     color: var(--button-text);
-    background: var(--button-bg);
+    background: linear-gradient(135deg, var(--button-bg), color-mix(in srgb, var(--button-bg) 76%, var(--accent-success-strong) 24%));
     box-shadow: none;
   }
 
-  .toolbar-date-range__panel,
-  .trade-filter-menu,
-  .currency-filter-menu {
-    top: 112px !important;
+  .dashboard:has(.dashboard-header) > .sidebar-toggle {
+    display: none !important;
   }
 
   .dashboard > .sidebar-toggle {
     display: inline-flex !important;
+    position: fixed;
     top: 8px;
     right: auto;
     left: 12px;
-    width: 40px;
-    min-width: 40px;
-    height: 40px;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 1px solid var(--border-light);
-    border-radius: 10px;
-    background: var(--surface-elevated);
-    box-shadow: var(--dashboard-card-shadow);
-    color: var(--text-primary);
-    font-size: 0;
     transform: none;
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 22px;
+    line-height: 1;
+    pointer-events: auto;
     z-index: 10004;
   }
 
   .dashboard > .sidebar-toggle.sidebar-toggle--open {
-    top: 50%;
-    left: 222px;
-    right: auto;
-    width: 38px;
-    min-width: 38px;
-    transform: translateY(-50%);
+    display: none !important;
   }
 
-  .dashboard > .sidebar:not(.open) .sidebar-settings-group {
-    display: none !important;
+  .dashboard > .sidebar-toggle:hover {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary);
+    transform: none;
+    box-shadow: none !important;
   }
 
   .dashboard > .sidebar:not(.open) {
@@ -872,51 +809,26 @@
 @media (max-width: 480px) {
   .main-content {
     width: 100%;
-    padding: 10px 10px calc(82px + env(safe-area-inset-bottom, 0px));
-    scroll-padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .dashboard.app-route-dashboard .main-content {
-    padding-left: 8px;
-    padding-right: 8px;
   }
 
   .main-content:has(.dashboard-header) {
-    padding-top: 118px;
-  }
-
-  .dashboard-header {
-    padding-top: 0;
-  }
-
-  .dashboard-toolbar__controls {
-    width: 100%;
+    padding-top: 66px;
   }
 
   .toolbar-date-range__panel,
-  .trade-filter-menu {
-    width: min(100vw - 24px, 360px);
-    right: auto;
-  }
-
-  .toolbar-chip,
-  .toolbar-primary {
-    min-height: 38px;
-    padding: 8px;
-    font-size: 11px;
-  }
-
-  .dashboard > .sidebar {
-    bottom: 0;
-    padding-inline: clamp(6px, 2vw, 8px);
-  }
-
-  .dashboard > .sidebar.open {
-    inset: 0 auto 0 0 !important;
-    width: min(270px, calc(100vw - 28px)) !important;
-    max-width: 270px !important;
-    height: 100dvh !important;
-    padding: 18px 12px 20px !important;
+  .trade-filter-menu,
+  .currency-filter-menu {
+    position: fixed !important;
+    top: 64px !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: translateX(-50%) !important;
+    width: calc(100vw - 24px) !important;
+    max-width: 360px !important;
+    margin: 0 auto !important;
+    z-index: 10055 !important;
+    box-sizing: border-box !important;
   }
 
   .dashboard > .sidebar:not(.open) .sidebar-settings-group {
@@ -958,6 +870,17 @@
     pointer-events: auto !important;
   }
 
+  .dashboard-header .toolbar-date-range:has(.toolbar-date-range__panel),
+  .dashboard-header .toolbar-date-range.toolbar-control--active {
+    display: block !important;
+    position: fixed !important;
+    top: 64px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 10050 !important;
+    pointer-events: auto !important;
+  }
+
   .dashboard-header .header-action-btn--import {
     display: none !important;
   }
@@ -992,26 +915,20 @@
     width: 100% !important;
   }
 
-  .dashboard-header .mobile-filters-trigger .toolbar-chip__text,
-  .dashboard-header .mobile-filters-trigger > svg:last-child {
-    display: inline-flex !important;
+  @media (max-width: 480px) {
+    .dashboard-header .toolbar-date-range,
+    .dashboard-header .trade-filter-wrapper,
+    .dashboard-header .currency-filter-wrapper {
+      display: none !important;
+    }
   }
 
-  .dashboard-header .toolbar-date-range {
-    display: none !important;
-  }
-
-  .dashboard-header .trade-filter-wrapper {
-    display: none !important;
-  }
-
-  .dashboard-header .currency-filter-wrapper {
-    display: none !important;
-  }
-
-  .dashboard-header__daily-row {
-    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-    z-index: 8001 !important;
+  @media (min-width: 481px) {
+    .dashboard-header .toolbar-date-range,
+    .dashboard-header .trade-filter-wrapper,
+    .dashboard-header .currency-filter-wrapper {
+      display: inline-block !important;
+    }
   }
 
   body.dashboard-popup-open .dashboard-header__daily-row {
@@ -1043,7 +960,7 @@
     border-bottom: 0 !important;
   }
 
-  body.dashboard-sidebar-open .dashboard-header .app-page-header__left,
+body.dashboard-sidebar-open .dashboard-header .app-page-header__left,
   body.dashboard-sidebar-open .dashboard-header .header-user {
     display: none !important;
   }

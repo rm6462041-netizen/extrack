@@ -7,17 +7,19 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  DoubleChevronLeftIcon,
   Settings,
 } from '../../icons/lucideIcons';
-import './PnLCalendar.css';
-import { formatCompactCurrency } from '../../utils/Currency';
-import api from '../../utils/serve';
-import { getTradeDisplayDate } from '../../utils/tradeTime';
-import { loadCachedUserSettings, saveUserSettings } from '../../utils/userSettings';
-import InfoTooltip from '../Common/InfoTooltip';
-import CustomSelect from '../Common/CustomSelect';
+import { formatCompactCurrency } from '../../utils/user/Currency';
+import api from '../../utils/common/serve';
+import { getTradeDisplayDate } from '../../utils/trading/tradeTime';
+import { loadCachedUserSettings, saveUserSettings } from '../../utils/user/userSettings';
+import InfoTooltip from '../Common/InfoTooltip/InfoTooltip';
+import { DropdownSelect as CustomSelect } from "@/components/Common/base/dropdown/dropdown";
+import { Card, CardHeader, CardTitle } from "@/components/Common/base";
 import { useAuth } from '../../context/AuthContext';
 import { useUserSettings } from '../../hooks/useUserSettings';
+import { useBreakpoint } from "@/hooks/use-breakpoint";
 
 const MONTH_NAMES = [
   'January',
@@ -34,7 +36,8 @@ const MONTH_NAMES = [
   'December',
 ];
 
-const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEKDAY_NAMES_SUN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEKDAY_NAMES_MON = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const DEFAULT_CALENDAR_SETTINGS = {
   weekStartsOn: 'sun',
   showPnl: true,
@@ -61,33 +64,30 @@ const normalizeCalendarSettings = (settings = {}) => ({
 const getCachedCalendarSettings = () => normalizeCalendarSettings(loadCachedUserSettings()?.pnlCalendar);
 
 const getOrderedWeekdays = (weekStartsOn) => (
-  weekStartsOn === 'mon'
-    ? [...WEEKDAY_NAMES.slice(1), WEEKDAY_NAMES[0]]
-    : WEEKDAY_NAMES
+  weekStartsOn === 'mon' ? WEEKDAY_NAMES_MON : WEEKDAY_NAMES_SUN
 );
 
 const getFirstWeekdayOffset = (day, weekStartsOn) => (
   weekStartsOn === 'mon' ? (day + 6) % 7 : day
 );
 
-function PnLCalendar({ trades, currencyCode = 'USD' }) {
-  const queryClient = useQueryClient();
+function PnLCalendar({ trades = [], currencyCode = 'USD' }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
   const userSettingsQuery = useUserSettings();
+  const isLg = useBreakpoint('lg');
+  const isCompactWeeks = !isLg;
   const calendarShellRef = useRef(null);
   const calendarSettingsVersion = useRef(0);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isWeeklyOpen, setIsWeeklyOpen] = useState(false);
   const [breakevenMenu, setBreakevenMenu] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [actionsMenuOpen, setActionsMenuOpen] = useState(false);
   const [calendarSettings, setCalendarSettings] = useState(getCachedCalendarSettings);
   const [pendingBreakevenDays, setPendingBreakevenDays] = useState({});
   const [isSnapshotting, setIsSnapshotting] = useState(false);
-  const [isCompactWeeks, setIsCompactWeeks] = useState(() => {
-    if (typeof window === 'undefined') return true;
-    return window.innerWidth <= 768;
-  });
 
   useEffect(() => {
     if (!breakevenMenu) return undefined;
@@ -117,23 +117,13 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
   }, [settingsOpen]);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
+    if (!actionsMenuOpen) return undefined;
 
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
-    const syncCompactWeeks = (event) => {
-      setIsCompactWeeks(event.matches);
-    };
+    const closeActionsMenu = () => setActionsMenuOpen(false);
+    window.addEventListener('click', closeActionsMenu);
 
-    setIsCompactWeeks(mediaQuery.matches);
-
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', syncCompactWeeks);
-      return () => mediaQuery.removeEventListener('change', syncCompactWeeks);
-    }
-
-    mediaQuery.addListener(syncCompactWeeks);
-    return () => mediaQuery.removeListener(syncCompactWeeks);
-  }, []);
+    return () => window.removeEventListener('click', closeActionsMenu);
+  }, [actionsMenuOpen]);
 
   const dailySummary = useMemo(() => {
     const summary = {};
@@ -176,21 +166,89 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
     const lastDay = new Date(year, month + 1, 0);
     const firstWeekday = getFirstWeekdayOffset(firstDay.getDay(), calendarSettings.weekStartsOn);
     const daysInMonth = lastDay.getDate();
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
     const today = new Date();
 
     const weeks = [];
-    let dayCounter = 1;
+    let currentWeek = [];
 
-    while (dayCounter <= daysInMonth) {
-      const week = [];
+    // Prepend previous month overflow days (disabled style)
+    for (let i = firstWeekday - 1; i >= 0; i -= 1) {
+      const prevDay = prevMonthLastDay - i;
+      const prevDate = new Date(year, month - 1, prevDay);
+      const dateKey = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}-${String(prevDay).padStart(2, '0')}`;
+      const stats = dailySummary[dateKey] || {
+        pnl: 0,
+        trades: 0,
+        wins: 0,
+        hasBadge: false,
+        isBreakeven: false,
+      };
+      currentWeek.push({
+        day: prevDay,
+        dateKey,
+        pnl: stats.pnl,
+        trades: stats.trades,
+        winRate: stats.trades > 0 ? (stats.wins / stats.trades) * 100 : 0,
+        hasBadge: stats.hasBadge,
+        isBreakeven: stats.isBreakeven,
+        isToday: false,
+        isOtherMonth: true,
+      });
+    }
 
-      for (let weekday = 0; weekday < 7; weekday += 1) {
-        if ((weeks.length === 0 && weekday < firstWeekday) || dayCounter > daysInMonth) {
-          week.push({ day: null });
-          continue;
-        }
+    // Add current month days
+    for (let dayCounter = 1; dayCounter <= daysInMonth; dayCounter += 1) {
+      const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCounter).padStart(2, '0')}`;
+      const stats = dailySummary[dateKey] || {
+        pnl: 0,
+        trades: 0,
+        wins: 0,
+        hasBadge: false,
+        isBreakeven: false,
+      };
+      const shouldAutoMarkBreakeven =
+        calendarSettings.autoBreakevenEnabled &&
+        stats.trades > 0 &&
+        stats.pnl <= Number(calendarSettings.breakevenThreshold);
+      const manualOverride = calendarSettings.manualBreakevenOverrides?.[dateKey];
+      const hasTrades = stats.trades > 0;
+      const isBreakeven = hasTrades && (
+        pendingBreakevenDays[dateKey] ?? (
+          typeof manualOverride === 'boolean'
+            ? manualOverride
+            : stats.isBreakeven || shouldAutoMarkBreakeven
+        )
+      );
 
-        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCounter).padStart(2, '0')}`;
+      currentWeek.push({
+        day: dayCounter,
+        dateKey,
+        pnl: stats.pnl,
+        trades: stats.trades,
+        winRate: stats.trades > 0 ? (stats.wins / stats.trades) * 100 : 0,
+        hasBadge: stats.hasBadge,
+        isBreakeven,
+        isToday:
+          today.getFullYear() === year &&
+          today.getMonth() === month &&
+          today.getDate() === dayCounter,
+        isOtherMonth: false,
+      });
+
+      if (currentWeek.length === 7) {
+        weeks.push(currentWeek);
+        currentWeek = [];
+      }
+    }
+
+    // Append next month overflow days to complete the final week
+    let nextDayCounter = 1;
+    if (currentWeek.length > 0) {
+      while (currentWeek.length < 7) {
+        const nextDate = new Date(year, month + 1, nextDayCounter);
+        const nextDay = nextDate.getDate();
+        const dateKey = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDay).padStart(2, '0')}`;
         const stats = dailySummary[dateKey] || {
           pnl: 0,
           trades: 0,
@@ -198,46 +256,29 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
           hasBadge: false,
           isBreakeven: false,
         };
-        const shouldAutoMarkBreakeven =
-          calendarSettings.autoBreakevenEnabled &&
-          stats.trades > 0 &&
-          stats.pnl <= Number(calendarSettings.breakevenThreshold);
-        const manualOverride = calendarSettings.manualBreakevenOverrides?.[dateKey];
-        const hasTrades = stats.trades > 0;
-        const isBreakeven = hasTrades && (
-          pendingBreakevenDays[dateKey] ?? (
-            typeof manualOverride === 'boolean'
-              ? manualOverride
-              : stats.isBreakeven || shouldAutoMarkBreakeven
-          )
-        );
-
-        week.push({
-          day: dayCounter,
+        currentWeek.push({
+          day: nextDay,
           dateKey,
           pnl: stats.pnl,
           trades: stats.trades,
           winRate: stats.trades > 0 ? (stats.wins / stats.trades) * 100 : 0,
           hasBadge: stats.hasBadge,
-          isBreakeven,
-          isToday:
-            today.getFullYear() === year &&
-            today.getMonth() === month &&
-            today.getDate() === dayCounter,
+          isBreakeven: stats.isBreakeven,
+          isToday: false,
+          isOtherMonth: true,
         });
-
-        dayCounter += 1;
+        nextDayCounter += 1;
       }
-
-      weeks.push(week);
+      weeks.push(currentWeek);
+      currentWeek = [];
     }
 
-    const allCells = weeks.flat().filter((cell) => cell.day);
-    const monthlyPnL = allCells.reduce((sum, cell) => sum + cell.pnl, 0);
-    const tradingDays = allCells.filter((cell) => cell.trades > 0).length;
+    const allCurrentMonthCells = weeks.flat().filter((cell) => !cell.isOtherMonth);
+    const monthlyPnL = allCurrentMonthCells.reduce((sum, cell) => sum + cell.pnl, 0);
+    const tradingDays = allCurrentMonthCells.filter((cell) => cell.trades > 0).length;
 
     const weeklyStats = weeks.map((week, index) => {
-      const activeDays = week.filter((cell) => cell.day && cell.trades > 0);
+      const activeDays = week.filter((cell) => !cell.isOtherMonth && cell.trades > 0);
       const isCurrentWeek = week.some((cell) => cell.isToday);
       return {
         label: `Week ${index + 1}`,
@@ -248,7 +289,7 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
     });
 
     return {
-      monthLabel: `${MONTH_NAMES[month]} ${year}`,
+      monthLabel: `${MONTH_NAMES[month]}, ${year}`,
       weeks,
       monthlyPnL,
       tradingDays,
@@ -295,7 +336,7 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
       const weekdayHeight = 38;
       const rows = Math.max(5, weeks.length);
       const cellWidth = (calendarWidth - gap * 6) / 7;
-      const cellHeight = 112;
+      const cellHeight = 118;
       const height = toolbarHeight + padding + weekdayHeight + gap + rows * cellHeight + (rows - 1) * gap + padding;
       const canvas = document.createElement('canvas');
       const scale = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
@@ -317,13 +358,13 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
 
       const drawText = (text, x, y, options = {}) => {
         context.fillStyle = options.color || '#0f172a';
-        context.font = `${options.weight || 600} ${options.size || 14}px Segoe UI, Arial, sans-serif`;
+        context.font = `${options.weight || 600} ${options.size || 14}px Inter, Segoe UI, Arial, sans-serif`;
         context.textAlign = options.align || 'left';
         context.textBaseline = options.baseline || 'alphabetic';
         context.fillText(String(text), x, y, options.maxWidth);
       };
 
-      context.fillStyle = '#f6f8fb';
+      context.fillStyle = '#f8fafc';
       context.fillRect(0, 0, width, height);
 
       context.fillStyle = '#ffffff';
@@ -362,12 +403,12 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
       let y = toolbarHeight + padding;
       weekdayLabels.forEach((weekday, index) => {
         const x = startX + index * (cellWidth + gap);
-        context.fillStyle = '#ffffff';
-        roundedRect(x, y, cellWidth, weekdayHeight, 9);
+        context.fillStyle = '#fafafa';
+        roundedRect(x, y, cellWidth, weekdayHeight, 8);
         context.fill();
-        context.strokeStyle = '#cbd5e1';
+        context.strokeStyle = '#e2e8f0';
         context.stroke();
-        drawText(weekday, x + cellWidth / 2, y + 24, { size: 14, weight: 800, align: 'center' });
+        drawText(weekday.toUpperCase(), x + cellWidth / 2, y + 24, { size: 13, weight: 700, color: '#94a3b8', align: 'center' });
       });
 
       y += weekdayHeight + gap;
@@ -376,73 +417,83 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
           const x = startX + dayIndex * (cellWidth + gap);
           const cellY = y + weekIndex * (cellHeight + gap);
 
-          if (!cell.day) return;
+          const isOther = cell.isOtherMonth;
+          const isProfit = !isOther && cell.trades > 0 && cell.pnl > 0;
+          const isLoss = !isOther && cell.trades > 0 && cell.pnl < 0;
+          const isBE = !isOther && cell.isBreakeven;
 
-          const fill =
-            cell.isBreakeven
-              ? '#dfe5ff'
-              : cell.trades === 0
-              ? '#eef0f5'
-              : cell.pnl > 0
-                ? '#d6f6de'
-                : cell.pnl < 0
-                  ? '#ffd8d8'
-                  : '#dfe5ff';
-          const stroke =
-            cell.isBreakeven
-              ? '#7b8cff'
-              : cell.trades === 0
-              ? '#e5e7ef'
-              : cell.pnl > 0
-                ? '#5ad79a'
-                : cell.pnl < 0
-                  ? '#ff857d'
-                  : '#6e84ff';
-
-          context.fillStyle = fill;
-          roundedRect(x, cellY, cellWidth, cellHeight, 10);
+          context.fillStyle = isOther
+            ? '#f8f8f8'
+            : isBE
+              ? '#eef2ff'
+              : isProfit
+                ? '#f0fdf4'
+                : isLoss
+                  ? '#fef2f2'
+                  : '#ffffff';
+          roundedRect(x, cellY, cellWidth, cellHeight, 8);
           context.fill();
-          context.strokeStyle = stroke;
+
+          context.strokeStyle = isOther
+            ? '#e2e8f0'
+            : isBE
+              ? '#c7d2fe'
+              : isProfit
+                ? '#bbf7d0'
+                : isLoss
+                  ? '#fecaca'
+                  : '#e2e8f0';
           context.stroke();
 
-          drawText(cell.day, x + cellWidth - 12, cellY + 20, {
-            size: 12,
-            weight: 800,
-            color: '#27314f',
-            align: 'right',
+          // Day number
+          drawText(cell.day, x + 10, cellY + 20, {
+            size: 13,
+            weight: 700,
+            color: isOther ? '#94a3b8' : '#0f172a',
+            align: 'left',
           });
 
-          if (cell.isBreakeven) {
-            drawText('BE', x + 12, cellY + 20, { size: 11, weight: 800, color: '#27314f' });
+          if (isBE) {
+            context.fillStyle = '#e0e7ff';
+            roundedRect(x + cellWidth - 36, cellY + 8, 28, 16, 4);
+            context.fill();
+            drawText('BE', x + cellWidth - 22, cellY + 20, { size: 10, weight: 700, color: '#4338ca', align: 'center' });
           }
 
-          if (cell.trades > 0) {
-            const centerX = x + cellWidth / 2;
-            let contentY = cellY + 54;
+          if (!isOther && cell.trades > 0) {
+            let badgeY = cellY + 34;
+            const badgeHeight = 20;
+
             if (calendarSettings.showPnl) {
-              drawText(formatCompactCurrency(cell.pnl, currencyCode), centerX, contentY, {
-                size: 16,
-                weight: 800,
-                color: '#27314f',
-                align: 'center',
+              const pnlText = isProfit ? `+${formatCompactCurrency(cell.pnl, currencyCode)}` : formatCompactCurrency(cell.pnl, currencyCode);
+              drawText(pnlText, x + 10, badgeY + 12, {
+                size: 13,
+                weight: 700,
+                color: isBE ? '#4338ca' : isProfit ? '#15803d' : isLoss ? '#b91c1c' : '#475569',
               });
-              contentY += 22;
+              badgeY += badgeHeight + 2;
             }
+
             if (calendarSettings.showTradeCount) {
-              drawText(`${cell.trades} trade${cell.trades > 1 ? 's' : ''}`, centerX, contentY, {
-                size: 11,
-                weight: 700,
-                color: '#5a6a91',
-                align: 'center',
+              context.fillStyle = '#fef3c7';
+              roundedRect(x + 10, badgeY, Math.min(80, cellWidth - 20), badgeHeight - 4, 4);
+              context.fill();
+              drawText(`${cell.trades} trades`, x + 14, badgeY + 11, {
+                size: 10,
+                weight: 600,
+                color: '#9a3412',
               });
-              contentY += 18;
+              badgeY += badgeHeight;
             }
+
             if (calendarSettings.showWinRate) {
-              drawText(`${cell.winRate.toFixed(1)}%`, centerX, contentY, {
-                size: 11,
-                weight: 700,
-                color: '#5a6a91',
-                align: 'center',
+              context.fillStyle = '#e0f2fe';
+              roundedRect(x + 10, badgeY, Math.min(76, cellWidth - 20), badgeHeight - 4, 4);
+              context.fill();
+              drawText(`${cell.winRate.toFixed(0)}% win`, x + 14, badgeY + 11, {
+                size: 10,
+                weight: 600,
+                color: '#0369a1',
               });
             }
           }
@@ -451,27 +502,29 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
 
       const weekX = padding + calendarWidth + 16;
       weeks.forEach((week, index) => {
-        const activeDays = week.filter((cell) => cell.day && cell.trades > 0);
+        const activeDays = week.filter((cell) => !cell.isOtherMonth && cell.trades > 0);
         const weekPnl = activeDays.reduce((sum, cell) => sum + cell.pnl, 0);
         const weekY = y + index * (cellHeight + gap);
+
         context.fillStyle = '#ffffff';
-        roundedRect(weekX, weekY, weekPanelWidth, cellHeight, 10);
+        roundedRect(weekX, weekY, weekPanelWidth, cellHeight, 8);
         context.fill();
-        context.strokeStyle = '#cbd5e1';
+        context.strokeStyle = '#e2e8f0';
         context.stroke();
-        drawText(`Week ${index + 1}`, weekX + 14, weekY + 26, { size: 13, weight: 700, color: '#475569' });
-        drawText(formatCompactCurrency(weekPnl, currencyCode), weekX + 14, weekY + 58, {
-          size: 18,
+
+        drawText(`Week ${index + 1}`, weekX + 14, weekY + 24, { size: 12, weight: 600, color: '#64748b' });
+        drawText(formatCompactCurrency(weekPnl, currencyCode), weekX + 14, weekY + 54, {
+          size: 16,
           weight: 800,
-          color: weekPnl > 0 ? '#16a34a' : weekPnl < 0 ? '#dc2626' : '#0f172a',
+          color: weekPnl > 0 ? '#15803d' : weekPnl < 0 ? '#b91c1c' : '#0f172a',
         });
-        context.fillStyle = '#dbeafe';
-        roundedRect(weekX + 14, weekY + 76, 66, 24, 12);
+        context.fillStyle = '#f1f5f9';
+        roundedRect(weekX + 14, weekY + 70, 68, 22, 11);
         context.fill();
-        drawText(`${activeDays.length} days`, weekX + 47, weekY + 92, {
+        drawText(`${activeDays.length} days`, weekX + 48, weekY + 85, {
           size: 11,
-          weight: 800,
-          color: '#0f172a',
+          weight: 700,
+          color: '#475569',
           align: 'center',
         });
       });
@@ -481,7 +534,7 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
 
       const downloadUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.download = `pnl-calendar-${calendarData.monthLabel.replaceAll(' ', '-').toLowerCase()}.png`;
+      link.download = `pnl-calendar-${calendarData.monthLabel.replaceAll(',', '').replaceAll(' ', '-').toLowerCase()}.png`;
       link.href = downloadUrl;
       document.body.appendChild(link);
       link.click();
@@ -496,11 +549,7 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
   };
 
   const changeMonth = (direction) => {
-    setCurrentDate((previous) => {
-      const next = new Date(previous);
-      next.setMonth(next.getMonth() + direction);
-      return next;
-    });
+    setCurrentDate((previous) => new Date(previous.getFullYear(), previous.getMonth() + direction, 1));
   };
 
   const toggleBreakevenDay = async (dateKey, currentValue) => {
@@ -591,25 +640,36 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
     navigate(`/day-review/${cell.dateKey}`);
   };
 
+  const is6Rows = calendarData.weeks.length >= 6;
   const showWeeklyCards = !isCompactWeeks || isWeeklyOpen;
 
   return (
-    <section className="calendar-shell" ref={calendarShellRef}>
-      <header className="calendar-shell__toolbar">
-        <div className="calendar-shell__toolbar-left">
-          <div className="calendar-shell__nav-group">
-            <button className="calendar-shell__nav" onClick={() => changeMonth(-1)} type="button">
+    <Card as="section" className="relative flex flex-col h-full min-h-0 overflow-hidden max-lg:h-auto max-lg:overflow-visible" padding="none" ref={calendarShellRef}>
+      <CardHeader className="flex items-center justify-between gap-2 sm:gap-3 p-2.5 sm:px-3 pb-2.5 border-b border-[var(--divider-strong)] flex-nowrap shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap shrink-0 relative">
+          <div className="flex items-center gap-0.5 sm:gap-1">
+            <button
+              className="w-6 h-6 inline-flex items-center justify-center border-none rounded-[8px] bg-transparent text-[var(--text-primary)] hover:bg-[var(--bg-hover)] hover:text-[var(--accent-ink)] cursor-pointer transition-colors"
+              onClick={() => changeMonth(-1)}
+              type="button"
+              aria-label="Previous month"
+            >
               <ChevronLeft size={16} />
             </button>
-            <h3 className="calendar-shell__month">
+            <CardTitle className="text-xs sm:text-sm font-semibold text-[var(--text-primary)] min-w-[90px] sm:min-w-[100px] text-center select-none whitespace-nowrap">
               {calendarData.monthLabel}
-            </h3>
-            <button className="calendar-shell__nav" onClick={() => changeMonth(1)} type="button">
+            </CardTitle>
+            <button
+              className="w-6 h-6 inline-flex items-center justify-center border-none rounded-[8px] bg-transparent text-[var(--text-primary)] hover:bg-[var(--bg-hover)] hover:text-[var(--accent-ink)] cursor-pointer transition-colors"
+              onClick={() => changeMonth(1)}
+              type="button"
+              aria-label="Next month"
+            >
               <ChevronRight size={16} />
             </button>
           </div>
           <button 
-            className="calendar-shell__range" 
+            className="hidden md:inline-flex border border-slate-300/80 dark:border-slate-700/80 rounded-[8px] text-[var(--text-primary)] px-2.5 py-1 text-xs sm:text-[13px] font-semibold bg-transparent cursor-pointer hover:bg-[var(--bg-hover)] hover:text-[var(--accent-ink)] transition-all whitespace-nowrap" 
             type="button"
             onClick={() => setCurrentDate(new Date())}
           >
@@ -617,108 +677,178 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
           </button>
         </div>
 
-        <div className="calendar-shell__toolbar-right">
-          <span className="calendar-shell__label">Monthly stats:</span>
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap shrink-0 relative">
+          <span className="text-xs sm:text-[13px] font-bold text-[var(--text-primary)] hidden md:inline">Monthly stats:</span>
           <span
-            className={`calendar-shell__pill ${
+            className={`inline-flex items-center justify-center min-w-[50px] sm:min-w-[58px] px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-bold ${
               calendarData.monthlyPnL > 0
-                ? 'calendar-shell__pill--profit'
+                ? 'bg-[#DCFCE7] text-[#15803d] dark:bg-[#15803d]/25 dark:text-[#4ade80]'
                 : calendarData.monthlyPnL < 0
-                  ? 'calendar-shell__pill--loss'
-                  : 'calendar-shell__pill--neutral'
+                  ? 'bg-[#FEE2E2] text-[#b91c1c] dark:bg-[#dc2626]/25 dark:text-[#f87171]'
+                  : 'bg-slate-100 dark:bg-slate-800 text-[var(--text-primary)]'
             }`}
           >
             {formatCompactCurrency(calendarData.monthlyPnL, currencyCode)}
           </span>
-          <span className="calendar-shell__pill calendar-shell__pill--purple">
+          <span className="inline-flex items-center justify-center min-w-[45px] sm:min-w-[58px] px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#E0F2FE] text-[#0369a1] dark:bg-[#0369a1]/25 dark:text-[#7dd3fc]">
             {calendarData.tradingDays} days
           </span>
-          <button
-            className={`calendar-shell__icon ${settingsOpen ? 'is-active' : ''}`}
-            type="button"
-            aria-label="Calendar settings"
-            onClick={(event) => {
-              event.stopPropagation();
-              setSettingsOpen((previous) => !previous);
-            }}
-          >
-            <Settings size={15} />
-          </button>
-          <button
-            className={`calendar-shell__icon ${isSnapshotting ? 'is-active' : ''}`}
-            type="button"
-            aria-label="Download calendar snapshot"
-            title="Download calendar image"
-            disabled={isSnapshotting}
-            onClick={downloadCalendarSnapshot}
-          >
-            <Camera size={15} />
-          </button>
-          <InfoTooltip
-            text="Shows daily P&L, trade count, win rate, breakeven days, and opens day review when you click a trading day."
-            size={13}
-            side="bottom"
-          />
+
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center gap-1">
+            <button
+              className={`w-6 h-6 inline-flex items-center justify-center border-none rounded-[8px] bg-transparent text-[var(--text-primary)] hover:bg-[var(--bg-hover)] hover:text-[var(--accent-ink)] cursor-pointer transition-colors ${
+                settingsOpen ? 'bg-[var(--bg-hover)] text-[var(--accent-ink)]' : ''
+              }`}
+              type="button"
+              aria-label="Calendar settings"
+              onClick={(event) => {
+                event.stopPropagation();
+                setSettingsOpen((previous) => !previous);
+              }}
+            >
+              <Settings size={15} />
+            </button>
+            <button
+              className={`w-6 h-6 inline-flex items-center justify-center border-none rounded-[8px] bg-transparent text-[var(--text-primary)] hover:bg-[var(--bg-hover)] hover:text-[var(--accent-ink)] cursor-pointer transition-colors ${
+                isSnapshotting ? 'bg-[var(--bg-hover)] text-[var(--accent-ink)] opacity-60 cursor-not-allowed' : ''
+              }`}
+              type="button"
+              aria-label="Download calendar snapshot"
+              title="Download calendar image"
+              disabled={isSnapshotting}
+              onClick={downloadCalendarSnapshot}
+            >
+              <Camera size={15} />
+            </button>
+            <InfoTooltip
+              text="Shows daily P&L, trade count, win rate, breakeven days, and opens day review when you click a trading day."
+              size={13}
+              side="bottom"
+            />
+          </div>
+
+          {/* Mobile / Compact Menu Toggle Button */}
+          <div className="md:hidden relative inline-flex items-center">
+            <button
+              className={`w-6 h-6 inline-flex items-center justify-center border-none rounded-[8px] bg-transparent text-[var(--text-primary)] hover:bg-[var(--bg-hover)] hover:text-[var(--accent-ink)] cursor-pointer transition-colors ${
+                actionsMenuOpen ? 'bg-[var(--bg-hover)] text-[var(--accent-ink)]' : ''
+              }`}
+              type="button"
+              aria-label="More calendar options"
+              onClick={(event) => {
+                event.stopPropagation();
+                setActionsMenuOpen((previous) => !previous);
+              }}
+            >
+              <DoubleChevronLeftIcon size={18} />
+            </button>
+
+            {actionsMenuOpen && (
+              <div
+                className="absolute top-[calc(100%+8px)] right-0 z-30 w-44 p-1.5 border border-[var(--border-light)] dark:border-[#242424] rounded-xl bg-[var(--bg-card)] dark:bg-[#090909] shadow-xl dark:shadow-2xl flex flex-col gap-1"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)] hover:text-[var(--accent-ink)] rounded-lg transition-colors text-left border-none bg-transparent cursor-pointer"
+                  onClick={() => {
+                    setCurrentDate(new Date());
+                    setActionsMenuOpen(false);
+                  }}
+                >
+                  <span>📅</span> This month
+                </button>
+                <button
+                  type="button"
+                  className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)] hover:text-[var(--accent-ink)] rounded-lg transition-colors text-left border-none bg-transparent cursor-pointer"
+                  onClick={() => {
+                    setSettingsOpen(true);
+                    setActionsMenuOpen(false);
+                  }}
+                >
+                  <Settings size={14} /> Settings
+                </button>
+                <button
+                  type="button"
+                  disabled={isSnapshotting}
+                  className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)] hover:text-[var(--accent-ink)] rounded-lg transition-colors text-left border-none bg-transparent cursor-pointer disabled:opacity-50"
+                  onClick={() => {
+                    downloadCalendarSnapshot();
+                    setActionsMenuOpen(false);
+                  }}
+                >
+                  <Camera size={14} /> Snapshot
+                </button>
+              </div>
+            )}
+          </div>
 
           {settingsOpen && (
             <div
-              className="calendar-settings-menu"
+              className="absolute top-[calc(100%+8px)] right-0 z-20 w-[min(280px,calc(100vw-32px))] p-3 border border-[var(--border-light)] dark:border-[#242424] rounded-xl bg-[var(--bg-card)] dark:bg-[#090909] shadow-xl dark:shadow-2xl flex flex-col gap-2.5"
               onClick={(event) => event.stopPropagation()}
             >
-              <span className="calendar-settings-menu__title">Calendar settings</span>
+              <span className="text-[13px] font-extrabold text-[var(--heading)]">Calendar settings</span>
 
-              <div className="calendar-settings-menu__row">
+              <div className="flex items-center justify-between gap-2.5 text-[var(--text-secondary)] text-[13px] font-semibold">
                 <span>Week starts on</span>
-                <CustomSelect
-                  value={calendarSettings.weekStartsOn}
-                  onChange={(event) => updateCalendarSettings({ weekStartsOn: event.target.value })}
-                  options={[
-                    { value: 'sun', label: 'Sunday' },
-                    { value: 'mon', label: 'Monday' },
-                  ]}
-                />
+                <div className="w-[122px]">
+                  <CustomSelect
+                    value={calendarSettings.weekStartsOn}
+                    onChange={(event) => updateCalendarSettings({ weekStartsOn: event.target.value })}
+                    options={[
+                      { value: 'sun', label: 'Sunday' },
+                      { value: 'mon', label: 'Monday' },
+                    ]}
+                  />
+                </div>
               </div>
 
-              <label className="calendar-settings-menu__option">
+              <label className="flex items-center justify-start gap-2.5 text-[var(--text-secondary)] text-[13px] font-semibold cursor-pointer">
                 <input
                   type="checkbox"
+                  className="w-3.5 h-3.5 accent-[var(--checkbox-accent)] cursor-pointer"
                   checked={calendarSettings.showPnl}
                   onChange={(event) => updateCalendarSettings({ showPnl: event.target.checked })}
                 />
                 Show P&L in day cells
               </label>
 
-              <label className="calendar-settings-menu__option">
+              <label className="flex items-center justify-start gap-2.5 text-[var(--text-secondary)] text-[13px] font-semibold cursor-pointer">
                 <input
                   type="checkbox"
+                  className="w-3.5 h-3.5 accent-[var(--checkbox-accent)] cursor-pointer"
                   checked={calendarSettings.showTradeCount}
                   onChange={(event) => updateCalendarSettings({ showTradeCount: event.target.checked })}
                 />
                 Show number of trades
               </label>
 
-              <label className="calendar-settings-menu__option">
+              <label className="flex items-center justify-start gap-2.5 text-[var(--text-secondary)] text-[13px] font-semibold cursor-pointer">
                 <input
                   type="checkbox"
+                  className="w-3.5 h-3.5 accent-[var(--checkbox-accent)] cursor-pointer"
                   checked={calendarSettings.showWinRate}
                   onChange={(event) => updateCalendarSettings({ showWinRate: event.target.checked })}
                 />
                 Show win rate
               </label>
 
-              <label className="calendar-settings-menu__option">
+              <label className="flex items-center justify-start gap-2.5 text-[var(--text-secondary)] text-[13px] font-semibold cursor-pointer">
                 <input
                   type="checkbox"
+                  className="w-3.5 h-3.5 accent-[var(--checkbox-accent)] cursor-pointer"
                   checked={calendarSettings.autoBreakevenEnabled}
                   onChange={(event) => updateCalendarSettings({ autoBreakevenEnabled: event.target.checked })}
                 />
                 Auto breakeven below P&L
               </label>
 
-              <label className="calendar-settings-menu__row">
+              <label className="flex items-center justify-between gap-2.5 text-[var(--text-secondary)] text-[13px] font-semibold">
                 <span>Breakeven below</span>
                 <input
-                  className="calendar-settings-menu__number"
+                  className="w-[84px] min-h-[30px] border border-[var(--border-light)] dark:border-[#333] rounded-lg px-2 py-1 bg-[var(--bg-card)] dark:bg-[#141416] text-[var(--text-primary)] text-[13px] font-bold outline-none focus:border-[var(--accent-ink)]"
                   type="number"
                   inputMode="decimal"
                   value={calendarSettings.breakevenThreshold}
@@ -731,127 +861,223 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
             </div>
           )}
         </div>
-      </header>
+      </CardHeader>
 
-      <div className={`calendar-shell__body ${calendarData.weeks.length >= 6 ? 'calendar-shell__body--6-rows' : ''}`}>
-        <div className="calendar-shell__main">
-          <div className="calendar-shell__weekdays">
-            {weekdayLabels.map((weekday) => (
-              <div key={weekday} className="calendar-shell__weekday">
-                {weekday}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_min(118px,13%)] gap-1 sm:gap-1.5 p-1.5 sm:p-2.5 flex-1 min-h-0 lg:overflow-hidden max-lg:flex max-lg:flex-col max-lg:h-auto max-lg:flex-none">
+        <div className="flex flex-col min-w-0 gap-1 sm:gap-1.5 h-full min-h-0 flex-1 lg:overflow-hidden max-lg:h-auto max-lg:flex-none">
+          {/* Weekday Headers (Figma Auto-Layout Style) */}
+          <div className="grid grid-cols-7 gap-1 sm:gap-1.5 shrink-0">
+            {weekdayLabels.map((weekday, idx) => (
+              <div
+                key={weekday}
+                className={`flex items-center justify-center min-h-[24px] sm:min-h-[28px] border border-slate-200 dark:border-[var(--divider-strong)] text-[10px] sm:text-xs font-bold text-[#969696] dark:text-slate-400 bg-[#FAFAFA] dark:bg-[var(--surface-muted-strong)] tracking-wider select-none ${
+                  idx === 0 ? 'rounded-tl-lg' : ''
+                } ${idx === 6 ? 'max-lg:rounded-tr-lg' : ''}`}
+              >
+                {weekday.toUpperCase()}
               </div>
             ))}
           </div>
 
-          <div className="calendar-shell__grid">
+          {/* Day Cells Grid (Figma Auto-Layout Style with Minimalist Green/Red Day Shells) */}
+          <div
+            className={`grid grid-cols-7 gap-1 sm:gap-1.5 flex-1 min-h-0 lg:h-full lg:overflow-hidden max-lg:grid-rows-none max-lg:auto-rows-[104px] max-sm:auto-rows-[92px] max-lg:flex-none ${
+              is6Rows ? 'lg:grid-rows-6' : 'lg:grid-rows-5'
+            }`}
+          >
             {calendarData.weeks.flat().map((cell, index) => {
-              if (!cell.day) {
-                return (
-                  <div
-                    key={`empty-${index}`}
-                    className="calendar-day-card calendar-day-card--empty"
-                  />
-                );
-              }
-
+              const isOtherMonth = cell.isOtherMonth;
+              const hasTrades = cell.trades > 0;
               const isBreakeven = cell.isBreakeven;
-              const toneClass =
-                isBreakeven
-                  ? 'calendar-day-card--breakeven'
-                  : cell.trades === 0
-                  ? 'calendar-day-card--muted'
-                  : cell.pnl > 0
-                    ? 'calendar-day-card--positive'
-                    : cell.pnl < 0
-                      ? 'calendar-day-card--negative'
-                      : 'calendar-day-card--flat';
+              const isProfit = !isOtherMonth && hasTrades && cell.pnl > 0;
+              const isLoss = !isOtherMonth && hasTrades && cell.pnl < 0;
+
+              // Minimalist day shell background & border styling
+              const shellToneClass = isOtherMonth
+                ? 'bg-[#F8F8F8] dark:bg-[#12151c]/40 border-slate-200/60 dark:border-[#222733]/50 opacity-40 cursor-default'
+                : isBreakeven
+                  ? 'bg-[#EEF2FF] dark:bg-[#171b2d] border-[#C7D2FE] dark:border-[#3730a3] hover:border-indigo-400 dark:hover:border-indigo-500 shadow-[0px_1px_2px_rgba(79,70,229,0.06)]'
+                  : isProfit
+                    ? 'bg-[#F0FDF4] dark:bg-[#0c2217] border-[#BBF7D0] dark:border-[#1e5238] hover:border-emerald-400 dark:hover:border-emerald-500 shadow-[0px_1px_2px_rgba(220,38,38,0.06)]'
+                    : isLoss
+                      ? 'bg-[#FEF2F2] dark:bg-[#271217] border-[#FECACA] dark:border-[#5c1d24] hover:border-red-400 dark:hover:border-red-500 shadow-[0px_1px_2px_rgba(220,38,38,0.06)]'
+                      : 'bg-white dark:bg-[#11141c] border-slate-200/90 dark:border-[#242a38] shadow-[0px_1px_2px_rgba(0,0,0,0.04)]';
 
               return (
                 <div
-                  key={cell.dateKey}
-                  className={`calendar-day-card ${toneClass} ${cell.isToday ? 'calendar-day-card--today' : ''}`}
-                  onClick={() => openDayReview(cell)}
-                  onContextMenu={(event) => openBreakevenMenu(event, cell)}
-                  role="button"
-                  tabIndex={cell.trades > 0 ? 0 : -1}
+                  key={`${cell.dateKey}-${index}`}
+                  className={`@container/cell group relative flex flex-col justify-evenly min-h-0 h-full w-full border rounded-lg overflow-hidden transition-all select-none p-[clamp(3px,1.2cqh+1.2cqi,7px)] ${shellToneClass} ${
+                    !isOtherMonth && hasTrades
+                      ? 'hover:shadow-md cursor-pointer'
+                      : !isOtherMonth
+                        ? 'cursor-default'
+                        : ''
+                  } ${
+                    cell.isToday
+                      ? 'ring-2 ring-blue-500 dark:ring-blue-400 border-transparent shadow-xs'
+                      : ''
+                  }`}
+                  onClick={() => {
+                    if (!isOtherMonth && hasTrades) openDayReview(cell);
+                  }}
+                  onContextMenu={(event) => {
+                    if (!isOtherMonth && hasTrades) openBreakevenMenu(event, cell);
+                  }}
+                  role={!isOtherMonth && hasTrades ? 'button' : undefined}
+                  tabIndex={!isOtherMonth && hasTrades ? 0 : -1}
                   onKeyDown={(event) => {
-                    if (cell.trades <= 0) return;
+                    if (isOtherMonth || !hasTrades) return;
                     if (event.key === 'Enter' || event.key === ' ') {
                       event.preventDefault();
                       openDayReview(cell);
                     }
                   }}
-                  title={cell.trades > 0 ? 'Open day review. Right-click for day options' : 'No trades on this day'}
+                  title={
+                    !isOtherMonth && hasTrades
+                      ? 'Open day review. Right-click for day options'
+                      : isOtherMonth
+                        ? 'Previous/next month day'
+                        : 'No trades on this day'
+                  }
                 >
-                  <span className="calendar-day-card__date">{cell.day}</span>
-                  {(cell.hasBadge || isBreakeven) && (
-                    <span className="calendar-day-card__icon">
-                      <BadgeCheck size={14} />
-                    </span>
-                  )}
+                  {/* Date & Badges in Top-Right Corner (Fluid Container Adaptive) */}
+                  <div className="absolute top-[clamp(2px,2.5cqh,5px)] right-[clamp(2px,2.5cqi,5px)] flex items-center gap-[clamp(2px,1.5cqi,4px)] pointer-events-none z-10">
+                    {!isOtherMonth && isBreakeven && (
+                      <span
+                        className="inline-flex items-center px-[clamp(2px,2cqi,4px)] py-[clamp(0.5px,0.8cqh,1.5px)] rounded-[3px] text-[clamp(7px,10cqh,8.5px)] font-bold bg-[#E0E7FF] text-[#4338CA] dark:bg-[#3730A3]/40 dark:text-[#A5B4FC] border border-[#C7D2FE] dark:border-[#3730A3]"
+                        title="Breakeven Day"
+                      >
+                        BE
+                      </span>
+                    )}
+                    {!isOtherMonth && cell.hasBadge && !isBreakeven && (
+                      <BadgeCheck
+                        size={12}
+                        className="text-blue-500 stroke-[2.4] w-[clamp(10px,13cqh,13px)] h-[clamp(10px,13cqh,13px)]"
+                      />
+                    )}
 
-                  {cell.trades > 0 && (
-                    <div className="calendar-day-card__content">
-                      <strong className={`calendar-day-card__pnl ${calendarSettings.showPnl ? '' : 'calendar-day-card__metric--hidden'}`}>
-                        {formatCompactCurrency(cell.pnl, currencyCode)}
-                      </strong>
-                      <span className={`calendar-day-card__trades ${calendarSettings.showTradeCount ? '' : 'calendar-day-card__metric--hidden'}`}>
-                        {cell.trades} trade{cell.trades > 1 ? 's' : ''}
+                    {cell.isToday ? (
+                      <span className="inline-flex items-center justify-center min-w-[clamp(15px,1.2vw,19px)] h-[clamp(15px,1.2vw,19px)] px-1 rounded-full bg-blue-600 text-white text-fluid-xs font-bold shadow-xs">
+                        {cell.day}
                       </span>
-                      <span className={`calendar-day-card__rate ${calendarSettings.showWinRate ? '' : 'calendar-day-card__metric--hidden'}`}>
-                        {cell.winRate.toFixed(1)}%
+                    ) : (
+                      <span
+                        className={`font-bold tracking-tight text-fluid-xs ${
+                          isOtherMonth
+                            ? 'text-slate-400 dark:text-slate-600'
+                            : 'text-slate-800 dark:text-slate-200'
+                        }`}
+                      >
+                        {cell.day}
                       </span>
+                    )}
+                  </div>
+
+                  {/* Auto-Layout Tag Stack & PnL (Fluid & Container-Adaptive: Scales with Cell Dimensions) */}
+                  {!isOtherMonth && hasTrades ? (
+                    <div className="flex-1 flex flex-col justify-evenly w-full min-h-0 pointer-events-none overflow-hidden py-[clamp(1px,1.2cqh,3px)]">
+                      {calendarSettings.showPnl && (
+                        <div className="w-full min-w-0 leading-none truncate">
+                          <span
+                            className={`font-extrabold tracking-tight truncate block text-[clamp(9.5px,15.5cqi,15.5px)] ${
+                              isBreakeven
+                                ? 'text-[#4338CA] dark:text-[#A5B4FC]'
+                                : isProfit
+                                  ? 'text-[#15803d] dark:text-[#4ade80]'
+                                  : isLoss
+                                    ? 'text-[#b91c1c] dark:text-[#f87171]'
+                                    : 'text-slate-700 dark:text-slate-300'
+                            }`}
+                          >
+                            {cell.pnl > 0 ? `+${formatCompactCurrency(cell.pnl, currencyCode)}` : formatCompactCurrency(cell.pnl, currencyCode)}
+                          </span>
+                        </div>
+                      )}
+
+                      {calendarSettings.showTradeCount && (
+                        <span className="inline-flex items-center w-fit max-w-full px-[clamp(3px,4cqi,6px)] py-[clamp(1px,1.5cqh,2.5px)] text-[clamp(7px,10cqi,10px)] rounded-[clamp(2px,3cqi,4px)] font-semibold leading-none truncate bg-amber-100/80 text-[#9a3412] dark:bg-amber-950/50 dark:text-[#fdba74] border border-amber-300/60 dark:border-amber-800/50 shrink-0">
+                          {cell.trades} {cell.trades === 1 ? 'trade' : 'trades'}
+                        </span>
+                      )}
+
+                      {calendarSettings.showWinRate && (
+                        <span className="inline-flex items-center w-fit max-w-full px-[clamp(3px,4cqi,6px)] py-[clamp(1px,1.5cqh,2.5px)] text-[clamp(7px,10cqi,10px)] rounded-[clamp(2px,3cqi,4px)] font-semibold leading-none truncate bg-sky-100/80 text-[#0369a1] dark:bg-sky-950/50 dark:text-[#7dd3fc] border border-sky-300/60 dark:border-sky-800/50 shrink-0">
+                          {cell.winRate.toFixed(0)}% win
+                        </span>
+                      )}
                     </div>
-                  )}
+                  ) : null}
                 </div>
               );
             })}
           </div>
         </div>
 
-        <aside
-          className={`calendar-shell__weeks-panel ${isCompactWeeks ? 'calendar-shell__weeks-panel--compact' : 'calendar-shell__weeks-panel--desktop'} ${isWeeklyOpen ? 'is-open' : ''}`}
-        >
+        {/* Weekly Summary Column (Exact Same 1fr Width & Row Heights as Day Shells) */}
+        <aside className="flex flex-col gap-1 sm:gap-1.5 h-full min-h-0 lg:overflow-hidden max-lg:w-full max-lg:h-auto max-lg:flex-none min-w-0">
+          {/* Matching Week Column Header on Desktop */}
+          <div className="hidden lg:flex items-center justify-center min-h-[24px] sm:min-h-[28px] border border-slate-200 dark:border-[var(--divider-strong)] text-[10px] sm:text-xs font-bold text-[#969696] dark:text-slate-400 bg-[#FAFAFA] dark:bg-[var(--surface-muted-strong)] tracking-wider select-none rounded-tr-lg shrink-0">
+            WEEK
+          </div>
+
           {isCompactWeeks && (
             <button
-              className="calendar-shell__weeks-toggle"
+              className="inline-flex lg:hidden items-center justify-between gap-2 w-full min-h-[34px] px-3 py-1.5 border border-slate-300/55 dark:border-[var(--divider-strong)] rounded-xl bg-white/80 dark:bg-[var(--surface-muted-strong)] text-[var(--text-primary)] text-xs font-bold cursor-pointer shrink-0"
               type="button"
               onClick={() => setIsWeeklyOpen((previous) => !previous)}
               aria-expanded={isWeeklyOpen}
             >
               <span>Weekly cards</span>
-              <ChevronDown size={16} />
+              <ChevronDown size={16} className={`transition-transform duration-200 ${isWeeklyOpen ? 'rotate-180' : ''}`} />
             </button>
           )}
 
           {showWeeklyCards && (
-            <div className="calendar-shell__weeks">
+            <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-1 sm:gap-1.5 flex-1 min-h-0 overflow-hidden ${is6Rows ? 'lg:grid-rows-6' : 'lg:grid-rows-5'}`}>
               {calendarData.weeklyStats.map((week) => (
                 <article
                   key={week.label}
-                  className={`calendar-week-card ${
-                    week.pnl > 0
-                      ? 'calendar-week-card--profit'
-                      : week.pnl < 0
-                        ? 'calendar-week-card--loss'
-                        : 'calendar-week-card--neutral'
-                  } ${week.isCurrentWeek ? 'calendar-week-card--current' : ''}`}
+                  className={`@container/week relative flex flex-col justify-evenly min-h-0 h-full w-full overflow-hidden rounded-lg border border-slate-200 dark:border-[var(--divider-strong)] bg-white dark:bg-[var(--surface-muted-strong)] transition-all p-[clamp(3px,1.2cqh+1.2cqi,7px)] ${
+                    week.isCurrentWeek
+                      ? 'ring-1.5 ring-blue-500/70 dark:ring-blue-400/80'
+                      : ''
+                  }`}
                 >
-                  <span className="calendar-week-card__label">{week.label}</span>
-                  <strong
-                    className={`calendar-week-card__value ${
-                      week.pnl > 0
-                        ? 'calendar-week-card__value--profit'
-                        : week.pnl < 0
-                          ? 'calendar-week-card__value--loss'
-                          : 'calendar-week-card__value--neutral'
-                    }`}
-                  >
-                    {formatCompactCurrency(week.pnl, currencyCode)}
-                  </strong>
-                  <span className="calendar-week-card__days">
-                    {week.days} day{week.days !== 1 ? 's' : ''}
-                  </span>
+                  {/* 1. Week Label */}
+                  <div className="w-full min-w-0 leading-none">
+                    {week.isCurrentWeek ? (
+                      <span className="bg-[#2563eb] text-white px-[clamp(3px,3cqi,6px)] py-[clamp(0.5px,0.8cqh,1.5px)] rounded-[3px] w-fit text-[clamp(8px,11cqi,11.5px)] font-bold shadow-xs leading-none truncate inline-block">
+                        {week.label}
+                      </span>
+                    ) : (
+                      <span className="text-[clamp(8px,11cqi,11.5px)] font-bold text-[var(--text-secondary)] leading-none truncate block">
+                        {week.label}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* 2. Days Count (Stacked below week label) */}
+                  <div className="w-full min-w-0 leading-none">
+                    <span className="px-[clamp(3px,3cqi,6px)] py-[clamp(0.5px,0.8cqh,1.5px)] rounded-full bg-slate-100/90 dark:bg-slate-800 text-[var(--text-secondary)] text-[clamp(7px,10cqi,10px)] font-bold leading-none inline-block truncate">
+                      {week.days} {week.days === 1 ? 'day' : 'days'}
+                    </span>
+                  </div>
+
+                  {/* 3. Weekly PnL (Stacked below days count) */}
+                  <div className="w-full min-w-0 leading-none">
+                    <strong
+                      className={`font-extrabold leading-none truncate block text-[clamp(9.5px,14.5cqi,14.5px)] ${
+                        week.pnl > 0
+                          ? 'text-[#15803d] dark:text-[#4ade80]'
+                          : week.pnl < 0
+                            ? 'text-[#b91c1c] dark:text-[#f87171]'
+                            : 'text-[var(--text-primary)] dark:text-[#f6f8ff]'
+                      }`}
+                    >
+                      {formatCompactCurrency(week.pnl, currencyCode)}
+                    </strong>
+                  </div>
                 </article>
               ))}
             </div>
@@ -861,14 +1087,16 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
 
       {breakevenMenu && (
         <div
-          className="calendar-context-menu"
+          className="absolute z-50 min-w-[190px] p-2.5 border border-indigo-400/40 dark:border-[#6f86ff] rounded-[10px] bg-white/95 dark:bg-[#151923] shadow-2xl flex flex-col"
           style={{ left: breakevenMenu.x, top: breakevenMenu.y }}
           onClick={(event) => event.stopPropagation()}
           onMouseDown={(event) => event.stopPropagation()}
         >
-          <span className="calendar-context-menu__eyebrow">Day {breakevenMenu.day}</span>
+          <span className="block mb-2 text-[var(--text-secondary)] text-xs font-bold uppercase tracking-wider">
+            Day {breakevenMenu.day}
+          </span>
           <label
-            className="calendar-context-menu__option"
+            className="flex items-center gap-2 text-[var(--text-primary)] text-[13px] font-bold cursor-pointer"
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
@@ -877,6 +1105,7 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
           >
             <input
               type="checkbox"
+              className="w-3.5 h-3.5 accent-[var(--checkbox-accent)] cursor-pointer"
               checked={breakevenMenu.isBreakeven}
               readOnly
               onClick={(event) => {
@@ -889,7 +1118,7 @@ function PnLCalendar({ trades, currencyCode = 'USD' }) {
           </label>
         </div>
       )}
-    </section>
+    </Card>
   );
 }
 

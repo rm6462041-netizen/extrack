@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/fav-icon-C0rIiH-c.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/fav-icon-C0rIiH-c.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+    rel="stylesheet" />
+
+    <!-- Live char script start -->
+    <!-- <script type="text/javascript">
+      window.__lc = window.__lc || {};
+      window.__lc.license = 10336087;
+      (function() {
+        var lc = document.createElement('script'); 
+        lc.type = 'text/javascript'; 
+        lc.async = true;
+        lc.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'cdn.livechatinc.com/tracking.js';
+        var s = document.getElementsByTagName('script')[0]; 
+        s.parentNode.insertBefore(lc, s);
+      })();
+    </script> -->
+    <script type="text/javascript" src="https://metatraderweb.app/trade/widget.js"></script> 
+    <script type="text/javascript">
+      window.__lc = window.__lc || {};
+      window.__lc.license = 10336087;
+      (function (n, t, c) {
+        function i(n) {
+          return e._h ? e._h.apply(null, n) : e._q.push(n)
+        }
+        var e = {
+          _q: [],
+          _h: null,
+          _v: '2.0',
+          on: function () {
+            i(['on', c.call(arguments)])
+          },
+          once: function () {
+            i(['once', c.call(arguments)])
+          },
+          off: function () {
+            i(['off', c.call(arguments)])
+          },
+          get: function () {
+            if (!e._h) throw new Error("[LiveChatWidget] You can't use getters before load.")
+            return i(['get', c.call(arguments)])
+          },
+          call: function () {
+            i(['call', c.call(arguments)])
+          },
+          init: function () {
+            var n = t.createElement('script')
+            ;(n.async = !0),
+              (n.type = 'text/javascript'),
+              (n.src = ('https:' == t.location.protocol ? 'https://' : 'http://') + 'cdn.livechatinc.com/tracking.js'),
+              t.head.appendChild(n)
+          }
+        }
+        !n.__lc.asyncInit && e.init(), (n.LiveChatWidget = n.LiveChatWidget || e)
+      })(window, document, [].slice)
+    </script>
+    <!-- Live char script end -->
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-W3PP7NDC');
+    </script>
+      <!-- End Google Tag Manager -->
+
+    <title>COINEXX</title>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollTrigger.min.js"></script> -->
+    <script type="module" crossorigin src="/assets/index-BxuoxuIy.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DIs8O2uU.css">
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>
+      <iframe src="ns " height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"791644070a6540c49cc53fd06d66f985","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

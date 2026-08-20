@@ -1,11 +1,10 @@
 import {
   CandlestickSeries,
-  ColorType,
-  CrosshairMode,
   LineStyle,
   createChart,
   createSeriesMarkers,
 } from 'lightweight-charts';
+import { getTradeDetailCandleOptions, getTradeDetailChartOptions, getTradeDetailChartTheme } from '../../../utils/chart/tradeDetailChartDesign';
 
 const getThemeColor = (name, fallback) => {
   if (typeof window === 'undefined') return fallback;
@@ -29,25 +28,13 @@ const markerForTrade = (trade) => {
 };
 
 export function createChartInstance(container, options = {}) {
+  const chartTheme = getTradeDetailChartTheme();
+  const chartDesign = getTradeDetailChartOptions(chartTheme, { isMobile: container.clientWidth < 480 });
   const chart = createChart(container, {
+    ...chartDesign,
     autoSize: true,
-    layout: {
-      background: { type: ColorType.Solid, color: getThemeColor('--bg-card', '#ffffff') },
-      textColor: getThemeColor('--text-muted', '#64748b'),
-      fontSize: 11,
-    },
-    grid: {
-      vertLines: { color: getThemeColor('--border-light', '#e2e8f0') },
-      horzLines: { color: getThemeColor('--border-light', '#e2e8f0') },
-    },
-    rightPriceScale: {
-      borderColor: getThemeColor('--border-medium', '#cbd5e1'),
-      entireTextOnly: true,
-    },
     timeScale: {
-      borderColor: getThemeColor('--border-medium', '#cbd5e1'),
-      timeVisible: true,
-      secondsVisible: false,
+      ...chartDesign.timeScale,
       rightOffset: RIGHT_EMPTY_BARS,
       fixRightEdge: false,
       rightBarStaysOnScroll: false,
@@ -70,18 +57,11 @@ export function createChartInstance(container, options = {}) {
       mouse: false,
       touch: false,
     },
-    crosshair: {
-      mode: CrosshairMode.Normal,
-    },
     ...options,
   });
 
   const candleSeries = chart.addSeries(CandlestickSeries, {
-    upColor: '#2563eb',
-    downColor: getThemeColor('--accent-danger', '#ef4444'),
-    wickUpColor: '#2563eb',
-    wickDownColor: getThemeColor('--accent-danger', '#ef4444'),
-    borderVisible: false,
+    ...getTradeDetailCandleOptions(chartTheme),
   });
 
   const overlay = document.createElement('div');
@@ -100,28 +80,9 @@ export function createChartInstance(container, options = {}) {
 
 export function applyTheme(instance) {
   if (!instance?.chart || !instance?.candleSeries) return;
-  instance.chart.applyOptions({
-    layout: {
-      background: { type: ColorType.Solid, color: getThemeColor('--bg-card', '#ffffff') },
-      textColor: getThemeColor('--text-muted', '#64748b'),
-    },
-    grid: {
-      vertLines: { color: getThemeColor('--border-light', '#e2e8f0') },
-      horzLines: { color: getThemeColor('--border-light', '#e2e8f0') },
-    },
-    rightPriceScale: {
-      borderColor: getThemeColor('--border-medium', '#cbd5e1'),
-    },
-    timeScale: {
-      borderColor: getThemeColor('--border-medium', '#cbd5e1'),
-    },
-  });
-  instance.candleSeries.applyOptions({
-    upColor: '#2563eb',
-    downColor: getThemeColor('--accent-danger', '#ef4444'),
-    wickUpColor: '#2563eb',
-    wickDownColor: getThemeColor('--accent-danger', '#ef4444'),
-  });
+  const chartTheme = getTradeDetailChartTheme();
+  instance.chart.applyOptions(getTradeDetailChartOptions(chartTheme));
+  instance.candleSeries.applyOptions(getTradeDetailCandleOptions(chartTheme));
 }
 
 export function setCandles(instance, candles) {

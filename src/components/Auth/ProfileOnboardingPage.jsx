@@ -2,9 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/AuthContext';
-import api from '../../utils/serve';
-import CustomSelect from '../Common/CustomSelect';
-import { getUserSafeError } from '../../utils/safeErrors';
+import { useAppDialog } from '../../context/AppDialogContext';
+import api from '../../utils/common/serve';
+import { DropdownSelect as CustomSelect } from "@/components/Common/base/dropdown/dropdown";
+import { getUserError } from '../../utils/common/errors';
 import './ProfileOnboardingPage.css';
 
 const currencies = [
@@ -27,6 +28,7 @@ const toPhoneCredential = (value) => {
 
 function ProfileOnboardingPage() {
   const { user, setUser } = useAuth();
+  const { notify } = useAppDialog();
   const navigate = useNavigate();
   const [formData, setFormData] = useState(() => ({
     firstName: user?.profileComplete ? (user.firstName || '') : '',
@@ -69,13 +71,14 @@ function ProfileOnboardingPage() {
 
       const updatedUser = data?.data?.user || data?.user;
       if (!data?.success || !updatedUser) {
-        throw new Error(data?.message || 'Could not save profile.');
+        throw new Error('Could not save profile.');
       }
 
       setUser(updatedUser);
+      notify('Profile saved successfully', 'success');
       navigate('/dashboard', { replace: true });
     } catch (saveError) {
-      setError(getUserSafeError(saveError, 'Could not save profile. Please try again.'));
+      setError(getUserError(saveError, 'Could not save profile. Please try again.'));
     } finally {
       setLoading(false);
     }

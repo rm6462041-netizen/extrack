@@ -714,7 +714,6 @@
       }
     }
 
-
     @media (max-width: 768px) {
       .slider__links,
       .actions button,
@@ -730,7 +729,6 @@
         filter: none;
       }
     }
-
 
     @media (max-width: 760px) {
       .broker-stage {

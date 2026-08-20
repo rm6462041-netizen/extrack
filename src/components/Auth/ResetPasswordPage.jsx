@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import Logo from '../Common/Logo';
+import Logo from '../Common/Logo/Logo';
 import './AuthPages.css';
 
 function ResetPasswordPage() {

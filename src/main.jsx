@@ -5,7 +5,7 @@ import * as Sentry from "@sentry/react";
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { AppDialogProvider } from './context/AppDialogContext';
-import { markPerf } from './utils/perfMarks';
+import { markPerf } from './utils/common/perfMarks';
 
 
     Sentry.init({

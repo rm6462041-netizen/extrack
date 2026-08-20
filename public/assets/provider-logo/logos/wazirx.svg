@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <script>window.process = window.process || { env: {} };</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#3067f0" />
+  <meta property="og:image" content="https://wazirx.com/og_image.png" data-rdm />
+  <meta property="og:title" content="Buy Bitcoin, Cryptocurrency at India’s Largest Exchange | Trading Platform | WazirX" data-rdm />
+  <meta property="og:description" content="WazirX is India's most trusted Bitcoin and cryptocurrency exchange & trading platform. Buy, Sell & Trade BTC, XRP, ETH, TRX, and 100+ cryptocurrencies in India at best prices. Start trading Now!" data-rdm  />
+
+  <!-- Twitter Card Start -->
+  <meta name="twitter:card" content="summary_large_image" data-rdm />
+  <meta name="twitter:site" content="@wazirXindia" data-rdm />
+  <meta name="twitter:title" content="Buy Bitcoin, Cryptocurrency at India’s Largest Exchange | Trading Platform | WazirX" data-rdm />
+  <meta name="twitter:description" content="WazirX is India's most trusted Bitcoin and cryptocurrency exchange & trading platform. Buy, Sell & Trade BTC, XRP, ETH, TRX, and 100+ cryptocurrencies in India at best prices. Start trading Now!" data-rdm />
+  <meta name="twitter:image" content="https://wazirx.com/og_image.png" data-rdm />
+  <!-- Twitter Card End -->
+
+  <meta name="description" content="WazirX is India's most trusted Bitcoin and cryptocurrency exchange & trading platform. Buy, Sell & Trade BTC, XRP, ETH, TRX, and 100+ cryptocurrencies in India at best prices. Start trading Now!" data-rdm  />
+  <meta name="keywords" content="bitcoin, cryptocurrency, Exchange, btc, eth, ltc, bch, xrp, buy bitcoin India, bitcoin wallet, buy bitcoin, buy btc, buy ripple, buy ethereum, inr to btc, inr to ripple, eth to inr, bitcoin exchange, bitcoin inr conversion, btc price inr, cheap btc, cheap eth, lowest fee crypto exchange, receive bitcoin india, buy ripple india" data-rdm />
+
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="apple-app-site-association file" type="text" href="/.well-known/apple-app-site-association" />
+
+  <style>
+    .section.open .articlewrap {
+      height: 120px;
+    }
+    .articlewrap {
+      height: 0;
+      background-color: transparent;
+      overflow: hidden;
+      transition: all 0.2s ease-in;
+    }
+    .article {
+      padding: 1em;
+      color: #333;
+      line-height: 1.3;
+    }
+    body{
+      background-color: #eceff1;
+    }
+  </style>
+  <link rel="preconnect" href="https://media.wazirx.com">
+  <!-- Preload LCP images — browser discovers these only after React mounts without this -->
+  <link rel="preload" as="image" fetchpriority="high" href="https://media.wazirx.com/web_assets/landing_bg/light/1x.svg" media="(prefers-color-scheme: light)">
+  <link rel="preload" as="image" fetchpriority="high" href="https://media.wazirx.com/web_assets/landing_bg/dark/1x.svg" media="(prefers-color-scheme: dark)">
+  <link rel="preload" as="image" href="https://media.wazirx.com/web_assets/landing_page_hero_app_screen/light/1x.svg" media="(prefers-color-scheme: light)">
+  <link rel="preload" as="image" href="https://media.wazirx.com/web_assets/landing_page_hero_app_screen/dark/1x.svg" media="(prefers-color-scheme: dark)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"></noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800&display=swap"></noscript>
+  <title>Buy Bitcoin, Cryptocurrency at India’s Largest Exchange | Trading Platform | WazirX</title>
+  <!-- Analytics SDKs deferred — inline scripts blocked the parser; external defer runs after parse, before React -->
+  <script src="/scripts/mixpanel-init.js" defer></script>
+  <script src="/scripts/moengage-init.js" defer></script>
+  <script type="module" crossorigin src="/static/index-DLg1H4W7.js"></script>
+  <link rel="modulepreload" crossorigin href="/static/vendor-redux-C7dcm3iz.js">
+  <link rel="modulepreload" crossorigin href="/static/vendor-react-DdF0hdaD.js">
+  <link rel="modulepreload" crossorigin href="/static/vendor-sentry-CqWLJeQq.js">
+  <link rel="modulepreload" crossorigin href="/static/vendor-i18n-DfTK6bz7.js">
+  <link rel="modulepreload" crossorigin href="/static/vendor-ui-8xICxPDG.js">
+  <link rel="modulepreload" crossorigin href="/static/vendor-utils-DF8xaOkf.js">
+  <link rel="stylesheet" crossorigin href="/static/index-DNYhaNzj.css">
+</head>
+
+<body>
+  <noscript>
+    You need to enable JavaScript to run this app.
+  </noscript>
+  <div id="root"></div>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"58f03ae06b3146a8ac56c0fedee31e2f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

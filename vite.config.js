@@ -1,36 +1,13 @@
-// import { defineConfig } from 'vite'
-// import react from '@vitejs/plugin-react'
-
-// // https://vite.dev/config/
-// export default defineConfig({
-//   plugins: [react()],
-// })
-
-
-// import { defineConfig } from 'vite';
-// import react from '@vitejs/plugin-react';
-
-// export default defineConfig({
-//     // base: '/entrack/', 
-//   plugins: [react()],
-//   server: {
-//     port: 3000,       // yaha apna fixed port
-//     strictPort: true, // agar port busy ho, error throw kare, auto change na ho
-//   },
-// });
-
-
-
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [tailwindcss(), react()],
 
   resolve: {
     alias: {
@@ -44,9 +21,23 @@ export default defineConfig({
   },
 
   build: {
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        passes: 2,
+      },
+      mangle: {
+        toplevel: true,
+      },
+      format: {
+        comments: false,
+      },
+    },
     rollupOptions: {
       output: {
-        // Change THIS 👇 from object to function
         manualChunks(id) {
           const normalizedId = id.replace(/\\/g, '/')
 

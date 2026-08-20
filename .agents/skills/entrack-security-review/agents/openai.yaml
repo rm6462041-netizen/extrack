@@ -1,0 +1,4 @@
+interface:
+  display_name: "Entrack Security Review"
+  short_description: "Review Entrack changes for security risks"
+  default_prompt: "Use $entrack-security-review to review the changed Entrack files and fix Critical or High findings."

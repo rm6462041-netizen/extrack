@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head>
+		
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://assets.deribit.com; script-src 'self' 'unsafe-eval' https://assets.deribit.com https://static.ads-twitter.com/uwt.js https://google-analytics.com/analytics.js https://*.googletagmanager.com https://googleads.g.doubleclick.net https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.googleadservices.com https://www.google.com 'sha256-Imv8rgvxn2GP4QJH/s+T5I8tEtsRwclyX3+LH36ke+U=' 'sha256-pVP3wiRK6EgotPvbJ2R65xpjHaVawiUq7xpvmES7HRA=' 'sha256-wJLdpr8x7Ctv7aInycfgEM1OkX2C2xeQq0B+k21WrbM=' 'sha256-3oJkyzuF9kqCDgyFboekuCGk4kllBgu28G7MaTIaB+8='; style-src 'self' 'unsafe-inline' https://assets.deribit.com; font-src 'self' data: https://assets.deribit.com https://fonts.gstatic.com https://fonts.googleapis.com; connect-src 'self' data: https://assets.deribit.com https://www.deribit.com https://data.deribit.com wss://www.deribit.com wss://streams.deribit.com https://newsfeed.deribit.com https://por.deribit.com https://history.deribit.com https://metrics.deribit.com https://o1264522.ingest.sentry.io https://landing-page-backend.deribit.com https://api.pwnedpasswords.com https://www.googleadservices.com https://pagead2.googlesyndication.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.g.doubleclick.net https://*.google.com https://google.com https://api.hashnote.com https://deribit-proof-of-reserves.s3.eu-west-2.amazonaws.com https://public-feed.securitize.io www.google.com www.google.ad www.google.ae www.google.com.af www.google.com.ag www.google.al www.google.am www.google.co.ao www.google.com.ar www.google.as www.google.at www.google.com.au www.google.az www.google.ba www.google.com.bd www.google.be www.google.bf www.google.bg www.google.com.bh www.google.bi www.google.bj www.google.com.bn www.google.com.bo www.google.com.br www.google.bs www.google.bt www.google.co.bw www.google.by www.google.com.bz www.google.ca www.google.cd www.google.cf www.google.cg www.google.ch www.google.ci www.google.co.ck www.google.cl www.google.cm www.google.cn www.google.com.co www.google.co.cr www.google.com.cu www.google.cv www.google.com.cy www.google.cz www.google.de www.google.dj www.google.dk www.google.dm www.google.com.do www.google.dz www.google.com.ec www.google.ee www.google.com.eg www.google.es www.google.com.et www.google.fi www.google.com.fj www.google.fm www.google.fr www.google.ga www.google.ge www.google.gg www.google.com.gh www.google.com.gi www.google.gl www.google.gm www.google.gr www.google.com.gt www.google.gy www.google.com.hk www.google.hn www.google.hr www.google.ht www.google.hu www.google.co.id www.google.ie www.google.co.il www.google.im www.google.co.in www.google.iq www.google.is www.google.it www.google.je www.google.com.jm www.google.jo www.google.co.jp www.google.co.ke www.google.com.kh www.google.ki www.google.kg www.google.co.kr www.google.com.kw www.google.kz www.google.la www.google.com.lb www.google.li www.google.lk www.google.co.ls www.google.lt www.google.lu www.google.lv www.google.com.ly www.google.co.ma www.google.md www.google.me www.google.mg www.google.mk www.google.ml www.google.com.mm www.google.mn www.google.com.mt www.google.mu www.google.mv www.google.mw www.google.com.mx www.google.com.my www.google.co.mz www.google.com.na www.google.com.ng www.google.com.ni www.google.ne www.google.nl www.google.no www.google.com.np www.google.nr www.google.nu www.google.co.nz www.google.com.om www.google.com.pa www.google.com.pe www.google.com.pg www.google.com.ph www.google.com.pk www.google.pl www.google.pn www.google.com.pr www.google.ps www.google.pt www.google.com.py www.google.com.qa www.google.ro www.google.ru www.google.rw www.google.com.sa www.google.com.sb www.google.sc www.google.se www.google.com.sg www.google.sh www.google.si www.google.sk www.google.com.sl www.google.sn www.google.so www.google.sm www.google.sr www.google.st www.google.com.sv www.google.td www.google.tg www.google.co.th www.google.com.tj www.google.tl www.google.tm www.google.tn www.google.to www.google.com.tr www.google.tt www.google.com.tw www.google.co.tz www.google.com.ua www.google.co.ug www.google.co.uk www.google.com.uy www.google.co.uz www.google.com.vc www.google.co.ve www.google.co.vi www.google.com.vn www.google.vu www.google.ws www.google.rs www.google.co.za www.google.co.zm www.google.co.zw www.google.cat; img-src 'self' blob: data: https://assets.deribit.com https://statics.deribit.com/ https://insights.deribit.com https://*.analytics.google.com https://analytics.twitter.com https://t.co https://www.googleadservices.com https://pagead2.googlesyndication.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.g.doubleclick.net https://*.google.com www.google.com www.google.ad www.google.ae www.google.com.af www.google.com.ag www.google.al www.google.am www.google.co.ao www.google.com.ar www.google.as www.google.at www.google.com.au www.google.az www.google.ba www.google.com.bd www.google.be www.google.bf www.google.bg www.google.com.bh www.google.bi www.google.bj www.google.com.bn www.google.com.bo www.google.com.br www.google.bs www.google.bt www.google.co.bw www.google.by www.google.com.bz www.google.ca www.google.cd www.google.cf www.google.cg www.google.ch www.google.ci www.google.co.ck www.google.cl www.google.cm www.google.cn www.google.com.co www.google.co.cr www.google.com.cu www.google.cv www.google.com.cy www.google.cz www.google.de www.google.dj www.google.dk www.google.dm www.google.com.do www.google.dz www.google.com.ec www.google.ee www.google.com.eg www.google.es www.google.com.et www.google.fi www.google.com.fj www.google.fm www.google.fr www.google.ga www.google.ge www.google.gg www.google.com.gh www.google.com.gi www.google.gl www.google.gm www.google.gr www.google.com.gt www.google.gy www.google.com.hk www.google.hn www.google.hr www.google.ht www.google.hu www.google.co.id www.google.ie www.google.co.il www.google.im www.google.co.in www.google.iq www.google.is www.google.it www.google.je www.google.com.jm www.google.jo www.google.co.jp www.google.co.ke www.google.com.kh www.google.ki www.google.kg www.google.co.kr www.google.com.kw www.google.kz www.google.la www.google.com.lb www.google.li www.google.lk www.google.co.ls www.google.lt www.google.lu www.google.lv www.google.com.ly www.google.co.ma www.google.md www.google.me www.google.mg www.google.mk www.google.ml www.google.com.mm www.google.mn www.google.com.mt www.google.mu www.google.mv www.google.mw www.google.com.mx www.google.com.my www.google.co.mz www.google.com.na www.google.com.ng www.google.com.ni www.google.ne www.google.nl www.google.no www.google.com.np www.google.nr www.google.nu www.google.co.nz www.google.com.om www.google.com.pa www.google.com.pe www.google.com.pg www.google.com.ph www.google.com.pk www.google.pl www.google.pn www.google.com.pr www.google.ps www.google.pt www.google.com.py www.google.com.qa www.google.ro www.google.ru www.google.rw www.google.com.sa www.google.com.sb www.google.sc www.google.se www.google.com.sg www.google.sh www.google.si www.google.sk www.google.com.sl www.google.sn www.google.so www.google.sm www.google.sr www.google.st www.google.com.sv www.google.td www.google.tg www.google.co.th www.google.com.tj www.google.tl www.google.tm www.google.tn www.google.to www.google.com.tr www.google.tt www.google.com.tw www.google.co.tz www.google.com.ua www.google.co.ug www.google.co.uk www.google.com.uy www.google.co.uz www.google.com.vc www.google.co.ve www.google.co.vi www.google.com.vn www.google.vu www.google.ws www.google.rs www.google.co.za www.google.co.zm www.google.co.zw www.google.cat; media-src 'self' https://assets.deribit.com; frame-src 'self' blob: https://deribitkyc.web.emea-1.jumio.ai https://amberdata-derivatives-iframes.amberdata.io https://assets.deribit.com https://www.googletagmanager.com https://td.doubleclick.net https://www.youtube.com; report-to csp-endpoint;">
+		
+
+		
+
+		<!-- Primary Meta Tags -->
+		<title>Crypto Futures and Options Exchange - Deribit by Coinbase</title>
+		<meta name="title" content="Crypto Futures and Options Exchange - Deribit by Coinbase">
+		<meta name="description" content="World's biggest Bitcoin and Ethereum Options Exchange and the most advanced crypto derivatives trading platform with up to 50x leverage on Crypto Futures and Perps.">
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website">
+		<meta property="og:url" content="https://www.deribit.com/">
+		<meta property="og:title" content="Crypto Futures and Options Exchange - Deribit by Coinbase">
+		<meta property="og:description" content="World's biggest Bitcoin and Ethereum Options Exchange and the most advanced crypto derivatives trading platform with up to 50x leverage on Crypto Futures and Perps.">
+		<meta property="og:image" content="https://assets.deribit.com/share-image.png">
+
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image">
+		<meta property="twitter:url" content="https://www.deribit.com/">
+		<meta property="twitter:title" content="Crypto Futures and Options Exchange - Deribit by Coinbase">
+		<meta property="twitter:description" content="World's biggest Bitcoin and Ethereum Options Exchange and the most advanced crypto derivatives trading platform with up to 50x leverage on Crypto Futures and Perps.">
+		<meta property="twitter:image" content="https://assets.deribit.com/share-image.png">
+
+		<meta charset="utf-8">
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" name="viewport">
+		<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
+		<meta content="yes" name="mobile-web-app-capable">
+		<meta content="#0C1B21" name="theme-color">
+
+		
+		<script async="" id="gtm" src="https://assets.deribit.com/static/js/gtm.js?id=GTM-TNQCFF86" crossorigin="anonymous"></script>
+		
+
+		<link rel="stylesheet" type="text/css" href="https://assets.deribit.com/normalize.css" media="screen" crossorigin="anonymous">
+
+		<!-- Favicon -->
+		<link rel="icon" sizes="any" href="https://assets.deribit.com/favicon/prod/favicon.ico" crossorigin="anonymous">
+		<link rel="icon" sizes="16x16" type="image/png" href="https://assets.deribit.com/favicon/prod/favicon-16x16.png" crossorigin="anonymous">
+		<link rel="icon" sizes="32x32" type="image/png" href="https://assets.deribit.com/favicon/prod/favicon-32x32.png" crossorigin="anonymous">
+		<link rel="icon" sizes="192x192" type="image/png" href="https://assets.deribit.com/favicon/prod/android-chrome-192x192.png" crossorigin="anonymous">
+		<link rel="icon" sizes="512x512" type="image/png" href="https://assets.deribit.com/favicon/prod/android-chrome-512x512.png" crossorigin="anonymous">
+		<link rel="apple-touch-icon" href="https://assets.deribit.com/favicon/prod/apple-touch-icon.png" crossorigin="anonymous">
+
+		<link rel="manifest" href="https://assets.deribit.com/manifest.json" crossorigin="anonymous">
+
+		
+
+		<script type="module" crossorigin="" src="/assets/index-DPFdl8SR.js" integrity="sha512-uPgIz6LZFaRLB7iHFDBUKH93GV3r5fEkyOmnTJPSIRvX4l1CVNv6yOmmYOSikvLekhCHkd7gUj+26u0Bj1JfAQ=="></script>
+		<link rel="stylesheet" crossorigin="" href="/assets/index-BgAsug8M.css" integrity="sha512-t7J4OyG9aFuEJGR49CIcnXqdn/hGR2G8t6qE+5P8YLEc4vQbTBBLMwo3I3oP9nq0VaN0KKXQTkfaEGthik3f2w==">
+	</head>
+
+	<body>
+		<noscript>You need to enable JavaScript to run this app.</noscript>
+		<div id="root"></div>
+		<div id="modalContainer"></div>
+
+		
+		
+		<!--
+    This HTML file is a template.
+    If you open it directly in the browser, you will see an empty page.
+
+    You can add webfonts, meta tags, or analytics to this file.
+    The build step will place the bundled scripts into the <body> tag.
+
+    To begin the development, run `npm start` or `yarn start`.
+    To create a production bundle, use `npm run build` or `yarn build`.
+  -->
+	
+
+
+</body></html>

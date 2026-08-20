@@ -1,18 +1,13 @@
 import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import './dashboard.css';
-
 import Header from '@/components/Header/Header';
 import MainContentWrapper from '@/components/Layout/MainContentWrapper';
 import StatsCards from '@/components/StatsCards/StatsCards';
-import TradesList from '@/components/myTrades/TradesList';
+import TradesList from '@/components/MainContent/TradesList';
 import ProgressTracker from '@/components/MainContent/ProgressTracker';
-import api from '@/utils/serve';
-import { markPerf, measurePerf } from '@/utils/perfMarks';
-import { loadCachedUserSettings } from '../../utils/userSettings';
-import { getUserSafeError } from '../../utils/safeErrors';
-import { useAuth } from '../../context/AuthContext';
+import { markPerf, measurePerf } from '@/utils/common/perfMarks';
+import { loadCachedUserSettings } from '../../utils/user/userSettings';
 import { useUserSettings } from '../../hooks/useUserSettings';
+import { Card } from '@/components/Common/base';
 
 const ActivityChart = lazy(() => import('@/components/MainContent/ActivityChart'));
 const Radar = lazy(() => import('@/components/MainContent/Radar'));
@@ -34,12 +29,6 @@ const getCachedDashboardLayout = () => {
     rowOrder: cachedLayout.rowOrder || DEFAULT_DASHBOARD_LAYOUT.rowOrder,
     columnOrder: cachedLayout.columnOrder || DEFAULT_DASHBOARD_LAYOUT.columnOrder,
   };
-};
-
-const getDashboardLayoutMode = () => {
-  if (window.innerWidth <= 768) return 'mobile';
-  if (window.innerWidth <= 1023) return 'tablet';
-  return 'desktop';
 };
 
 const getDateScopePart = (value) => {
@@ -95,52 +84,37 @@ function LazyDashboardSection({ children, sectionKey, fallback, perfName, delay 
     }
   }, [perfName, shouldRender]);
 
-  return <div className="dashboard-lazy-section" ref={sectionRef}>{shouldRender ? children : fallback}</div>;
+  return <div className="w-full h-full min-w-0" ref={sectionRef}>{shouldRender ? children : fallback}</div>;
 }
 
 const SkeletonChartCard = () => (
-  <div className="chart-card skeleton-box skeleton-chart-card">
-    <div
-      className="skeleton-text"
-      style={{ width: '150px', height: '20px', marginBottom: '20px' }}
-    />
-    <div
-      className="skeleton-chart"
-      style={{ height: '250px', borderRadius: '8px' }}
-    />
-  </div>
+  <Card className="w-full h-full min-h-[340px] sm:min-h-[360px] lg:min-h-0 flex flex-col p-4 animate-pulse" padding="none">
+    <div className="w-36 h-5 rounded-lg bg-[var(--surface-subtle)] mb-5" />
+    <div className="flex-1 rounded-xl bg-[var(--surface-subtle)]" />
+  </Card>
 );
 
 const SkeletonTradesList = () => (
-  <div className="skeleton-box skeleton-trades">
-    <div
-      className="skeleton-text"
-      style={{ width: '120px', height: '20px', marginBottom: '16px' }}
-    />
-
+  <Card className="w-full h-full min-h-[380px] sm:min-h-[420px] lg:min-h-0 flex flex-col p-4 animate-pulse" padding="none">
+    <div className="w-28 h-5 rounded-lg bg-[var(--surface-subtle)] mb-4" />
     {[...Array(5)].map((_, i) => (
       <div
         key={i}
-        className="skeleton-text"
-        style={{ width: '100%', height: '14px', marginBottom: '10px' }}
+        className="w-full h-3.5 rounded bg-[var(--surface-subtle)] mb-2.5"
       />
     ))}
-  </div>
+  </Card>
 );
 
 const SkeletonPnLCalendar = () => (
-  <div className="skeleton-box skeleton-calendar">
-    <div
-      className="skeleton-text"
-      style={{ width: '140px', height: '20px', marginBottom: '20px' }}
-    />
-
-    <div className="calendar-grid-skeleton">
+  <Card className="w-full h-full min-h-[420px] lg:h-[590px] flex flex-col p-4 animate-pulse" padding="none">
+    <div className="w-32 h-5 rounded-lg bg-[var(--surface-subtle)] mb-5" />
+    <div className="grid grid-cols-7 gap-2 flex-1">
       {[...Array(35)].map((_, i) => (
-        <div key={i} className="skeleton-calendar-day" />
+        <div key={i} className="rounded-lg bg-[var(--surface-subtle)]" />
       ))}
     </div>
-  </div>
+  </Card>
 );
 
 function Dashboard({
@@ -153,19 +127,13 @@ function Dashboard({
   defaultCurrencyCode = 'USD',
   onCurrencyChange,
   isLoading = false,
-  mt5Accounts = [],
+  openPositions = [],
 }) {
   const [layout, setLayout] = useState(getCachedDashboardLayout);
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
   const userSettingsQuery = useUserSettings();
-  const [syncJobs, setSyncJobs] = useState({});
-
-  const [layoutMode, setLayoutMode] = useState(getDashboardLayoutMode);
   const layoutChangeVersion = useRef(0);
 
   useEffect(() => {
-    const handleResize = () => setLayoutMode(getDashboardLayoutMode());
     const handleLayoutChange = (event) => {
       layoutChangeVersion.current += 1;
       const eventLayout = event.detail?.layout;
@@ -181,10 +149,8 @@ function Dashboard({
       setLayout(getCachedDashboardLayout());
     };
 
-    window.addEventListener('resize', handleResize);
     window.addEventListener('dashboard-layout-change', handleLayoutChange);
     return () => {
-      window.removeEventListener('resize', handleResize);
       window.removeEventListener('dashboard-layout-change', handleLayoutChange);
     };
   }, []);
@@ -216,218 +182,39 @@ function Dashboard({
     return `dashboard:${tradeMode}:${currencyCode}:${from}:${to}`;
   }, [currencyCode, dateRange?.from, dateRange?.to, tradeMode]);
 
-  useEffect(() => {
-    const activeJobs = Object.entries(syncJobs).filter(([, job]) => (
-      job?.jobId && !['success', 'failed'].includes(job.status)
-    ));
+  const isChartsFirst = layout.rowOrder === 'charts-first';
+  const isFlipped = layout.columnOrder === 'flipped';
 
-    if (activeJobs.length === 0) return undefined;
+  const OverviewSection = useMemo(() => (
+    <section className={`grid grid-cols-1 lg:grid-cols-3 gap-2.5 w-full items-stretch lg:h-[590px] ${isChartsFirst ? 'order-2' : 'order-1'}`}>
+      {/* 1st Column: Progress Tracker & Trades List */}
+      <div className={`col-span-1 flex flex-col gap-2.5 min-w-0 min-h-0 lg:h-[590px] ${isFlipped ? 'lg:order-2' : 'lg:order-1'}`}>
+        <div className="min-w-0 min-h-0 h-[340px] sm:h-[360px] lg:h-[288px] shrink-0">
+          {isLoading ? (
+            <SkeletonChartCard />
+          ) : (
+            <ProgressTracker trades={trades} />
+          )}
+        </div>
 
-    const timer = window.setTimeout(async () => {
-      await Promise.all(activeJobs.map(async ([accountId, job]) => {
-        try {
-          const { data } = await api.get(`/mt5/sync-jobs/${job.jobId}/status`);
-          const nextJob = data?.job;
-          if (!data?.success || !nextJob) {
-            throw new Error(data?.error || 'Unable to check sync status');
-          }
-
-          setSyncJobs((previous) => ({
-            ...previous,
-            [accountId]: {
-              ...previous[accountId],
-              status: nextJob.status,
-              progressStatus: nextJob.progress_status,
-              errorMessage: nextJob.error_message || '',
-            },
-          }));
-
-          if (['success', 'failed'].includes(nextJob.status)) {
-            queryClient.invalidateQueries({ queryKey: ['mt5-accounts'] });
-            if (user?.ID) {
-              queryClient.invalidateQueries({ queryKey: ['trades', user.ID] });
-            }
-          }
-        } catch (error) {
-          setSyncJobs((previous) => ({
-            ...previous,
-            [accountId]: {
-              ...previous[accountId],
-              status: 'failed',
-              progressStatus: 'failed',
-              errorMessage: getUserSafeError(error, 'Unable to check sync status. Please try again.'),
-            },
-          }));
-        }
-      }));
-    }, 2500);
-
-    return () => window.clearTimeout(timer);
-  }, [queryClient, syncJobs, user?.ID]);
-
-  const handleSyncNow = async (account) => {
-    if (!account?.id) return;
-
-    setSyncJobs((previous) => ({
-      ...previous,
-      [account.id]: {
-        status: 'queued',
-        progressStatus: 'queued',
-        errorMessage: '',
-      },
-    }));
-
-    try {
-      const { data } = await api.post(`/mt5/accounts/${account.id}/sync`);
-      const jobId = data?.job_id || data?.job?.id;
-
-      if (!data?.success || !jobId) {
-        throw new Error(data?.error || 'Unable to start sync');
-      }
-
-      setSyncJobs((previous) => ({
-        ...previous,
-        [account.id]: {
-          jobId,
-          status: data.job?.status || 'queued',
-          progressStatus: data.job?.progress_status || 'queued',
-          errorMessage: '',
-        },
-      }));
-    } catch (error) {
-      const existingJob = error.response?.data?.job;
-
-      setSyncJobs((previous) => ({
-        ...previous,
-        [account.id]: existingJob?.id ? {
-          jobId: existingJob.id,
-          status: existingJob.status,
-          progressStatus: existingJob.progress_status || existingJob.status,
-          errorMessage: getUserSafeError(error, 'Unable to start sync. Please try again.'),
-        } : {
-          status: 'failed',
-          progressStatus: 'failed',
-          errorMessage: getUserSafeError(error, 'Unable to start sync. Please try again.'),
-        },
-      }));
-    }
-  };
-
-  const gridAreas = useMemo(() => {
-    const { rowOrder, columnOrder } = layout;
-
-    if (layoutMode === 'mobile') {
-      return rowOrder === 'charts-first'
-        ? `
-          "performance"
-          "activity"
-          "progress"
-          "zella"
-          "calendar"
-          "trades"
-        `
-        : `
-          "zella"
-          "calendar"
-          "trades"
-          "performance"
-          "activity"
-          "progress"
-        `;
-    }
-
-    if (layoutMode === 'tablet') {
-      if (rowOrder === 'charts-first') {
-        return columnOrder === 'flipped'
-          ? `
-            "activity performance"
-            "progress progress"
-            "calendar zella"
-            "calendar trades"
-          `
-          : `
-            "performance activity"
-            "progress progress"
-            "zella calendar"
-            "trades calendar"
-          `;
-      }
-
-      return columnOrder === 'flipped'
-        ? `
-          "calendar zella"
-          "calendar trades"
-          "activity performance"
-          "progress progress"
-        `
-        : `
-          "zella calendar"
-          "trades calendar"
-          "performance activity"
-          "progress progress"
-        `;
-    }
-    
-    let areas;
-    if (rowOrder === 'overview-first') {
-      if (columnOrder === 'normal') {
-        areas = `
-          "zella calendar calendar"
-          "trades calendar calendar"
-          "performance activity progress"
-        `;
-      } else {
-        areas = `
-          "calendar calendar zella"
-          "calendar calendar trades"
-          "progress activity performance"
-        `;
-      }
-    } else { // charts-first
-      if (columnOrder === 'normal') {
-        areas = `
-          "performance activity progress"
-          "zella calendar calendar"
-          "trades calendar calendar"
-        `;
-      } else {
-        areas = `
-          "progress activity performance"
-          "calendar calendar zella"
-          "calendar calendar trades"
-        `;
-      }
-    }
-    return areas;
-  }, [layout, layoutMode]);
-
-  const gridColumns = useMemo(() => {
-    if (layoutMode !== 'tablet') return undefined;
-
-    return layout.columnOrder === 'flipped'
-      ? 'minmax(0, 1.32fr) minmax(220px, 0.68fr)'
-      : 'minmax(220px, 0.68fr) minmax(0, 1.32fr)';
-  }, [layout.columnOrder, layoutMode]);
-
-  const MainGrid = useMemo(() => (
-    <section 
-      className="dashboard-layout dashboard-main-grid" 
-      style={{
-        ...(gridAreas ? { gridTemplateAreas: gridAreas } : {}),
-        ...(gridColumns ? { gridTemplateColumns: gridColumns } : {}),
-      }}
-    >
-      {/* 1st Row Left: Non-chart Progress Tracker */}
-      <div className="dashboard-grid-card dashboard-grid-card--zella left-charts">
-        {isLoading ? (
-          <SkeletonChartCard />
-        ) : (
-          <ProgressTracker trades={trades} />
-        )}
+        <section className="min-w-0 min-h-0 h-[380px] sm:h-[420px] lg:h-[292px] shrink-0 flex">
+          {isLoading ? (
+            <SkeletonTradesList />
+          ) : (
+            <LazyDashboardSection sectionKey="trades-list" fallback={<SkeletonTradesList />} delay={0}>
+              <TradesList
+                trades={trades}
+                openPositions={tradeMode === 'manual' ? [] : openPositions}
+                currentTradeMode={tradeMode}
+                currencyCode={currencyCode}
+              />
+            </LazyDashboardSection>
+          )}
+        </section>
       </div>
 
-      {/* 1st & 2nd Row Right: PnL Calendar (Large, non-chart) */}
-      <div className="dashboard-grid-card dashboard-grid-card--calendar chart-cardx calendar-panel">
+      {/* 2nd & 3rd Columns: PnL Calendar */}
+      <div className={`col-span-1 lg:col-span-2 min-w-0 min-h-0 h-full lg:h-[590px] flex flex-col ${isFlipped ? 'lg:order-1' : 'lg:order-2'}`}>
         {isLoading ? (
           <SkeletonPnLCalendar />
         ) : (
@@ -438,20 +225,12 @@ function Dashboard({
           </LazyDashboardSection>
         )}
       </div>
+    </section>
+  ), [currencyCode, isChartsFirst, isFlipped, isLoading, openPositions, tradeMode, trades]);
 
-      {/* 2nd Row Left: Trades List (Non-chart) */}
-      <section className="dashboard-grid-card dashboard-grid-card--trades trades-section">
-        {isLoading ? (
-          <SkeletonTradesList />
-        ) : (
-          <LazyDashboardSection sectionKey="trades-list" fallback={<SkeletonTradesList />} delay={0}>
-            <TradesList trades={trades} currentTradeMode={tradeMode} currencyCode={currencyCode} />
-          </LazyDashboardSection>
-        )}
-      </section>
-
-      {/* 3rd Row: Charts (Below the fold) */}
-      <div className="dashboard-grid-card dashboard-grid-card--performance">
+  const ChartsSection = useMemo(() => (
+    <section className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 w-full items-stretch ${isChartsFirst ? 'order-1' : 'order-2'}`}>
+      <div className={`min-w-0 h-[340px] sm:h-[360px] lg:h-[290px] ${isFlipped ? 'lg:order-3' : 'lg:order-1'}`}>
         {isLoading ? (
           <SkeletonChartCard />
         ) : (
@@ -463,7 +242,7 @@ function Dashboard({
         )}
       </div>
 
-      <div className="dashboard-grid-card dashboard-grid-card--activity">
+      <div className="min-w-0 h-[340px] sm:h-[360px] lg:h-[290px] lg:order-2">
         {isLoading ? (
           <SkeletonChartCard />
         ) : (
@@ -475,7 +254,7 @@ function Dashboard({
         )}
       </div>
 
-      <div className="dashboard-grid-card dashboard-grid-card--progress">
+      <div className={`min-w-0 h-[340px] sm:h-[360px] lg:h-[290px] md:col-span-2 lg:col-span-1 ${isFlipped ? 'lg:order-1' : 'lg:order-3'}`}>
         {isLoading ? (
           <SkeletonChartCard />
         ) : (
@@ -487,7 +266,14 @@ function Dashboard({
         )}
       </div>
     </section>
-  ), [currencyCode, gridAreas, gridColumns, isLoading, tradeMode, trades]);
+  ), [currencyCode, isChartsFirst, isFlipped, isLoading, trades]);
+
+  const MainGrid = useMemo(() => (
+    <div className="flex flex-col gap-2.5 w-full">
+      {OverviewSection}
+      {ChartsSection}
+    </div>
+  ), [OverviewSection, ChartsSection]);
 
   return (
     <MainContentWrapper>
@@ -500,9 +286,6 @@ function Dashboard({
         currencyCode={currencyCode}
         defaultCurrencyCode={defaultCurrencyCode}
         onCurrencyChange={onCurrencyChange}
-        mt5Accounts={mt5Accounts}
-        syncJobs={syncJobs}
-        handleSyncNow={handleSyncNow}
       />
 
       <StatsCards

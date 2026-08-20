@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import LegacyIcon from '../Common/LegacyIcon';
+import LegacyIcon from '../Common/LegacyIcon/LegacyIcon';
 import { useAuth } from '../../context/AuthContext';
-import { loadCachedUserSettings, saveUserSettings } from '../../utils/userSettings';
+import { loadCachedUserSettings, saveUserSettings } from '../../utils/user/userSettings';
 import { useUserSettings } from '../../hooks/useUserSettings';
 
 const DEFAULT_DASHBOARD_LAYOUT = {

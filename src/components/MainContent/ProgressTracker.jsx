@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import './ProgressTracker.css';
-import InfoTooltip from '../Common/InfoTooltip';
-import { getTradeDisplayDate, getTradeDisplayTime } from '../../utils/tradeTime';
+import InfoTooltip from '../Common/InfoTooltip/InfoTooltip';
+import { getTradeDisplayDate, getTradeDisplayTime } from '../../utils/trading/tradeTime';
+import { Card, CardHeader, CardTitle } from '@/components/Common/base';
 
 const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 function buildHeatmap(trades = []) {
@@ -76,88 +76,85 @@ function buildHeatmap(trades = []) {
   return { cells: dynamicCells, monthMarkers, columns };
 }
 
-function ProgressTracker({ trades }) {
+function ProgressTracker({ trades, className = '' }) {
   const { cells: heatmap, monthMarkers, columns } = useMemo(() => buildHeatmap(trades), [trades]);
   const hasTrades = Array.isArray(trades) && trades.some((trade) => getTradeDisplayDate(trade));
 
   return (
-    <div className="progress-card">
-      <div className="progress-card__header">
-        <div className="progress-card__title-wrap">
-          <h3 className="dashboard-card-title">Progress Tracker</h3>
+    <Card className={`w-full h-full min-h-0 flex flex-col overflow-hidden ${className}`.trim()} padding="sm">
+      <CardHeader className="flex items-center justify-between gap-3 pb-1.5 mb-1.5 border-b border-[var(--divider-strong)] min-h-[var(--title-card-row-height)] flex-nowrap shrink-0">
+        <div className="inline-flex items-center gap-2 min-h-[var(--title-card-row-height)] flex-nowrap min-w-0">
+          <CardTitle className="text-xs sm:text-sm font-semibold text-[var(--text-primary)]">Progress Tracker</CardTitle>
           <InfoTooltip
             text="Shows how consistently you traded across recent weeks."
             size={13}
             side="bottom-left"
           />
         </div>
-        <span className="progress-card__badge">BETA</span>
-      </div>
+      </CardHeader>
 
-      <div className="progress-card__body">
+      <div className="flex flex-col gap-2.5 flex-1 min-h-0">
         {!hasTrades ? (
-          <div className="dashboard-empty-state">
-            <strong>No trades yet</strong>
-            <span>Trading activity will appear here once trades match the current filter.</span>
+          <div className="flex flex-col items-center justify-center p-6 text-center text-[var(--text-secondary)]">
+            <strong className="text-[var(--heading)] font-semibold mb-1">No trades yet</strong>
+            <span className="text-xs">Trading activity will appear here once trades match the current filter.</span>
           </div>
         ) : (
-          <>
-            <div className="progress-card__grid-wrap">
-              <div className="progress-card__labels">
-                <span aria-hidden="true" />
-                {WEEKDAY_LABELS.map((label) => (
-                  <span key={label}>{label}</span>
-                ))}
-              </div>
+          <div className="grid grid-cols-[34px_minmax(0,1fr)] gap-2 flex-1 min-h-0 min-w-0">
+            <div className="grid grid-rows-[18px_repeat(7,1fr)] items-center min-w-0 text-[var(--text-secondary)] text-fluid-sm font-semibold">
+              <span aria-hidden="true" />
+              {WEEKDAY_LABELS.map((label) => (
+                <span key={label}>{label}</span>
+              ))}
+            </div>
 
-              <div className="progress-card__viewport">
-                <div className="progress-card__track" style={{ '--progress-columns': columns }}>
-                  <div className="progress-card__months">
-                    {monthMarkers.map((marker) => (
-                      <span
-                        key={`${marker.label}-${marker.column}`}
-                        className="progress-card__month"
-                        style={{ left: `${(marker.column / Math.max(columns, 1)) * 100}%` }}
-                      >
-                        {marker.label}
-                      </span>
-                    ))}
-                  </div>
-                  <div
-                    className="progress-card__grid"
-                    style={{
-                      gridTemplateColumns: `repeat(${columns}, minmax(var(--progress-cell-size, 0px), 1fr))`,
-                    }}
-                  >
-                    {heatmap.map((row, rowIndex) =>
-                      row.map((value, columnIndex) => {
-                        const levelClass =
-                          value >= 3
-                            ? 'level-4'
-                            : value >= 2
-                              ? 'level-3'
-                              : value >= 1
-                                ? 'level-2'
-                                : value > 0
-                                  ? 'level-1'
-                                  : 'level-0';
+            <div className="flex-1 min-h-0 min-w-0 overflow-hidden">
+              <div className="flex flex-col w-full h-full min-w-0">
+                <div className="relative flex-none h-[18px] min-w-0">
+                  {monthMarkers.map((marker) => (
+                    <span
+                      key={`${marker.label}-${marker.column}`}
+                      className="absolute top-0 text-[var(--text-secondary)] text-fluid-md font-medium"
+                      style={{ left: `${(marker.column / Math.max(columns, 1)) * 100}%` }}
+                    >
+                      {marker.label}
+                    </span>
+                  ))}
+                </div>
+                <div
+                  className="grid grid-rows-7 gap-1 h-full min-h-0 min-w-0"
+                  style={{
+                    gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+                  }}
+                >
+                  {heatmap.map((row, rowIndex) =>
+                    row.map((value, columnIndex) => {
+                      let cellColor = 'bg-[var(--bg-card)] border border-[var(--divider-strong)]';
+                      if (value >= 3) {
+                        cellColor = 'bg-blue-700 dark:bg-blue-500 border border-blue-600';
+                      } else if (value >= 2) {
+                        cellColor = 'bg-blue-500 dark:bg-blue-600 border border-blue-400';
+                      } else if (value >= 1) {
+                        cellColor = 'bg-blue-300 dark:bg-blue-900/60 border border-blue-300 dark:border-blue-800';
+                      } else if (value > 0) {
+                        cellColor = 'bg-blue-100 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900';
+                      }
 
-                        return (
-                          <div
-                            key={`${rowIndex}-${columnIndex}`}
-                            className={`progress-card__cell ${levelClass}`}
-                          />
-                        );
-                      })
-                    )}
-                  </div>
+                      return (
+                        <div
+                          key={`${rowIndex}-${columnIndex}`}
+                          className={`rounded-[3px] ${cellColor}`}
+                        />
+                      );
+                    })
+                  )}
                 </div>
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 }
 

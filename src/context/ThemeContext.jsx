@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useLayoutEffect, useCallback } from 'react';
-import { decodeStorageValue, encodeStorageValue } from '../utils/obfuscatedStorage';
+import { decodeStorageValue, encodeStorageValue } from '../utils/storage/obfuscatedStorage';
 
 const ThemeContext = createContext();
 const THEME_STORAGE_KEY = 'k7@dm.2';
@@ -43,33 +43,90 @@ function storeDarkMode(value) {
   }
 }
 
+function applyThemeDOM(isDark) {
+  if (typeof document === 'undefined') return;
+  if (isDark) {
+    document.body.classList.add('dark-mode');
+    document.documentElement.classList.add('dark-mode');
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+  } else {
+    document.body.classList.remove('dark-mode');
+    document.documentElement.classList.remove('dark-mode');
+    document.documentElement.classList.add('light');
+    document.documentElement.classList.remove('dark');
+  }
+}
+
+function disableTransitions() {
+  const css = document.createElement('style');
+  css.setAttribute('type', 'text/css');
+  css.setAttribute('id', 'theme-transition-lock');
+  css.appendChild(
+    document.createTextNode(
+      `*, *::before, *::after {
+        -webkit-transition: none !important;
+        -moz-transition: none !important;
+        -o-transition: none !important;
+        -ms-transition: none !important;
+        transition: none !important;
+      }`
+    )
+  );
+  document.head.appendChild(css);
+
+  return () => {
+    // Force browser to recalculate and commit styles instantly without any transition
+    // eslint-disable-next-line no-unused-expressions
+    window.getComputedStyle(document.body).opacity;
+
+    window.requestAnimationFrame(() => {
+      window.setTimeout(() => {
+        if (css.parentNode) {
+          css.parentNode.removeChild(css);
+        }
+      }, 10);
+    });
+  };
+}
+
+function runWithThemeTransition(callback) {
+  if (typeof document === 'undefined') {
+    callback();
+    return;
+  }
+
+  const restoreTransitions = disableTransitions();
+  try {
+    callback();
+  } finally {
+    restoreTransitions();
+  }
+}
+
 export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(getStoredDarkMode);
 
   useLayoutEffect(() => {
-    if (darkMode) {
-      document.body.classList.add('dark-mode');
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
-    } else {
-      document.body.classList.remove('dark-mode');
-      document.documentElement.classList.add('light');
-      document.documentElement.classList.remove('dark');
-    }
+    applyThemeDOM(darkMode);
   }, [darkMode]);
 
   const toggleDarkMode = useCallback(() => {
-    setDarkMode(prev => {
-      const nextDarkMode = !prev;
-      storeDarkMode(nextDarkMode);
-      return nextDarkMode;
+    runWithThemeTransition(() => {
+      setDarkMode((prev) => {
+        const nextDarkMode = !prev;
+        storeDarkMode(nextDarkMode);
+        return nextDarkMode;
+      });
     });
   }, []);
 
   const setDarkModePreference = useCallback((value) => {
     const nextDarkMode = Boolean(value);
-    storeDarkMode(nextDarkMode);
-    setDarkMode(nextDarkMode);
+    runWithThemeTransition(() => {
+      storeDarkMode(nextDarkMode);
+      setDarkMode(nextDarkMode);
+    });
   }, []);
 
   return (
@@ -82,3 +139,4 @@ export function ThemeProvider({ children }) {
 export function useTheme() {
   return useContext(ThemeContext);
 }
+

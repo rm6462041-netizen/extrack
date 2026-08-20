@@ -1,40 +1,48 @@
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import api from '../utils/serve';
+import api from '../utils/common/serve';
+
+export function useDebouncedValue(value, delay = 250) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebounced(value), delay);
+    return () => window.clearTimeout(timer);
+  }, [delay, value]);
+  return debounced;
+}
 
 export function filterInstruments(instruments, query, limit = 30) {
   const source = Array.isArray(instruments) ? instruments : [];
   const q = String(query || '').trim().toLowerCase();
-
-  if (!q) return source.slice(0, Math.min(limit, 20));
-
-  return source
-    .filter((item) => (
-      String(item.symbol || '').toLowerCase().includes(q) ||
-      String(item.name || '').toLowerCase().includes(q) ||
-      String(item.type || '').toLowerCase().includes(q) ||
-      String(item.category || '').toLowerCase().includes(q)
-    ))
-    .slice(0, limit);
+  return source.filter((item) => !q || `${item.symbol} ${item.name} ${item.displayName} ${(item.searchKeywords || []).join(' ')}`.toLowerCase().includes(q)).slice(0, limit);
 }
 
 export function isAllowedInstrumentSymbol(instruments, symbol) {
-  const normalizedSymbol = String(symbol || '').trim().toUpperCase();
-  if (!normalizedSymbol || !Array.isArray(instruments)) return false;
-
-  return instruments.some((instrument) => instrument.symbol === normalizedSymbol);
+  const normalized = String(symbol || '').trim().toUpperCase();
+  return Array.isArray(instruments) && instruments.some((item) => item.symbol === normalized);
 }
 
-export function useInstruments() {
+export function useInstruments(search = '', filters = {}) {
+  const debouncedSearch = useDebouncedValue(search);
+  const category = filters.category || undefined;
+  const productType = filters.productType || undefined;
+  const productTypes = Array.isArray(filters.productTypes) ? filters.productTypes.join(',') : undefined;
+  const limit = Number(filters.limit) || 50;
   return useQuery({
-    queryKey: ['instruments'],
+    queryKey: ['instruments', category || 'all', productType || productTypes || 'all', debouncedSearch, limit],
     queryFn: async () => {
-      const { data } = await api.get('/instruments');
-      return Array.isArray(data) ? data : [];
+      if (Array.isArray(filters.productTypes) && filters.productTypes.length > 0) {
+        const perTypeLimit = Math.max(Math.floor(limit / filters.productTypes.length), 50);
+        const responses = await Promise.all(filters.productTypes.map((type) => api.get('/instruments', {
+          params: { category, productType: type, search: debouncedSearch || undefined, limit: perTypeLimit },
+        })));
+        return responses.flatMap(({ data }) => Array.isArray(data?.instruments) ? data.instruments : []);
+      }
+      const { data } = await api.get('/instruments', { params: { category, productType, productTypes, search: debouncedSearch || undefined, limit } });
+      return Array.isArray(data?.instruments) ? data.instruments : [];
     },
-    staleTime: Infinity,
-    gcTime: Infinity,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: false,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    placeholderData: (previous) => previous,
   });
 }

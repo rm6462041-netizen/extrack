@@ -83,7 +83,7 @@
       width: 100%;
       height: 100%;
       display: block;
-      object-fit: cover;
+      object-fit: contain;
       filter: saturate(0.95) brightness(0.72);
     }
 
@@ -179,7 +179,7 @@
       width: 100%;
       height: 100%;
       display: block;
-      object-fit: cover;
+      object-fit: contain;
       filter: brightness(0.78) saturate(0.98);
     }
 
@@ -280,7 +280,6 @@
       display: block;
       object-fit: cover;
       filter: saturate(0.98) brightness(0.72);
-      transform: scale(1.06);
     }
 
     .demo-slider-highlight {
@@ -395,7 +394,7 @@
       width: 100%;
       height: 100%;
       display: block;
-      object-fit: cover;
+      object-fit: contain;
     }
 
     .demo-slide-card .demo-feature-list {

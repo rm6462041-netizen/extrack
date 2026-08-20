@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { DayPicker } from 'react-day-picker';
 import MainContentWrapper from '../../components/Layout/MainContentWrapper';
 import PageHeader from '../../components/Layout/PageHeader';
 import {
@@ -9,27 +8,20 @@ import {
   ChartLine,
   ChevronLeft,
   ChevronRight,
-  EllipsisVertical,
-  Gauge,
-  PanelRightOpen,
   TrendingDown,
   TrendingUp,
+  X,
 } from '../../icons/lucideIcons';
-import SymbolWithIcon from '../../components/Common/SymbolWithIcon';
-import CustomTimePicker from '../../components/Common/CustomTimePicker';
-import ActivityChart from '../../components/MainContent/ActivityChart';
-import PerformanceChart from '../../components/MainContent/PerformanceChart';
-import Radar from '../../components/MainContent/Radar';
-import StatsCards from '../../components/StatsCards/StatsCards';
-import BacktestBottomPanel from './components/BacktestBottomPanel';
+import SymbolWithIcon from '../../components/Common/SymbolWithIcon/SymbolWithIcon';
+import CustomTimePicker from '../../components/Common/CustomTimePicker/CustomTimePicker';
 import BacktestChart from './components/BacktestChart';
-import { getUserSafeError } from '../../utils/safeErrors';
-import BacktestOrderPanel from './components/BacktestOrderPanel';
-import BacktestStatsBar from './components/BacktestStatsBar';
+import { getUserError } from '../../utils/common/errors';
+import { useAppDialog } from '../../context/AppDialogContext';
 import { useBacktestSession } from './hooks/useBacktestSession';
 import { filterInstruments, isAllowedInstrumentSymbol, useInstruments } from '../../hooks/useInstruments';
 import backtestingExtraSymbols from './data/backtesting.json';
-import '../../components/Common/DateRangePicker.css';
+import { Calendar as UntitledCalendar } from '../../components/application/date-picker/calendar';
+import { jsDateToCalendarDate, calendarDateToJsDate } from '../../utils/common/dateConversions';
 import './BacktestingPage.css';
 
 const BACKTEST_SESSIONS_KEY = 'entrack:backtest_sessions:v1';
@@ -243,9 +235,9 @@ function CalendarTemplateHeader({ month, onMonthChange }) {
 
 function BacktestDateTimeField({ label, value, onChange }) {
   const [open, setOpen] = useState(false);
-  const [pickerMonth, setPickerMonth] = useState(() => normalizePickerMonth(parseDateTimeLocalValue(value)));
-  const wrapperRef = useRef(null);
   const selectedDate = parseDateTimeLocalValue(value);
+  const [focusedCalDate, setFocusedCalDate] = useState(() => jsDateToCalendarDate(selectedDate || new Date()));
+  const wrapperRef = useRef(null);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -267,7 +259,7 @@ function BacktestDateTimeField({ label, value, onChange }) {
           type="button"
           className="backtest-date-trigger"
           onClick={() => {
-            setPickerMonth(normalizePickerMonth(selectedDate || new Date()));
+            setFocusedCalDate(jsDateToCalendarDate(selectedDate || new Date()));
             setOpen((current) => !current);
           }}
           aria-label={label}
@@ -287,21 +279,17 @@ function BacktestDateTimeField({ label, value, onChange }) {
 
       {open && (
         <div className="backtest-date-popover">
-          <CalendarTemplateHeader month={pickerMonth} onMonthChange={setPickerMonth} />
-          <DayPicker
-            mode="single"
-            selected={selectedDate || undefined}
-            onSelect={(date) => {
-              if (!date) return;
+          <UntitledCalendar
+            value={jsDateToCalendarDate(selectedDate)}
+            onChange={(calDate) => {
+              if (!calDate) return;
+              const date = calendarDateToJsDate(calDate);
               onChange(mergeDateTime(value, date));
               setOpen(false);
             }}
-            month={pickerMonth}
-            onMonthChange={setPickerMonth}
-            fixedWeeks
-            showOutsideDays
-            className="trade-rdp trade-calendar-template backtest-date-rdp"
-          />
+            focusedValue={focusedCalDate}
+            onFocusChange={setFocusedCalDate}
+          ><span /></UntitledCalendar>
         </div>
       )}
     </div>
@@ -674,6 +662,7 @@ function BacktestSessionDashboard({ session, onBack, onContinue }) {
 }
 
 function BacktestingPage() {
+  const { confirm, notify, prompt: requestInput } = useAppDialog();
   const defaultSessionDraft = useMemo(() => {
     return {
       sessionName: '',
@@ -823,7 +812,7 @@ function BacktestingPage() {
         });
       }
     } catch (error) {
-      setSessionError(getUserSafeError(error, 'Session could not be loaded.'));
+      setSessionError(getUserError(error, 'Session could not be loaded.'));
     }
   }, [instruments, instrumentsLoadError, instrumentsLoading, sessionDraft, startSession]);
 
@@ -839,12 +828,16 @@ function BacktestingPage() {
       await resumeSession(session);
       setActiveView('chart');
     } catch (error) {
-      setSessionError(getUserSafeError(error, 'Saved session could not be opened.'));
+      setSessionError(getUserError(error, 'Saved session could not be opened.'));
     }
   }, [resumeSession]);
 
-  const handleRenameSavedSession = useCallback((session) => {
-    const nextName = window.prompt('Rename session', session.sessionName || '');
+  const handleRenameSavedSession = useCallback(async (session) => {
+    const nextName = await requestInput('Enter a new name for this backtest session.', {
+      title: 'Rename session',
+      value: session.sessionName || '',
+      confirmText: 'Save name',
+    });
     if (nextName === null) return;
 
     const trimmedName = nextName.trim();
@@ -863,10 +856,14 @@ function BacktestingPage() {
     if (state.sessionId === session.id) {
       setField('sessionName', trimmedName);
     }
-  }, [setField, state.sessionId]);
+    notify('Backtest session renamed', 'success');
+  }, [notify, requestInput, setField, state.sessionId]);
 
-  const handleDeleteSavedSession = useCallback((session) => {
-    const shouldDelete = window.confirm(`Delete "${session.sessionName || 'this session'}"?`);
+  const handleDeleteSavedSession = useCallback(async (session) => {
+    const shouldDelete = await confirm(`Delete "${session.sessionName || 'this session'}"?`, {
+      title: 'Delete backtest session',
+      confirmText: 'Delete session',
+    });
     if (!shouldDelete) return;
 
     deletedSessionIdsRef.current.add(session.id);
@@ -881,7 +878,8 @@ function BacktestingPage() {
       setReviewSessionId('');
       setActiveView('library');
     }
-  }, [reviewSessionId]);
+    notify('Backtest session deleted', 'success');
+  }, [confirm, notify, reviewSessionId]);
 
   useEffect(() => {
     if (!hasSession || !state.sessionId) return undefined;
@@ -928,6 +926,8 @@ function BacktestingPage() {
     window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerup', handlePointerUp, { once: true });
   }, [bottomPanelHeight]);
+
+
 
   const startOrderResize = useCallback((event) => {
     event.preventDefault();
@@ -979,6 +979,110 @@ function BacktestingPage() {
       )}
 
       <div className={isCreateSessionModalOpen ? 'backtest-terminal is-modal-open' : 'backtest-terminal'}>
+        {activeView === 'library' && isCreateSessionModalOpen && (
+          <div className="backtest-session-modal" role="dialog" aria-modal="true" aria-labelledby="backtest-session-modal-title">
+            <button
+              className="backtest-session-modal__backdrop"
+              type="button"
+              aria-label="Close create session"
+              onClick={() => setIsCreateSessionModalOpen(false)}
+            />
+            <section className="backtest-session-modal__panel">
+              <div className="backtest-session-modal__header">
+                <div className="backtest-session-modal__title-group">
+                  <span className="backtest-card-icon"><ChartLine size={18} aria-hidden="true" /></span>
+                  <div>
+                    <h3 id="backtest-session-modal-title">Create Backtest Session</h3>
+                    <p className="backtest-session-modal__subtitle">Configure symbol, date range, and starting balance</p>
+                  </div>
+                </div>
+                <button
+                  className="backtest-session-modal__close"
+                  type="button"
+                  aria-label="Close modal"
+                  onClick={() => setIsCreateSessionModalOpen(false)}
+                >
+                  <X size={18} aria-hidden="true" />
+                </button>
+              </div>
+
+              <form
+                id={BACKTEST_SESSION_FORM_ID}
+                className="backtest-session-form"
+                onSubmit={handleCreateSession}
+                autoComplete="off"
+              >
+                <div className="backtest-modal-group">
+                  <label className="backtest-modal-label">Session Name</label>
+                  <div className="backtest-field">
+                    <input
+                      value={sessionDraft.sessionName}
+                      onChange={(event) => updateSessionDraft('sessionName', event.target.value)}
+                      placeholder="e.g. BTC London Breakout Replay"
+                      aria-label="Session name"
+                      autoComplete="off"
+                    />
+                  </div>
+                </div>
+
+                <div className="backtest-modal-group">
+                  <label className="backtest-modal-label">Symbol</label>
+                  <BacktestSymbolField
+                    value={sessionDraft.symbol}
+                    onChange={(value) => updateSessionDraft('symbol', value)}
+                    instruments={instruments}
+                    isLoading={instrumentsLoading}
+                  />
+                </div>
+
+                <div className="backtest-modal-grid">
+                  <div className="backtest-modal-group">
+                    <label className="backtest-modal-label">Start Time</label>
+                    <BacktestDateTimeField
+                      label="Start time"
+                      value={sessionDraft.startTime}
+                      onChange={(value) => updateSessionDraft('startTime', value)}
+                    />
+                  </div>
+
+                  <div className="backtest-modal-group">
+                    <label className="backtest-modal-label">End Time</label>
+                    <BacktestDateTimeField
+                      label="End time"
+                      value={sessionDraft.endTime}
+                      onChange={(value) => updateSessionDraft('endTime', value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="backtest-modal-group">
+                  <label className="backtest-modal-label">Initial Balance ($)</label>
+                  <div className="backtest-field">
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={sessionDraft.initialBalance}
+                      onChange={(event) => updateSessionDraft('initialBalance', event.target.value)}
+                      placeholder="e.g. 10000"
+                      aria-label="Initial balance"
+                      autoComplete="off"
+                    />
+                  </div>
+                </div>
+
+                {sessionError && <div className="backtest-order-errors">{sessionError}</div>}
+
+                <button className="backtest-session-submit" type="submit" disabled={loadStatus === 'loading'}>
+                  <span>{loadStatus === 'loading' ? 'Loading session...' : 'Create session'}</span>
+                  <ChevronRight size={16} aria-hidden="true" />
+                </button>
+              </form>
+            </section>
+          </div>
+        )}
+
+
         {activeView === 'library' ? (
           <div className="backtest-session-shell backtest-session-shell--results-only">
             <div className="backtest-session-column backtest-session-column--results">
@@ -1141,91 +1245,8 @@ function BacktestingPage() {
 
         {journalStatus && <div className="backtest-status-note">{journalStatus}</div>}
       </div>
-
-      {activeView === 'library' && isCreateSessionModalOpen && (
-        <div className="backtest-session-modal" role="dialog" aria-modal="true" aria-labelledby="backtest-session-modal-title">
-          <button
-            className="backtest-session-modal__backdrop"
-            type="button"
-            aria-label="Close create session"
-            onClick={() => setIsCreateSessionModalOpen(false)}
-          />
-          <section className="backtest-session-card backtest-session-card--setup backtest-session-modal__panel">
-            <div className="backtest-session-card__header backtest-session-modal__header">
-              <span className="backtest-card-icon"><ChartLine size={16} aria-hidden="true" /></span>
-              <div>
-                <strong id="backtest-session-modal-title">Create backtest session</strong>
-              </div>
-              <button
-                className="backtest-session-modal__close"
-                type="button"
-                onClick={() => setIsCreateSessionModalOpen(false)}
-              >
-                Close
-              </button>
-            </div>
-
-            <form
-              id={BACKTEST_SESSION_FORM_ID}
-              className="backtest-session-form"
-              onSubmit={handleCreateSession}
-              autoComplete="off"
-            >
-              <label className="backtest-field">
-                <input
-                  value={sessionDraft.sessionName}
-                  onChange={(event) => updateSessionDraft('sessionName', event.target.value)}
-                  placeholder="Session name"
-                  aria-label="Session name"
-                  autoComplete="off"
-                />
-              </label>
-
-              <BacktestSymbolField
-                value={sessionDraft.symbol}
-                onChange={(value) => updateSessionDraft('symbol', value)}
-                instruments={instruments}
-                isLoading={instrumentsLoading}
-              />
-
-              <BacktestDateTimeField
-                label="Start time"
-                value={sessionDraft.startTime}
-                onChange={(value) => updateSessionDraft('startTime', value)}
-              />
-
-              <BacktestDateTimeField
-                label="End time"
-                value={sessionDraft.endTime}
-                onChange={(value) => updateSessionDraft('endTime', value)}
-              />
-
-              <label className="backtest-field">
-                <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  value={sessionDraft.initialBalance}
-                  onChange={(event) => updateSessionDraft('initialBalance', event.target.value)}
-                  placeholder="Initial balance"
-                  aria-label="Initial balance"
-                  autoComplete="off"
-                />
-              </label>
-
-              {sessionError && <div className="backtest-order-errors">{sessionError}</div>}
-
-              <button className="backtest-session-submit" type="submit" disabled={loadStatus === 'loading'}>
-                <span>{loadStatus === 'loading' ? 'Loading session...' : 'Create session'}</span>
-                <ChevronRight size={16} aria-hidden="true" />
-              </button>
-            </form>
-          </section>
-        </div>
-      )}
     </MainContentWrapper>
   );
 }
 
 export default BacktestingPage;
-

@@ -3,7 +3,6 @@
       to { transform: translateY(-100%); }
     }
 
-
     @media (prefers-reduced-motion: reduce) {
       .broker-track,
       .broker-track.track-two {

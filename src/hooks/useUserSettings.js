@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
-import { loadCachedUserSettings, loadUserSettings } from '../utils/userSettings';
+import { loadCachedUserSettings, loadUserSettings } from '../utils/user/userSettings';
 
 export const userSettingsQueryKey = (userId) => ['user-settings', userId || 'anonymous'];
 

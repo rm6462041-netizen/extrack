@@ -31,7 +31,7 @@ const featureCards = [
     text: 'Log entry, exit, screenshots, notes, risk, mistakes, setup quality and the lesson behind every position.',
     href: '/features/journal',
     link: 'Explore →',
-    bg: "linear-gradient(135deg, rgba(37,99,235,.52), rgba(2,6,23,.42)), url('https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=1000&q=80')",
+    bg: "url('/assets/landing/trades-list.png')",
   },
   {
     tag: 'Brokers',
@@ -39,7 +39,7 @@ const featureCards = [
     text: 'Keep Exness, IC Markets, Binance, Bybit, Zerodha, Angel One and popular brokers in one clean list.',
     href: '/features/brokers',
     link: 'View brokers →',
-    bg: "linear-gradient(135deg, rgba(124,58,237,.52), rgba(2,6,23,.44)), url('https://images.unsplash.com/photo-1642543492481-44e81e3914a7?w=1000&q=80')",
+    bg: 'none',
   },
   {
     tag: 'Analytics',
@@ -47,7 +47,7 @@ const featureCards = [
     text: 'Break down win rate, RR, symbols, weekdays, sessions and repeated behavior that quietly hurts performance.',
     href: '/analytics',
     link: 'Analyze ->',
-    bg: "linear-gradient(135deg, rgba(14,165,233,.50), rgba(2,6,23,.44)), url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1000&q=80')",
+    bg: "url('/assets/landing/stats-cards.png')",
   },
   {
     tag: 'Backtest',
@@ -55,13 +55,13 @@ const featureCards = [
     text: 'Practice entries, exits and risk rules with historical candles before risking money in live markets.',
     href: '/features/replay',
     link: 'Replay →',
-    bg: "linear-gradient(135deg, rgba(34,197,94,.42), rgba(2,6,23,.46)), url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1000&q=80')",
+    bg: 'none',
   },
 ];
 
 const statCards = [
   {
-    label: 'MT5 Account',
+    label: 'Trading Account',
     metric: '$12.4k',
     text: 'Live balance, equity and account health stay visible inside the same workspace.',
     bg: 'radial-gradient(circle at 18% 12%, rgba(255,255,255,.08), transparent 34%), radial-gradient(circle at 92% 12%, rgba(45,212,255,.10), transparent 26%), linear-gradient(135deg, #101012, #050506 58%, #010204)',
@@ -85,31 +85,31 @@ const modules = [
     eyebrow: 'Journal',
     title: 'Trade Journal',
     text: 'Track every setup, screenshot, mistake and lesson in one clean trading workspace built for serious review.',
-    bg: "url('https://images.unsplash.com/photo-1642790551116-18e150f248e8?auto=format&fit=crop&w=1000&q=80')",
+    bg: 'none',
   },
   {
     eyebrow: 'Analytics',
     title: 'Performance Analytics',
     text: 'See win rate, risk reward, daily PnL, mistakes and patterns without digging through messy spreadsheets.',
-    bg: "url('https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&w=1000&q=80')",
+    bg: "url('/assets/landing/radar-score.png')",
   },
   {
     eyebrow: 'Replay',
     title: 'Backtest Replay',
     text: 'Replay candles, place virtual trades, test strategy rules and build confidence before risking real capital.',
-    bg: "url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1000&q=80')",
+    bg: 'none',
   },
   {
     eyebrow: 'Brokers',
     title: 'Broker Directory',
     text: 'Organize broker names, market type and trading source cleanly with journal and analytics context.',
-    bg: "url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1000&q=80')",
+    bg: 'none',
   },
   {
     eyebrow: 'Risk',
     title: 'Risk Control',
     text: 'Keep risk visible with daily limits, position sizing, drawdown checks and rule-based trading stats.',
-    bg: "url('https://images.unsplash.com/photo-1639762681057-408e52192e55?auto=format&fit=crop&w=1000&q=80')",
+    bg: 'none',
   },
 ];
 
@@ -247,9 +247,9 @@ function LandingHome({ onLogin, onSignUp, onStartTracking, onGetStarted, onViewD
 
         <section className="image-peek-section" aria-label="Product image preview">
           <div className="image-peek-stage">
-            <img className="peek-image peek-image-left" src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&q=80" alt="Trading chart side preview" loading="lazy" decoding="async" />
-            <img className="peek-image peek-image-center" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&q=80" alt="Trading dashboard preview" loading="lazy" decoding="async" />
-            <img className="peek-image peek-image-right" src="https://images.unsplash.com/photo-1642790551116-18e150f248e8?w=1200&q=80" alt="Market replay side preview" loading="lazy" decoding="async" />
+            <img className="peek-image peek-image-left" src="/assets/landing/economic-calendar.png" alt="Economic calendar side preview" loading="lazy" decoding="async" />
+            <img className="peek-image peek-image-center" src="/assets/landing/pnl-calendar.png" alt="Trading dashboard preview" loading="lazy" decoding="async" />
+            <img className="peek-image peek-image-right" src="/assets/landing/trade-detail-strategy.png" alt="Trade review side preview" loading="lazy" decoding="async" />
           </div>
         </section>
 

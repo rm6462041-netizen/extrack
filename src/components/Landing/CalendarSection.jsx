@@ -11,7 +11,7 @@ const CalendarSection = () => {
           <div className="landing-mockup-card">
             <img
               alt="Trading Calendar"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtWB83srelfxja0FSRYrnpB7bLCyVVQV5dTM71QQqfjWKrS2NVCFp28p7_7jpvt_jghwJksZGF03uqgyQe2-_jIE2Xwl-zQVaUDZDva0lQI_ig0KknTxgE9h1Ha3N1xhhE7iSTKKWgdGSlsSCXk6WVL989MuFIBNSocXSk7euPdaorKFyTJN5DustwD12JdGwB-EaiNQKS2v3_aPN3YTVlzA5t_pvS7HCVNankv3XvCpYz8e7j-W5jLzO5uuQprdRKkAZYIWgnrnxAMLU"
+              src="/assets/landing/pnl-calendar.png"
             />
           </div>
         </div>

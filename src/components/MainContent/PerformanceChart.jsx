@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import Chart from '../../utils/chartSetup';
-import './PerformanceChart.css';
-import { formatCurrency } from '../../utils/Currency';
+import Chart from '../../utils/chart/chartSetup';
+import { formatCurrency } from '../../utils/user/Currency';
 import { useTheme } from '../../context/ThemeContext';
-import { getTradeDisplayDate, getTradeDisplayTime, toTradeDateKey } from '../../utils/tradeTime';
-import InfoTooltip from '../Common/InfoTooltip';
+import { getTradeDisplayDate, getTradeDisplayTime, toTradeDateKey } from '../../utils/trading/tradeTime';
+import InfoTooltip from '../Common/InfoTooltip/InfoTooltip';
+import { Card, CardHeader, CardTitle } from '@/components/Common/base';
 
 const formatCompactNumber = (value) => (
   new Intl.NumberFormat('en-US', {
@@ -14,11 +14,17 @@ const formatCompactNumber = (value) => (
   }).format(value)
 );
 
+const cumulativePnL = (values) => {
+  let total = 0;
+  return values.map((value) => (total += value));
+};
+
 function PerformanceChart({
   trades,
   currencyCode = 'USD',
   title = 'Daily Net Cumulative P&L',
   groupBy = 'day',
+  className = '',
 }) {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
@@ -60,16 +66,12 @@ function PerformanceChart({
     return { labels, data };
   }, [groupBy, trades]);
 
-  const cumulativePnL = (values) => {
-    let total = 0;
-    return values.map((value) => {
-      total += value;
-      return total;
-    });
-  };
+  const hasData = labels.length > 0;
+  const latestData = useRef({ labels, data });
+  latestData.current = { labels, data };
 
   useEffect(() => {
-    if (!chartRef.current) {
+    if (!chartRef.current || !hasData) {
       chartInstance.current?.destroy();
       chartInstance.current = null;
       return undefined;
@@ -82,7 +84,6 @@ function PerformanceChart({
     const isDark = Boolean(darkMode);
     const theme = getComputedStyle(document.body);
     const accentDanger = theme.getPropertyValue('--accent-danger').trim() || '#ef4444';
-    const textPrimary = isDark ? '#f8fafc' : '#0f172a';
     const textSecondary = isDark ? '#f8fafc' : '#0f172a';
     const positiveLine = isDark ? '#4fb889' : '#2f8f63';
     const negativeLine = isDark ? '#f87171' : accentDanger;
@@ -92,62 +93,56 @@ function PerformanceChart({
     const tooltipBg = isDark ? '#0b0b0b' : '#ffffff';
     const tooltipText = isDark ? '#f8fafc' : '#0f172a';
     const tooltipBorder = isDark ? '#2a2a2a' : '#cbd5e1';
-    const curveData = cumulativePnL(data);
 
     chartInstance.current = new Chart(ctx, {
       type: 'line',
       data: {
-        labels,
+        labels: latestData.current.labels,
         datasets: [
           {
-            data: curveData,
-            borderColor: positiveLine,
-            borderWidth: isMobile ? 0.9 : 1,
-            fill: 'origin',
-            tension: 0.18,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            pointHitRadius: 18,
-            pointHoverBackgroundColor: textPrimary,
-            pointHoverBorderColor: '#ffffff',
-            pointHoverBorderWidth: 2,
-            segment: {
-              borderColor: (context) => (context.p1.parsed.y >= 0 ? positiveLine : negativeLine),
-              backgroundColor: (context) =>
-                context.p1.parsed.y >= 0
-                  ? 'rgba(88, 212, 126, 0.18)'
-                  : isDark
-                    ? 'rgba(248, 113, 113, 0.14)'
-                    : 'rgba(239, 68, 68, 0.14)',
+            label: 'Cumulative P&L',
+            data: cumulativePnL(latestData.current.data),
+            borderColor: (context) => {
+              const currentVal = context.raw ?? 0;
+              return currentVal >= 0 ? positiveLine : negativeLine;
             },
             backgroundColor: (context) => {
-              const chart = context.chart;
-              const { ctx: chartCtx, chartArea } = chart;
+              const { chart } = context;
+              const { ctx: c, chartArea } = chart;
+              if (!chartArea) return null;
 
-              if (!chartArea) {
-                return positiveFillMid;
+              const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+              const currentVal = context.raw ?? 0;
+
+              if (currentVal >= 0) {
+                gradient.addColorStop(0, positiveFillTop);
+                gradient.addColorStop(0.5, positiveFillMid);
+                gradient.addColorStop(1, 'rgba(47, 143, 99, 0.02)');
+              } else {
+                gradient.addColorStop(0, negativeFill);
+                gradient.addColorStop(1, 'rgba(239, 68, 68, 0.02)');
               }
 
-              const gradient = chartCtx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-              gradient.addColorStop(0, positiveFillTop);
-              gradient.addColorStop(0.62, positiveFillMid);
-              gradient.addColorStop(1, negativeFill);
               return gradient;
             },
+            fill: true,
+            tension: 0.32,
+            borderWidth: 1.5,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            pointHoverBackgroundColor: (context) => {
+              const currentVal = context.raw ?? 0;
+              return currentVal >= 0 ? positiveLine : negativeLine;
+            },
+            pointHoverBorderColor: '#ffffff',
+            pointHoverBorderWidth: 2,
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: {
-          padding: {
-            top: isMobile ? 4 : 0,
-            right: isMobile ? 2 : 0,
-            bottom: isMobile ? 2 : 0,
-            left: 0,
-          },
-        },
+        animation: { duration: 300 },
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -156,28 +151,25 @@ function PerformanceChart({
             bodyColor: tooltipText,
             borderColor: tooltipBorder,
             borderWidth: 1,
-            padding: 10,
+            padding: 8,
+            cornerRadius: 8,
             displayColors: false,
-            intersect: false,
             callbacks: {
-              title: (items) => items?.[0]?.label || '',
-              label: (tooltip) => formatCurrency(tooltip.parsed.y, currencyCode),
+              title: (items) => items[0]?.label || '',
+              label: (context) => `P&L: ${formatCurrency(context.raw, currencyCode)}`,
             },
           },
         },
         scales: {
           x: {
-            offset: true,
-            grid: { display: false, drawBorder: false, drawOnChartArea: false, drawTicks: false },
+            display: true,
+            grid: { display: false },
             border: { display: false },
             ticks: {
               color: textSecondary,
-              font: { size: isMobile ? 10 : 11, weight: '600' },
-              autoSkip: true,
-              maxTicksLimit: isMobile ? 5 : 7,
-              padding: 6,
-              callback: function (value, index) {
-                if (index === 0) return '';
+              font: { size: 10 },
+              maxTicksLimit: isMobile ? 4 : 6,
+              callback: function callback(value) {
                 return this.getLabelForValue(value);
               },
             },
@@ -185,20 +177,15 @@ function PerformanceChart({
           y: {
             display: true,
             grid: {
-              display: false,
-              color: 'transparent',
+              color: isDark ? '#2a2a2a' : '#e2e8f0',
               drawBorder: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              lineWidth: 0,
             },
             border: { display: false },
             ticks: {
               color: textSecondary,
-              display: true,
-              padding: 3,
-              maxTicksLimit: isMobile ? 5 : 7,
-              font: { size: 11, weight: '600' },
+              padding: 6,
+              maxTicksLimit: 5,
+              font: { size: 10 },
               callback: (value) => formatCompactNumber(value),
             },
           },
@@ -207,39 +194,48 @@ function PerformanceChart({
           intersect: false,
           mode: 'nearest',
         },
-        elements: {
-          line: {
-            borderWidth: isMobile ? 0.9 : 1,
-          },
-        },
       },
     });
 
-    return () => chartInstance.current?.destroy();
-  }, [currencyCode, darkMode, data, labels]);
+    const instance = chartInstance.current;
+    return () => {
+      instance.destroy();
+      if (chartInstance.current === instance) chartInstance.current = null;
+    };
+  }, [currencyCode, darkMode, hasData]);
+
+  useEffect(() => {
+    const instance = chartInstance.current;
+    if (!instance) return;
+    instance.data.labels = labels;
+    instance.data.datasets[0].data = cumulativePnL(data);
+    instance.update('none');
+  }, [data, labels]);
 
   return (
-    <div className="chart-card performance-card">
-      <div className="performance-header">
-        <h3 className="app-panel-title">{title}</h3>
-        <InfoTooltip
-          text="Tracks cumulative net P&L over time so you can see your equity curve."
-          size={13}
-          side="bottom-left"
-        />
-      </div>
+    <Card className={`w-full h-full min-h-0 flex flex-col overflow-hidden ${className}`.trim()} padding="none">
+      <CardHeader className="flex items-center gap-2 p-3.5 pb-2 mb-0 border-b border-[var(--divider-strong)] min-h-[var(--title-card-row-height)] flex-nowrap shrink-0">
+        <div className="inline-flex items-center gap-2 flex-nowrap min-w-0">
+          <CardTitle className="text-xs sm:text-sm font-semibold text-[var(--text-primary)]">{title}</CardTitle>
+          <InfoTooltip
+            text="Tracks cumulative net P&L over time so you can see your equity curve."
+            size={13}
+            side="bottom-left"
+          />
+        </div>
+      </CardHeader>
 
-      <div className="chart-container">
+      <div className="flex-1 min-h-0 p-2 sm:p-3 flex relative w-full h-full">
         {labels.length === 0 ? (
-          <div className="dashboard-empty-state">
-            <strong>No trades yet</strong>
-            <span>Cumulative P&L will appear here once trades match the current filter.</span>
+          <div className="flex flex-col items-center justify-center p-6 text-center text-[var(--text-secondary)] w-full">
+            <strong className="text-[var(--heading)] font-semibold mb-1">No trades yet</strong>
+            <span className="text-xs">Cumulative P&L will appear here once trades match the current filter.</span>
           </div>
         ) : (
-          <canvas ref={chartRef} />
+          <canvas ref={chartRef} className="w-full h-full block" />
         )}
       </div>
-    </div>
+    </Card>
   );
 }
 

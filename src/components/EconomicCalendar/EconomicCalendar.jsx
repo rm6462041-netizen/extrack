@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NEWS from "../Analytics/NEWS";
-import LegacyIcon from "../Common/LegacyIcon";
+import NEWS from "./NEWS";
+import LegacyIcon from "../Common/LegacyIcon/LegacyIcon";
 import EconomicCalendarWidget from "./EconomicCalendarWidget";
-import "../Analytics/Analytics.css";
+import "./EconomicCalendar.css";
 import { useAuth } from "../../context/AuthContext";
-import { loadCachedUserSettings, saveUserSettings } from "../../utils/userSettings";
+import { loadCachedUserSettings, saveUserSettings } from "../../utils/user/userSettings";
 import MainContentWrapper from "../Layout/MainContentWrapper";
 import PageHeader from "../Layout/PageHeader";
 import { useUserSettings } from "../../hooks/useUserSettings";

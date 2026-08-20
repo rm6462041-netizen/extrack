@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html data-area="404" data-ip="135.232.200.36" data-userAccessFrom="outside" data-country="us" data-locale="en">
+	<head>
+		<meta name="apple-mobile-web-app-status-bar-style" content="white"/>
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="theme-color" content="#000000">
+		<title>404 | IC Trading Partners</title>
+		<meta data-n-head="true" charset="utf-8">
+		<meta data-n-head="true" name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width, minimal-ui">
+		<meta data-n-head="true" name="description" content="IC Trading Partners Portal">
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+		
+
+        <link rel="stylesheet" href="/stylesheets/style.css?v=1783753463557">
+		<script nonce="endfunc9" src="/javascripts/moment.min.js" charset="utf-8"></script>
+		<!-- <script src="/javascripts/jquery.min.js" charset="utf-8"></script> -->
+		<script nonce="endfunc8" src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+
+		
+
+		<script nonce="endfunc5" async src="/javascripts/js.cookie.min.js" charset="utf-8"></script>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script nonce="endfunc6" async src="https://www.googletagmanager.com/gtag/js?id=G-QM3YBSX55C"></script>
+		<script nonce="endfunc7">
+			window.dataLayer = window.dataLayer || [];
+			function gtag() { dataLayer.push(arguments); }
+			gtag('js', new Date());
+			gtag('config', 'G-QM3YBSX55C');
+		</script>
+	</head>
+	<body>
+        <div class="overlay"></div>
+        <div class="clearlay"></div>
+		<!DOCTYPE html>
+<html lang="en" data-ip="135.232.200.36" data-userAccessFrom="outside"  data-country="us" data-locale="en">
+
+<head>
+  
+  <title>404</title>
+  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+</head>
+<style>
+    #oopss {
+  position: fixed;
+  left: 0px;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  line-height: 1.5em;
+  z-index: 9999;
+  display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+#oopss #error-text {
+  font-size: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Shabnam', Tahoma, sans-serif;
+  color: #000;
+  direction: rtl;
+}
+#oopss #error-text img {
+  margin: 85px auto 20px;
+  height: 342px;
+}
+#oopss #error-text span {
+  position: relative;
+  font-size: 3.3em;
+  font-weight: 900;
+  margin-bottom: 50px;
+}
+#oopss #error-text p.p-a {
+  font-size: 19px;
+  margin: 30px 0 15px 0;
+}
+#oopss #error-text p.p-b {
+  font-size: 15px;
+}
+#oopss #error-text .back {
+  background: #fff;
+  color: #000;
+  font-size: 30px;
+  text-decoration: none;
+  margin: 2em auto 0;
+  padding: .7em 2em;
+  border-radius: 500px;
+  box-shadow: 0 20px 70px 4px rgba(0, 0, 0, 0.1), inset 7px 33px 0 0px #fff300;
+  font-weight: 900;
+  transition: all 300ms ease;
+}
+#oopss #error-text .back:hover {
+  -webkit-transform: translateY(-13px);
+          transform: translateY(-13px);
+  box-shadow: 0 35px 90px 4px rgba(0, 0, 0, 0.3), inset 0px 0 0 3px #000;
+}
+
+@media screen and (max-width: 650px) {
+  #oopss #error-text span {
+    font-size: 1.3em;
+    margin: 0 0;
+  }
+
+  #oopss #error-text p.p-a {
+      font-size: 14px;
+  }
+}
+
+
+</style>
+<body>
+
+  <div id='oopss'>
+    <div id='error-text'>
+        <span class="text-white">404 PAGE</span>
+        <p class="p-a text-white">
+           . The page you were looking for could not be found</p>
+    </div>
+</div>
+  
+  
+
+</body>
+
+</html>
+		<script nonce="endfunc1" src="/javascripts/jquery.min.js?v=1783753463557" charset="utf-8"></script>
+		<script nonce="endfunc2" src="https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" onload="(function tpInit() {var trustbox = $('.trustpilot-widget')[0]; if (trustbox && window.Trustpilot) {window.Trustpilot.loadFromElement(trustbox);}})()"></script>
+		<script nonce="endfunc3" src="/javascripts/main.js?v=1783753463557" charset="utf-8"></script>
+		<script nonce="endfunc4">
+			if(window.location.pathname.endsWith('/apply')) {
+				var formApp = {
+					data: function () {
+						return {
+							firstNameVal: "",
+							lastNameVal: "",
+							emailVal: "",
+							dobDay: "",
+							dobMonth: "",
+							dobYear: "",
+							countryVal: "",
+							phoneNumberVal: "",
+							addressVal: "",
+							stateVal: "",
+							zipVal: "",
+							cityVal: "",
+							declarationVal: "",
+							tacVal: "",
+							branchVal: "",
+
+							formError: false,
+							formErrorDescription: "",
+							formSended: false,
+							countries: [],
+							userGeoIP: null,
+							gRecaptchaResponse: ""
+						}
+					},
+					mounted: function () {
+						this.getCountriesAndBranches();
+						$('.form-block').on('change keyup touchend', 'input, select', this.validateField.bind(this));
+						$('.form-block .submit').on('pointerup', this.handleFormSubmit.bind(this))
+						$('.form-block .clear').on('click touchend', this.handleFormClear.bind(this))
+					},
+					validateField: function (e) {
+						var $el = $(e.target);
+						var field = $el.attr('data-model');
+						this[field] = $el.val();
+						if (field === 'countryVal') {
+							this.onCountryChange(this[field]);
+						}
+						$el.toggleClass('invalid', !$el[0].checkValidity());
+						var $form = $el.closest('form');
+						var valid = true;
+						$form.find('[required]').each(function () {
+							if (!$(this).val() || $(this).is('.invalid') || $(this).val() == 'off' || !$(this).val().length) {
+								valid = false;
+							}
+						});
+						if (valid) {
+							$form.find('[required]').each(function () {
+								$(this).toggleClass('invalid', !$(this)[0].checkValidity());
+								if ($(this).is('.invalid') || $(this).val() == 'off' || !$(this).val().length) {
+									valid = false;
+								}
+							});
+						}
+						$form.toggleClass('invalid', !valid);
+					},
+					setBranch: function (branchSelect, countryCode) {
+						var country = serverCountries.find(function (_) { return _.code === countryCode; });
+												if (country && country.branching) {
+							var defaultBranchByCountry = {};
+							// default with status 1
+							defaultBranchByCountry = country.branching.find(function (item) {
+								return item && item.status === '1' && item.default === true && item.branch !== '2';
+								});
+							if (!defaultBranchByCountry) {
+								// any with status 1
+								defaultBranchByCountry = country.branching.find(function (item) {
+									return item && item.status === '1';
+								});
+								}
+							var IDs = Object.keys(
+								country.branching
+									.filter(function (_) { return !!_.branch && _.status === '1'; })
+									.map(function (_) { return _.branch; })
+									.reduce(
+										function (_set, branch) {
+											_set[branch] = true;
+											return _set;
+										},
+										{}
+									)
+							);
+								this.fillBranches(serverBranches.filter(function (_) { return IDs.includes(_.ID); }))
+														if (defaultBranchByCountry) {
+								branchSelect.value = defaultBranchByCountry.branch;
+																this.branchVal = defaultBranchByCountry.branch;
+															}
+						}
+					},
+					onCountryChange: function (countryVal) {
+						this.setPhoneByCountry(this.getCountryByCode(countryVal));
+						this.setBranch(branch, countryVal);
+					},
+					checkEmail: function (email) {
+						var $def = $.Deferred();
+						this.getSignToken().then(function (token) {
+							$.get("https://prod-regapi.icmarkets.com/?getAction=check_branched_email&data=" + email + "&branch=12&request_from=PartnershipsForm&sign=" + token
+							).done(function (data) {
+								if (data && data !== 'used') {
+									$def.resolve(true);
+								} else {
+									$def.resolve(false);
+								}
+							}).fail(function (e) {
+								$def.resolve(false);
+							});
+						});
+						return $def.promise();
+					},
+					setError: function (error) {
+						error = error || '<s key="form_20" >An error has occurred</s>';
+						var errorBlock = $('.form-error-info');
+						var errorBlockText = $('.form-error-info .error-description');
+						var successBlock = $('.form-sended-info');
+						successBlock.hide();
+						errorBlock.show();
+						errorBlockText.html(error);
+					},
+					clearResult: function () {
+						var errorBlock = $('.form-error-info');
+						var errorBlockText = $('.form-error-info .error-description');
+						var successBlock = $('.form-sended-info');
+						successBlock.hide();
+						errorBlock.hide();
+						errorBlockText.html('');
+					},
+					handleFormSubmit: function (e) {
+						var self = this;
+						var form = $('.form-block')[0];
+						$('.form-block input').change();
+						var valid = form.checkValidity();
+						var buttonsBlock = $('.form-block__submit-button-block')
+						var d = Number(self.dobDay);
+						var m = Number(self.dobMonth);
+						var y = Number(self.dobYear);
+						var dob = new Date(y, m, d, 23);
+						var currentDate = new Date();
+						var diff = currentDate - dob;
+						var diffYears = diff / (1000 * 60 * 60 * 24 * 365);
+						var birthYearsValid = diffYears > 18;
+						var dateValid = false;
+						var gRecaptchaResponse = $('#g-recaptcha-response').val();
+						
+						// Phone validation with libphonenumber-js
+						var phoneVal = self.phoneNumberVal ? self.phoneNumberVal.trim() : '';
+						var phoneValid = true;
+						if (phoneVal && typeof libphonenumber !== 'undefined') {
+							try {
+								phoneValid = libphonenumber.isValidPhoneNumber(phoneVal);
+							} catch (err) {
+								console.error('Phone validation error:', err);
+								phoneValid = false;
+							}
+						}
+						
+						if (dob.getDate() === d && dob.getMonth() === m && dob.getFullYear() === y) {
+							dateValid = true;
+						}
+							if (!self.countries) {
+							return false;
+						}
+							var selectedCountry = self.countries.find(function (c) {
+							return (c.code === self.countryVal)
+						});
+						var allowed = false;
+						if (selectedCountry && selectedCountry.branching) {
+							var branch = selectedCountry.branching.find(function (b) {
+								return b.default === true && b.status === "1";
+							});
+							if (branch) {
+								allowed = true;
+							}
+						}
+						if (!birthYearsValid) {
+							self.setError('<s key="form_21" >Individuals under 18 years of age are not allowed to join.</s>');
+							setTimeout(self.clearResult, 5000);
+							document.querySelector('.submit').classList.remove('disabled-style');
+							return;
+						}
+						if (!dateValid) {
+							self.setError('<s key="form_22" >The date you provided is incorrect.<br><br>Please check again.</s>');
+							setTimeout(self.clearResult, 5000);
+							document.querySelector('.submit').classList.remove('disabled-style');
+							return;
+						}
+						// if (!allowed) {
+						// 	self.setError('<s key="form_23" >We cannot proceed with your application as it is not yet available in your region.</s>');
+						// 	setTimeout(self.clearResult, 5000);
+						// 	return;
+						// }
+						if(!gRecaptchaResponse) {
+							self.setError('<s key="form_google_recaptcha" >Please select recaptcha</s>');
+							setTimeout(self.clearResult, 5000);
+							document.querySelector('.submit').classList.remove('disabled-style');
+							return;
+						}
+						if (phoneVal && !phoneValid) {
+							$('#phone').addClass('is-invalid').addClass('invalid');
+							// Error message is shown inline by phoneValidation.js
+							document.querySelector('.submit').classList.remove('disabled-style');
+							return;
+						}
+						if (form && valid && birthYearsValid && this.emailVal) {
+							// Disable button now that validation passed
+							var submitBtnEl = document.querySelector('.submit');
+							submitBtnEl.classList.add('disabled-style');
+							submitBtnEl.classList.add('submitting');
+							// hide invalid validation
+							this.checkEmail(this.emailVal).then(function (canContinue) {
+								if (canContinue) {
+									var country = self.getCountryByCode(self.countryVal) || {};
+									var data = {
+										first_name: self.firstNameVal,
+										last_name: self.lastNameVal,
+										email: self.emailVal,
+										address: self.addressVal,
+										state: self.stateVal,
+										zip_code: self.zipVal,
+										city: self.cityVal,
+										country: country.name,
+										phone: self.phoneNumberVal,
+										submitIntroBroker: "Partnership",
+										branch_id: "12",
+										gRecaptchaResponse
+									};
+									self.onContactFormSubmit(data);
+								} else {
+									// Already USED or Incorrect EMAIL
+									self.setError('<s key="form_24" >This email address is already registered with us.<br><br>If you are a client with us, apply via the client area.</s>');
+									$('#emailaddress').toggleClass('invalid', true);
+									// show invalid email validation
+									setTimeout(self.clearResult, 5000);
+									document.querySelector('.submit').classList.remove('disabled-style');
+									document.querySelector('.submit').classList.remove('submitting');
+								}
+							});
+						} else {
+							self.setError('<s key="form_25" >Please fill all required fields</s>');
+							setTimeout(self.clearResult, 5000);
+							document.querySelector('.submit').classList.remove('disabled-style');
+						}
+					},
+					handleFormClear: function (e) {
+						this.formErrorDescription = "";
+						this.firstNameVal = "";
+						this.lastNameVal = "";
+						this.emailVal = "";
+						this.addressVal = "";
+						this.stateVal = "";
+						this.zipVal = "";
+						this.cityVal = "";
+						this.phoneNumberVal = "";
+						this.declarationVal = "";
+						this.tacVal = "";
+						$('.form-block input').val('')
+						if (this.userGeoIP) {
+							this.countryVal = this.userGeoIP.countryCode;
+							$('#country').val(this.countryVal)
+							this.setPhoneByCountry(this.getCountryByCode(this.userGeoIP.countryCode));
+						} else {
+							this.countryVal = "AU";
+						}
+						this.setBranch(branch, this.countryVal);
+						$('.form-block').toggleClass('invalid', true);
+						if (e !== true) $('.form-sended-info').hide();
+					},
+					getSignToken: function () {
+						var $def = $.Deferred();
+						$.get('https://prod-regapi.icmarkets.com/~get~sign~token~?nocache=' + Date.now()).done(function (token) {
+							$def.resolve(token);
+						}).fail(function () {
+							$def.resolve(null);
+						});
+						return $def.promise();
+					},
+					getCountryByCode: function (code) {
+						var res = null;
+						var c;
+						for (var i in this.countries) {
+							c = this.countries[i];
+							if (c && c.code == code) {
+								res = c;
+								break;
+							}
+						} 
+						return res;
+					},
+					getUserGeoIP: function () {
+						var $def = $.Deferred();
+						$.get("https://pro.ip-api.com/json/?key=xylJvTwPTjbRGfQ").done(function (done) {
+							$def.resolve(done);
+						}).fail(function (fail) {
+							$def.reject(null);
+						});
+						return $def.promise();
+					},
+					detectUserCountry: function (filteredCountries) {
+						let self = this;
+						this.getUserGeoIP().then(function (userGeoIP) {
+							if (userGeoIP && filteredCountries.find(function (c) { return c.code === userGeoIP.countryCode; })) {
+								$('#country').val(userGeoIP.countryCode)
+								self.countryVal = userGeoIP.countryCode;
+								self.setBranch(branch, self.countryVal);
+								self.userGeoIP = userGeoIP;
+								self.setPhoneByCountry(self.getCountryByCode(userGeoIP.countryCode));
+							} else {
+								var fallbackCountry = filteredCountries[0];
+								$('#country').val(fallbackCountry.code);
+								self.countryVal = fallbackCountry.code;
+								self.setBranch(branch, self.countryVal);
+								self.setPhoneByCountry(fallbackCountry);
+							}
+						});
+					},
+					setPhoneByCountry: function (country) {
+						if (country?.tel) {
+							const cleanTel = String(country.tel).replace(/[^\d+]|(?<=.)\+/g, '');
+							this.phoneNumberVal = cleanTel;
+							$('#phone').val(cleanTel);
+						}
+					},
+					getCountriesAndBranches: function () {
+						let self = this;
+						this.getSignToken().then(function (token) {
+							$.ajax({
+								dataType: "json",
+								url: "https://prod-regapi.icmarkets.com/?getData&request_from=PartnershipsForm&sign=" + token,
+								success: function (data) {
+									window['serverCountries'] = data.countries;
+									window['serverBranches'] = data.branches.filter(function (b) { return b.ID !== '2'; });
+									self.fillBranches(serverBranches);
+									var filteredCountries = data.countries.filter((c) => (c && c.branching && c.code !== 'AU' && c.branching.find(b => b.branch == 12 && b.status == 1)));
+									self.fillCountries(filteredCountries);
+									
+									self.detectUserCountry(filteredCountries);
+								},
+								fail: function (err) {
+									console.error('FAIL', err);
+								}
+							});
+						});
+					},
+					fillCountries: function (countries) {
+						this.countries = countries
+						countries.forEach(function (country) {
+							$('#country').append($('<option>', {
+								html: country.name,
+								value: country.code,
+								'data-phone': country.phone
+							}))
+						})
+					},
+					fillBranches: function (branches) {
+						$('#branch').empty()
+						branches.forEach(function (branch) {
+							$('#branch').append($('<option>', {
+								html: branch.Name,
+								value: branch.ID
+							}))
+						})
+					},
+					onContactFormSubmit: function (formInput) {
+						let self = this;
+						this.getSignToken().then(function (token) {
+							formInput.ip = (self.userGeoIP && self.userGeoIP.query) ? self.userGeoIP.query : null;
+							formInput.sign = token;
+							let buttonsBlock = document.querySelector('.form-block__submit-button-block');
+							if (buttonsBlock) buttonsBlock.style.display = 'none';
+							$.ajax({
+								type: 'POST',
+								url: 'https://prod-regapi.icmarkets.com',
+								dataType: "json",
+								data: formInput
+							}).done(function (data) {
+								self.formErrorDescription = "";
+								let clearButton = $('.form-block .form-block__submit-button-block .clear');
+								self.formSended = true;
+								if (data && data.status && data.status == "success") {
+									self.formError = false;
+									// $('.form-sended-info').show();
+									setTimeout(function () {
+										self.handleFormClear(true)
+										// var link = data.link;
+										// link = link.replace(/\/ \//g, '/').replace(/%2f/g, '/').replace(/%3f/g, '?');
+										// link = link.replace("ReturnUrl=/OpenAccount/OpenDemoAccount", "ReturnUrl=/Requests/RequestPartner")
+										// window.location = link;
+										const popup = $('#popup');
+										popup.addClass('d-block');
+									}, 1000);
+								} else {
+									if (data && data.error && data.error.indexOf("ErrorMessage") !== -1) {
+										var desc = JSON.parse(data.error);
+										self.setError(desc["ErrorMessage"]);
+									} else {
+										self.setError();
+									}
+									setTimeout(function () {
+										self.handleFormClear()
+									}, 5000);
+								}
+							}).fail(function (error) {
+								self.setError()
+							});
+						});
+					}
+				}
+
+				$(document).ready(formApp.mounted.bind(formApp))
+
+				$('.form-error-info .btn').click(function() {
+					$('.form-error-info').hide()
+				});
+
+				$('.form-error-icon').click(function() {
+					$('.form-error-info').hide()
+				});
+			}
+		</script>
+	</body>
+</html>

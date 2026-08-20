@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import Chart from '../../utils/chartSetup';
-import './ActivityChart.css';
-import { formatCurrency } from '../../utils/Currency';
+import Chart from '../../utils/chart/chartSetup';
+import { formatCurrency } from '../../utils/user/Currency';
 import { useTheme } from '../../context/ThemeContext';
-import { toTradeDateKey } from '../../utils/tradeTime';
-import InfoTooltip from '../Common/InfoTooltip';
+import { toTradeDateKey } from '../../utils/trading/tradeTime';
+import InfoTooltip from '../Common/InfoTooltip/InfoTooltip';
+import { Card, CardHeader, CardTitle } from '@/components/Common/base';
 
 const formatCompactNumber = (value) => (
   new Intl.NumberFormat('en-US', {
@@ -14,7 +14,7 @@ const formatCompactNumber = (value) => (
   }).format(value)
 );
 
-function ActivityChart({ trades, currencyCode = 'USD' }) {
+function ActivityChart({ trades, currencyCode = 'USD', className = '' }) {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
   const { darkMode = false } = useTheme() || {};
@@ -199,32 +199,29 @@ function ActivityChart({ trades, currencyCode = 'USD' }) {
   }, [currencyCode, dailyPnlData, darkMode, labels]);
 
   return (
-    <div className="activity-card--daily-pnl">
-      <div className="activity-card__header">
-        <div className="activity-card__title-wrap">
-          <div className="activity-card__title-row">
-            <h3 className="app-panel-title">Net Daily P&L</h3>
-            <InfoTooltip
-              text="Shows each trading day's net P&L as a bar."
-              size={13}
-              side="bottom-left"
-            />
-          </div>
+    <Card className={`w-full h-full min-h-0 flex flex-col overflow-hidden ${className}`.trim()} padding="none">
+      <CardHeader className="flex items-center gap-2 p-3.5 pb-2 mb-0 border-b border-[var(--divider-strong)] min-h-[var(--title-card-row-height)] flex-nowrap shrink-0">
+        <div className="inline-flex items-center gap-2 flex-nowrap min-w-0">
+          <CardTitle className="text-xs sm:text-sm font-semibold text-[var(--text-primary)]">Net Daily P&L</CardTitle>
+          <InfoTooltip
+            text="Shows each trading day's net P&L as a bar."
+            size={13}
+            side="bottom-left"
+          />
         </div>
+      </CardHeader>
 
-      </div>
-
-      <div className="activity-card__chart-shell">
+      <div className="flex-1 min-h-0 p-3 flex relative w-full h-full">
         {labels.length === 0 ? (
-          <div className="dashboard-empty-state">
-            <strong>No trades yet</strong>
-            <span>Daily P&L will appear here once trades match the current filter.</span>
+          <div className="flex flex-col items-center justify-center p-6 text-center text-[var(--text-secondary)] w-full">
+            <strong className="text-[var(--heading)] font-semibold mb-1">No trades yet</strong>
+            <span className="text-xs">Daily P&L will appear here once trades match the current filter.</span>
           </div>
         ) : (
-          <canvas ref={chartRef} />
+          <canvas ref={chartRef} className="w-full h-full block" />
         )}
       </div>
-    </div>
+    </Card>
   );
 }
 

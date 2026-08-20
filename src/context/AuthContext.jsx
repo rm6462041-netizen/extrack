@@ -1,9 +1,9 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
-import api from '../utils/serve';
-import { clearClientStorage } from '../utils/clientStorage';
-import { markPerf, measurePerf } from '../utils/perfMarks';
+import api from '../utils/common/serve';
+import { clearClientStorage } from '../utils/storage/clientStorage';
+import { markPerf, measurePerf } from '../utils/common/perfMarks';
 
 const AuthContext = createContext(null);
 const AUTH_STORAGE_KEY = 'authUser';

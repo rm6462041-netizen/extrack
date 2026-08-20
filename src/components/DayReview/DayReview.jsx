@@ -12,11 +12,11 @@ import {
   TrendingDown,
   TrendingUp,
 } from '../../icons/lucideIcons';
-import SymbolWithIcon from '../Common/SymbolWithIcon';
+import SymbolWithIcon from '../Common/SymbolWithIcon/SymbolWithIcon';
 import MainContentWrapper from '../Layout/MainContentWrapper';
 import PageHeader from '../Layout/PageHeader';
-import { formatCurrency } from '../../utils/Currency';
-import { getTradeDisplayDate, getTradeDisplayTime, getTradeOpenDate, toTradeDateKey } from '../../utils/tradeTime';
+import { formatCurrency } from '../../utils/user/Currency';
+import { getTradeDisplayDate, getTradeDisplayTime, getTradeOpenDate, toTradeDateKey } from '../../utils/trading/tradeTime';
 import './DayReview.css';
 
 const PerformanceChart = lazy(() => import('../MainContent/PerformanceChart'));
@@ -426,10 +426,10 @@ function DayReview({ trades = [], currencyCode = 'USD' }) {
           ) : (
             dayTrades.map((trade) => (
               <button
-                key={trade.unique_id || trade.id || `${trade.open_timestamp || ''}-${trade.close_timestamp || ''}`}
+                key={trade.unique_id}
                 className="day-review-trade-row"
                 type="button"
-                onClick={() => navigate(`/trade/${trade.unique_id || trade.id}`, { state: { tradeData: trade } })}
+                onClick={() => navigate(`/trade/${trade.unique_id}`, { state: { tradeData: trade } })}
               >
                 <div className="day-review-trade-main">
                   <SymbolWithIcon symbol={trade.symbol} />

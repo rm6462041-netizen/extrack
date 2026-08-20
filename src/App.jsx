@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useMemo, useRef, lazy, Suspense } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Agentation } from 'agentation';
 import './styles/app-shell.css';
 import './styles/mobile.css';
+import './styles/globals.css';
 
-import { TradeManager } from './utils/tradeManager';
-import { API_URL, WS_URL } from './utils/constants';
+import { TradeManager } from './utils/trading/tradeManager';
+import { API_URL, WS_URL } from './utils/common/constants';
 import { ThemeProvider } from './context/ThemeContext'; 
 import { useAuth } from './context/AuthContext';
-import api from './utils/serve';
-import { convertCurrency, normalizeCurrencyCode } from './utils/Currency';
-import { getTradeDisplayDate } from './utils/tradeTime';
-import { loadCachedUserSettings, saveUserSettings } from './utils/userSettings';
+import api from './utils/common/serve';
+import { convertCurrency, convertTradePnlForDisplay, normalizeCurrencyCode } from './utils/user/Currency';
+import { getTradeDisplayDate } from './utils/trading/tradeTime';
+import { loadCachedUserSettings, saveUserSettings } from './utils/user/userSettings';
 import { useUserSettings } from './hooks/useUserSettings';
-import { markPerf, measurePerf } from './utils/perfMarks';
+import { markPerf, measurePerf } from './utils/common/perfMarks';
 import VerifyEmailPage from './components/Auth/VerifyEmailPage';
 import ResetPasswordPage from './components/Auth/ResetPasswordPage';
 import ProfileOnboardingPage from './components/Auth/ProfileOnboardingPage';
@@ -27,9 +29,10 @@ import PageHeader from './components/Layout/PageHeader';
 // These will load only when needed (Code Splitting)
 const Dashboard = lazy(() => import('./components/dashboard/dashboard'));
 const AddTrade = lazy(() => import('./components/AddTrade/AddTrade'));
-const Analytics = lazy(() => import('./components/Analytics/Analytics'));
+const Heatmaps = lazy(() => import('./components/Markets/Heatmaps/Heatmaps'));
+const AIAnalysisPage = lazy(() => import('./components/AIAnalysis/AIAnalysisPage'));
 const EconomicCalendar = lazy(() => import('./components/EconomicCalendar/EconomicCalendar'));
-const TradeView = lazy(() => import('./components/Daily/TradeView'));
+const TradeLog = lazy(() => import('./components/Daily/TradeLog'));
 const ThatTrade = lazy(() => import('./components/Daily/ThatTrade/ThatTrade'));
 const DayReview = lazy(() => import('./components/DayReview/DayReview'));
 const BacktestingPage = lazy(() => import('./features/backtesting/BacktestingPage'));
@@ -86,7 +89,7 @@ const getCachedDashboardCurrency = (fallback = 'USD') => {
   return cachedCurrency ? normalizeCurrencyCode(cachedCurrency, fallback) : null;
 };
 
-const isApiTrade = (trade) => Boolean(trade?.account_id || trade?.ticket || trade?.platform);
+const isApiTrade = (trade) => Boolean(trade?.account_id || trade?.platform);
 
 const deriveCachedTradesForMode = (queryClient, userId, mode) => {
   const exactCachedTrades = queryClient.getQueryData(['trades', userId, mode]);
@@ -153,13 +156,14 @@ const getCachedRouteKey = (pathname) => {
 
   if (path === '/' || path === '/dashboard') return 'dashboard';
   if (path === '/add-trade') return 'add-trade';
-  if (path === '/analytics') return 'analytics';
+  if (path === '/heatmaps') return 'heatmaps';
+  if (path === '/ai-analysis') return 'ai-analysis';
   if (path === '/economic-calendar') return 'economic-calendar';
   if (path === '/backtesting') return 'backtesting';
   if (path === '/chart') return 'chart';
   if (path === '/profile') return 'profile';
   if (path === '/day-review') return 'day-review';
-  if (path === '/tradeview') return 'trade-view';
+  if (path === '/trade-log' || path === '/tradelog') return 'trade-log';
 
   return null;
 };
@@ -168,6 +172,7 @@ function CachedMainRoutes({
   tradeMode,
   setTradeMode,
   trades,
+  convertedTrades,
   convertedDashboardTrades,
   dashboardDateRange,
   setDashboardDateRange,
@@ -175,7 +180,7 @@ function CachedMainRoutes({
   defaultDashboardCurrency,
   handleDashboardCurrencyChange,
   isTradesLoading,
-  mt5Accounts,
+  openPositions,
 }) {
   const location = useLocation();
   const activeRouteKey = getCachedRouteKey(location.pathname);
@@ -230,14 +235,18 @@ function CachedMainRoutes({
           defaultCurrencyCode={defaultDashboardCurrency}
           onCurrencyChange={handleDashboardCurrencyChange}
           isLoading={isTradesLoading}
-          mt5Accounts={mt5Accounts}
+          openPositions={openPositions}
         />
       ))}
 
-      {renderCachedPane('add-trade', <AddTrade trades={trades} />)}
+      {renderCachedPane('add-trade', <AddTrade trades={trades} currencyCode={dashboardCurrency} defaultCurrencyCode={defaultDashboardCurrency} onCurrencyChange={handleDashboardCurrencyChange} />)}
 
-      {renderCachedPane('analytics', (
-        <Analytics trades={convertedDashboardTrades} currencyCode={dashboardCurrency} />
+      {renderCachedPane('heatmaps', (
+        <Heatmaps />
+      ))}
+
+      {renderCachedPane('ai-analysis', (
+        <AIAnalysisPage trades={convertedTrades} currencyCode={dashboardCurrency} />
       ))}
 
       {renderCachedPane('economic-calendar', <EconomicCalendar />)}
@@ -249,7 +258,7 @@ function CachedMainRoutes({
         <DayReview trades={convertedDashboardTrades} currencyCode={dashboardCurrency} />
       ))}
 
-      {renderCachedPane('trade-view', <TradeView trades={trades} currencyCode={defaultDashboardCurrency} />)}
+      {renderCachedPane('trade-log', <TradeLog trades={convertedTrades} currencyCode={dashboardCurrency} />)}
 
       {!activeRouteKey && (
         <Suspense fallback={<RouteFallback />}>
@@ -265,7 +274,7 @@ function CachedMainRoutes({
               path="/day-review/:dateKey"
               element={<DayReview trades={convertedDashboardTrades} currencyCode={dashboardCurrency} />}
             />
-            <Route path="/trade/:tradeId" element={<ThatTrade />} />
+            <Route path="/trade/:uniqueId" element={<ThatTrade />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
         </Suspense>
@@ -278,6 +287,7 @@ function AuthenticatedApp({
   tradeMode,
   setTradeMode,
   trades,
+  convertedTrades,
   convertedDashboardTrades,
   dashboardDateRange,
   setDashboardDateRange,
@@ -285,7 +295,7 @@ function AuthenticatedApp({
   defaultDashboardCurrency,
   handleDashboardCurrencyChange,
   isTradesLoading,
-  mt5Accounts,
+  openPositions,
 }) {
   const { user } = useAuth();
   const location = useLocation();
@@ -317,6 +327,7 @@ function AuthenticatedApp({
         tradeMode={tradeMode}
         setTradeMode={setTradeMode}
         trades={trades}
+        convertedTrades={convertedTrades}
         convertedDashboardTrades={convertedDashboardTrades}
         dashboardDateRange={dashboardDateRange}
         setDashboardDateRange={setDashboardDateRange}
@@ -324,7 +335,7 @@ function AuthenticatedApp({
         defaultDashboardCurrency={defaultDashboardCurrency}
         handleDashboardCurrencyChange={handleDashboardCurrencyChange}
         isTradesLoading={isTradesLoading}
-        mt5Accounts={mt5Accounts}
+        openPositions={openPositions}
       />
     </AppShell>
   );
@@ -348,6 +359,7 @@ function App() {
   const [dashboardCurrency, setDashboardCurrency] = useState(
     getCachedDashboardCurrency('USD') || 'USD'
   );
+  const [openPositions, setOpenPositions] = useState([]);
 
   const tradeManager = useMemo(() => new TradeManager(), []);
   const queryClient = useQueryClient();
@@ -355,6 +367,7 @@ function App() {
   const updatingTrades = useRef(false);
   const hasHydratedDashboardCurrency = useRef(false);
   const hasHydratedUserSettings = useRef(false);
+  const hasInitializedTimeZone = useRef(false);
 
   useEffect(() => {
     markPerf('shell-visible');
@@ -374,7 +387,7 @@ function App() {
 
       window.setTimeout(() => {
         import('./components/DayReview/DayReview');
-        import('./components/Analytics/Analytics');
+        import('./components/Markets/Heatmaps/Heatmaps');
         import('./components/EconomicCalendar/EconomicCalendar');
       }, 5000);
     };
@@ -392,7 +405,9 @@ function App() {
 
   useEffect(() => {
     hasHydratedDashboardCurrency.current = false;
+    hasInitializedTimeZone.current = false;
     setDashboardCurrency(getCachedDashboardCurrency('USD') || 'USD');
+    setOpenPositions([]);
   }, [user?.ID]);
 
   useEffect(() => {
@@ -417,6 +432,19 @@ function App() {
     measurePerf('settings-from-start', 'app-start', 'settings-ready');
   }, [isAuthLoading, user?.ID, userSettingsQuery.data]);
 
+  useEffect(() => {
+    if (isAuthLoading || !user?.ID || userSettingsQuery.isPlaceholderData || !userSettingsQuery.data) return;
+    if (hasInitializedTimeZone.current) return;
+
+    hasInitializedTimeZone.current = true;
+    if (userSettingsQuery.data?.preferences?.timeZone) return;
+
+    const detectedTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    saveUserSettings({ preferences: { timeZone: detectedTimeZone } })
+      .then((settings) => queryClient.setQueryData(['user-settings', user.ID], settings))
+      .catch(() => { hasInitializedTimeZone.current = false; });
+  }, [isAuthLoading, queryClient, user?.ID, userSettingsQuery.data, userSettingsQuery.isPlaceholderData]);
+
   const tradesQuery = useQuery({
     queryKey: ['trades', user?.ID, tradeMode],
     enabled: !isAuthLoading && Boolean(user?.ID),
@@ -428,16 +456,6 @@ function App() {
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-  });
-
-  const mt5AccountsQuery = useQuery({
-    queryKey: ['mt5-accounts', user?.ID],
-    enabled: !isAuthLoading && Boolean(user?.ID),
-    queryFn: async () => {
-      const { data } = await api.get('/get-mt5-accounts');
-      return data?.accounts || [];
-    },
-    placeholderData: (previousData) => previousData,
   });
 
   useEffect(() => {
@@ -492,6 +510,29 @@ function App() {
 
         socket.onmessage = async (event) => {
           const msg = JSON.parse(event.data);
+
+          if (msg.type === 'OPEN_POSITIONS_UPDATED') {
+            setOpenPositions((current) => [
+              ...current.filter((position) => String(position.unique_id || '').startsWith('binance-open:')),
+              ...(Array.isArray(msg.positions) ? msg.positions : []),
+            ]);
+            return;
+          }
+
+          if (msg.type === 'BINANCE_OPEN_POSITIONS_UPDATED') {
+            setOpenPositions((current) => [
+              ...current.filter((position) => !String(position.unique_id || '').startsWith('binance-open:')),
+              ...(Array.isArray(msg.positions) ? msg.positions : []),
+            ]);
+            return;
+          }
+
+          if (msg.type === 'BROKER_BALANCES_UPDATED') {
+            window.dispatchEvent(new CustomEvent('broker-balances-updated', {
+              detail: Array.isArray(msg.balances) ? msg.balances : [],
+            }));
+            return;
+          }
 
           if (msg.type === 'TRADE_UPDATED') {
             if (updatingTrades.current) return;
@@ -572,64 +613,36 @@ function App() {
   const trades = useMemo(() => (
     user?.ID ? (tradesQuery.data || []) : []
   ), [tradesQuery.data, user?.ID]);
-  const defaultDashboardCurrency = useMemo(() => {
-    const accountCurrency = mt5AccountsQuery.data?.find((account) => account?.default_currency)
-      ?.default_currency;
-
-    return normalizeCurrencyCode(accountCurrency || user?.preferred_currency || 'USD');
-  }, [mt5AccountsQuery.data, user?.preferred_currency]);
-
-  const savedDashboardCurrency = useMemo(() => {
-    const accountCurrency = mt5AccountsQuery.data?.find((account) => account?.temporary_currency)
-      ?.temporary_currency;
-
-    return accountCurrency ? normalizeCurrencyCode(accountCurrency, defaultDashboardCurrency) : null;
-  }, [defaultDashboardCurrency, mt5AccountsQuery.data]);
+  const defaultDashboardCurrency = useMemo(
+    () => normalizeCurrencyCode(user?.preferred_currency || 'USD'),
+    [user?.preferred_currency]
+  );
 
   useEffect(() => {
     if (hasHydratedDashboardCurrency.current) return;
-    if (!mt5AccountsQuery.isSuccess) return;
 
     setDashboardCurrency(
-      savedDashboardCurrency
-      || getCachedDashboardCurrency(defaultDashboardCurrency)
+      getCachedDashboardCurrency(defaultDashboardCurrency)
       || defaultDashboardCurrency
     );
     hasHydratedDashboardCurrency.current = true;
-  }, [defaultDashboardCurrency, mt5AccountsQuery.isSuccess, savedDashboardCurrency]);
+  }, [defaultDashboardCurrency]);
 
-  const handleDashboardCurrencyChange = async (currencyCode) => {
+  const handleDashboardCurrencyChange = (currencyCode) => {
     const normalizedCurrency = normalizeCurrencyCode(currencyCode, defaultDashboardCurrency);
     setDashboardCurrency(normalizedCurrency);
     saveUserSettings({ dashboard: { currency: normalizedCurrency } }).catch(() => null);
-    queryClient.setQueryData(['mt5-accounts', user?.ID], (previousAccounts = []) => (
-      Array.isArray(previousAccounts)
-        ? previousAccounts.map((account) => ({
-            ...account,
-            temporary_currency: normalizedCurrency,
-          }))
-        : previousAccounts
-    ));
-
-    try {
-      const { data } = await api.post('/update-dashboard-currency', {
-        currency: normalizedCurrency,
-      });
-
-      if (data?.success) {
-        setDashboardCurrency(normalizedCurrency);
-      }
-    } catch {
-      // Currency is kept optimistically in local UI if persistence fails.
-    }
   };
 
+  const convertedTrades = useMemo(() => (
+    trades.map((trade) => convertTradePnlForDisplay(trade, dashboardCurrency, defaultDashboardCurrency))
+  ), [dashboardCurrency, defaultDashboardCurrency, trades]);
   const dashboardTrades = useMemo(() => {
-    if (!Array.isArray(trades)) return [];
+    if (!Array.isArray(convertedTrades)) return [];
     const from = dashboardDateRange?.from ? startOfLocalDay(new Date(dashboardDateRange.from)) : null;
     const to = dashboardDateRange?.to ? endOfLocalDay(new Date(dashboardDateRange.to)) : null;
 
-    return trades.filter((trade) => {
+    return convertedTrades.filter((trade) => {
       const tradeDate = getTradeDisplayDate(trade);
 
       if (!tradeDate) return false;
@@ -638,16 +651,21 @@ function App() {
 
       return true;
     });
-  }, [dashboardDateRange, trades]);
-  const convertedDashboardTrades = useMemo(() => (
-    dashboardTrades.map((trade) => ({
-      ...trade,
-      pnl: convertCurrency(trade?.pnl, defaultDashboardCurrency, dashboardCurrency),
-      source_pnl: trade?.source_pnl ?? trade?.pnl,
-      source_currency: trade?.source_currency ?? defaultDashboardCurrency,
+  }, [convertedTrades, dashboardDateRange]);
+  const convertedDashboardTrades = dashboardTrades;
+  const convertedOpenPositions = useMemo(() => (
+    openPositions.map((position) => ({
+      ...position,
+      pnl: convertCurrency(
+        position?.pnl,
+        position?.pnl_currency || defaultDashboardCurrency,
+        dashboardCurrency
+      ),
+      pnl_currency: dashboardCurrency,
+      pnlCurrency: dashboardCurrency,
       display_currency: dashboardCurrency,
     }))
-  ), [dashboardCurrency, dashboardTrades, defaultDashboardCurrency]);
+  ), [dashboardCurrency, defaultDashboardCurrency, openPositions]);
   const isTradesLoading =
     Boolean(user?.ID) &&
     tradesQuery.isPending &&
@@ -673,11 +691,13 @@ function App() {
   return (
     <BrowserRouter>
     <ThemeProvider>
+      {import.meta.env.DEV && <Agentation />}
       {user ? (
         <AuthenticatedApp
           tradeMode={tradeMode}
           setTradeMode={handleTradeModeChange}
           trades={trades}
+          convertedTrades={convertedTrades}
           convertedDashboardTrades={convertedDashboardTrades}
           dashboardDateRange={dashboardDateRange}
           setDashboardDateRange={setDashboardDateRange}
@@ -685,7 +705,7 @@ function App() {
           defaultDashboardCurrency={defaultDashboardCurrency}
           handleDashboardCurrencyChange={handleDashboardCurrencyChange}
           isTradesLoading={isTradesLoading}
-          mt5Accounts={mt5AccountsQuery.data || []}
+          openPositions={convertedOpenPositions}
         />
       ) : (
         <Routes>

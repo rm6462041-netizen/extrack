@@ -1,0 +1,166 @@
+import axios from "axios";
+import { API_URL } from "./constants";
+import { clearClientStorage } from "../storage/clientStorage";
+
+// =====================
+// Axios Instance
+// =====================
+const api = axios.create({
+  baseURL: `${API_URL}/api`,
+  withCredentials: true,
+});
+
+if (import.meta.env.DEV) {
+  api.interceptors.request.use((config) => {
+    config.metadata = { startTime: performance.now() };
+    return config;
+  });
+
+  api.interceptors.response.use(
+    (response) => {
+      const startedAt = response.config?.metadata?.startTime;
+      if (typeof startedAt === "number") {
+        console.info(
+          "[api]",
+          response.config.method?.toUpperCase(),
+          response.config.url,
+          `${Math.round(performance.now() - startedAt)}ms`
+        );
+      }
+      return response;
+    },
+    (error) => {
+      const startedAt = error.config?.metadata?.startTime;
+      if (typeof startedAt === "number") {
+        console.info(
+          "[api]",
+          error.config.method?.toUpperCase(),
+          error.config.url,
+          `${Math.round(performance.now() - startedAt)}ms`,
+          "failed"
+        );
+      }
+      return Promise.reject(error);
+    }
+  );
+}
+
+api.interceptors.request.use((config) => {
+  const accessToken = localStorage.getItem("accessToken");
+  if (accessToken && !config.headers?.Authorization) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
+});
+
+// =====================
+// Refresh control
+// =====================
+let isRefreshing = false;
+let refreshSubscribers = [];
+let isForceLoggingOut = false;
+
+const subscribeTokenRefresh = (cb) => {
+  refreshSubscribers.push(cb);
+};
+
+const onRefreshed = () => {
+  refreshSubscribers.forEach((cb) => cb());
+  refreshSubscribers = [];
+};
+
+const notifyLogout = () => {
+  window.dispatchEvent(new Event("auth:logout"));
+};
+
+// =====================
+// FULL FORCE LOGOUT FUNCTION
+// =====================
+const forceLogout = async () => {
+  if (isForceLoggingOut) {
+    notifyLogout();
+    return;
+  }
+
+  isForceLoggingOut = true;
+
+  try {
+    await api.post("/auth/logout");
+  } catch {
+    // Ignore logout cleanup failures and continue clearing local auth state.
+  } finally {
+    clearClientStorage();
+    notifyLogout();
+    isForceLoggingOut = false;
+  }
+};
+
+// =====================
+// RESPONSE INTERCEPTOR
+// =====================
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    const requestUrl = String(originalRequest?.url || "");
+    const isRefreshRequest = requestUrl.includes("/refresh-token");
+    const isLogoutRequest = requestUrl.includes("/logout");
+    const isLogout = error.response?.data?.logout;
+    const isUnauthorized =
+      error.response?.data?.expired ||
+      error.response?.status === 401;
+
+    if (isRefreshRequest || isLogoutRequest) {
+      if (isLogout || isUnauthorized) {
+        await forceLogout();
+      }
+
+      return Promise.reject(error);
+    }
+
+    // If access token is missing/expired/invalid, try the refresh token once.
+    if (isUnauthorized && !originalRequest?._retry) {
+      originalRequest._retry = true;
+
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          subscribeTokenRefresh(() => {
+            resolve(api(originalRequest));
+          });
+        });
+      }
+
+      isRefreshing = true;
+
+      try {
+        const refreshResponse = await axios.post(
+          `${API_URL}/api/auth/refresh-token`,
+          {},
+          { withCredentials: true }
+        );
+        const refreshedToken = refreshResponse.data?.data?.accessToken;
+        if (refreshedToken) {
+          localStorage.setItem("accessToken", refreshedToken);
+        }
+
+        onRefreshed();
+
+        return api(originalRequest);
+      } catch (refreshError) {
+        await forceLogout();
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    if (isLogout) {
+      await forceLogout();
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default api;

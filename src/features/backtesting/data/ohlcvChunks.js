@@ -1,4 +1,4 @@
-import api from '../../../utils/serve';
+import api from '../../../utils/common/serve';
 
 export const DEFAULT_OHLCV_CHUNK_LIMIT = 1000;
 export const OHLCV_CHUNK_GC_TIME = 30 * 60 * 1000;
@@ -193,21 +193,59 @@ export async function fetchOhlcvChunk(queryClient, request) {
   return queryClient.fetchQuery({
     queryKey,
     queryFn: async () => {
-      const { data } = await api.get('/ohlcv/chunk', {
-        params: {
-          symbol: sourceRequest.symbol,
-          timeframe: sourceRequest.timeframe,
-          cursor: sourceRequest.cursor,
-          direction: normalizedRequest.direction,
-          limit: sourceRequest.limit,
-        },
-      });
+      let rawCandles = [];
 
-      const rawCandles = Array.isArray(data?.data)
-        ? data.data
-          .map(normalizeOhlcvRow)
-          .filter((candle) => Number.isFinite(candle.time))
-        : [];
+      try {
+        const cursorMs = new Date(sourceRequest.cursor).getTime();
+        const intervalMs = 60 * 1000;
+        const limit = sourceRequest.limit;
+
+        let startTime, endTime;
+        if (normalizedRequest.direction === 'past') {
+          startTime = cursorMs - (limit * intervalMs);
+          endTime = cursorMs - intervalMs;
+        } else {
+          startTime = cursorMs;
+          endTime = cursorMs + (limit * intervalMs);
+        }
+
+        const { data } = await api.get('/market-chart/candles', {
+          params: {
+            symbol: sourceRequest.symbol,
+            interval: '1m',
+            startTime: Math.floor(startTime),
+            endTime: Math.floor(endTime),
+            limit,
+          },
+        });
+
+        if (Array.isArray(data?.candles) && data.candles.length > 0) {
+          rawCandles = data.candles
+            .map(normalizeOhlcvRow)
+            .filter((candle) => Number.isFinite(candle.time));
+        }
+      } catch (marketChartError) {
+        console.warn('fetchOhlcvChunk.marketChartCandlesFailed, falling back to /ohlcv/chunk', marketChartError);
+      }
+
+      if (rawCandles.length === 0) {
+        const { data } = await api.get('/ohlcv/chunk', {
+          params: {
+            symbol: sourceRequest.symbol,
+            timeframe: sourceRequest.timeframe,
+            cursor: sourceRequest.cursor,
+            direction: normalizedRequest.direction,
+            limit: sourceRequest.limit,
+          },
+        });
+
+        rawCandles = Array.isArray(data?.data)
+          ? data.data
+            .map(normalizeOhlcvRow)
+            .filter((candle) => Number.isFinite(candle.time))
+          : [];
+      }
+
       const candles = resampleCandles(rawCandles, normalizedRequest.timeframe)
         .map((candle) => ({
           ...candle,
@@ -226,7 +264,7 @@ export async function fetchOhlcvChunk(queryClient, request) {
 
       return {
         candles,
-        total: data?.total || candles.length,
+        total: rawCandles.length,
         rawTotal: rawCandles.length,
         request: normalizedRequest,
       };

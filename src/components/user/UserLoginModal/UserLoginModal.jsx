@@ -2,48 +2,26 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import './UserLoginModal.css';
-import LegacyIcon from '../../Common/LegacyIcon';
-import Logo from '../../Common/Logo';
-import CustomSelect from '../../Common/CustomSelect';
+import LegacyIcon from '../../Common/LegacyIcon/LegacyIcon';
+import Logo from '../../Common/Logo/Logo';
+import { DropdownSelect as CustomSelect } from "@/components/Common/base/dropdown/dropdown";
+import GoogleIcon from './components/GoogleIcon';
 
-import { API_URL } from "../../../utils/constants";
+import { API_URL } from "../../../utils/common/constants";
 import { useAuth } from '../../../context/AuthContext';
 import { useAppDialog } from '../../../context/AppDialogContext';
-import { clearClientStorage } from '../../../utils/clientStorage';
-import { getUserSafeError } from '../../../utils/safeErrors';
+import { clearClientStorage } from '../../../utils/storage/clientStorage';
+import { getUserError } from '../../../utils/common/errors';
 
 const FORGOT_RESET_STORAGE_KEY = 'entrack:forgotReset';
 const DEFAULT_RESET_RESEND_SECONDS = 60;
 
-const getFetchSafeError = (response, data, fallbackMessage) => getUserSafeError({
+const getFetchUserError = (response, data, fallbackMessage) => getUserError({
   response: {
     status: response?.status,
     data,
   },
 }, fallbackMessage);
-
-function GoogleIcon() {
-  return (
-    <svg className="google-auth-icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false">
-      <path
-        fill="#4285F4"
-        d="M17.64 9.2c0-.64-.06-1.26-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.58 2.68-3.9 2.68-6.62z"
-      />
-      <path
-        fill="#34A853"
-        d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M3.97 10.72A5.41 5.41 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.82.96 4.05l3.01-2.33z"
-      />
-      <path
-        fill="#EA4335"
-        d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"
-      />
-    </svg>
-  );
-}
 
 function UserLoginModal({ isOpen, onClose, initialTab = 'login' }) {
   const { user: currentUser, setUser } = useAuth();
@@ -333,10 +311,10 @@ function UserLoginModal({ isOpen, onClose, initialTab = 'login' }) {
         alert(`Welcome back ${responseUser.firstName || 'there'}!`);
         onClose();
       } else {
-        setFormError(data.message || data.error || 'Sign in failed.');
+        setFormError(getUserError({ response: { status: response.status, data } }, 'Sign in failed.'));
       }
     } catch {
-      setFormError('Network error. Check if server is running.');
+      setFormError('Could not connect. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -400,13 +378,13 @@ function UserLoginModal({ isOpen, onClose, initialTab = 'login' }) {
         setUser(responseUser);
         onClose();
       } else if (data.success) {
-        alert(data.message || 'Verification link sent to your email');
+        alert('Verification link sent to your email.');
         setActiveTab('login');
       } else {
-        setFormError(data.message || data.error || 'Signup failed.');
+        setFormError(getUserError({ response: { status: response.status, data } }, 'Signup failed.'));
       }
     } catch {
-      setFormError('Network error. Check if server is running.');
+      setFormError('Could not connect. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -439,13 +417,13 @@ function UserLoginModal({ isOpen, onClose, initialTab = 'login' }) {
         setForgotStep('otp');
         startResendCooldown(data.data?.resendAfterSeconds);
         if (data.code === 'RESET_OTP_COOLDOWN') {
-          setFormError(data.message || 'Please wait before requesting another OTP.');
+          setFormError('Please wait before requesting another OTP.');
         }
       } else {
-        setFormError(data.message || 'Could not send reset OTP.');
+        setFormError('Could not send reset OTP. Please try again.');
       }
     } catch {
-      setFormError('Network error. Check if server is running.');
+      setFormError('Could not connect. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -484,10 +462,10 @@ function UserLoginModal({ isOpen, onClose, initialTab = 'login' }) {
       if (data.success) {
         setForgotStep('password');
       } else {
-        setFormError(data.message || 'Invalid or expired reset OTP.');
+        setFormError('Invalid or expired reset OTP.');
       }
     } catch {
-      setFormError('Network error. Check if server is running.');
+      setFormError('Could not connect. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -525,14 +503,14 @@ function UserLoginModal({ isOpen, onClose, initialTab = 'login' }) {
       const data = await response.json();
 
       if (data.success) {
-        alert(data.message || 'Password reset successful. Please login again.');
+        alert('Password reset successful. Please sign in again.');
         clearForgotResetFields();
         setActiveTab('login');
       } else {
-        setFormError(data.message || 'Password reset failed.');
+        setFormError('Password reset failed. Please try again.');
       }
     } catch {
-      setFormError('Network error. Check if server is running.');
+      setFormError('Could not connect. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -605,7 +583,7 @@ function UserLoginModal({ isOpen, onClose, initialTab = 'login' }) {
         alert('Profile updated successfully!');
         setIsEditModalOpen(false);
       } else {
-        alert(getFetchSafeError(response, data, 'Could not update profile. Please try again.'));
+        alert(getFetchUserError(response, data, 'Could not update profile. Please try again.'));
       }
     } catch {
       alert('Something went wrong. Please try again.');
@@ -637,7 +615,7 @@ function UserLoginModal({ isOpen, onClose, initialTab = 'login' }) {
         setIsDeleteModalOpen(false);
         window.dispatchEvent(new Event('auth:logout'));
       } else {
-        alert(getFetchSafeError(response, data, 'Could not delete account. Please try again.'));
+        alert(getFetchUserError(response, data, 'Could not delete account. Please try again.'));
       }
     } catch {
       alert('Something went wrong. Please try again.');

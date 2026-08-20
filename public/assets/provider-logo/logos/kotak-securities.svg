@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <base href="/">
+  <meta charset="UTF-8">
+
+
+  <!-- Required meta tags -->
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description"
+    content="Login to your Kotak Securities Neo account securely and explore a wide range of investment options and manage your portfolio effectively. Trade and invest in Stocks, F&O, Currencies, Commodities, ETFs and IPO through Kotak Neo.">
+  <link rel="canonical" href="https://trade.kotakneo.com">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title"
+    content="Kotak Securities Neo Login – Leading Online Trading and Investing Platform of India">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- DNS Prefetching -->
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com/" />
+  <link rel="dns-prefetch" href="https://www.gstatic.com/" />
+  <link rel="dns-prefetch" href="https://lapi.kotaksecurities.com/" />
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net/" />
+  <link rel="dns-prefetch" href="https://unpkg.com/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin />
+  <link rel="preconnect" href="https://lapi.kotaksecurities.com/" crossorigin />
+  <link rel="preconnect" href="https://unpkg.com/" crossorigin />
+
+  <!-- Preload critical assets -->
+  <link rel="preload" href="icons/neo_logo.svg" as="image" type="image/svg+xml" fetchpriority="high">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <!-- App config -->
+  <title>Login</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Page-specific minimal inline styles -->
+  <style>
+    html,
+    body {
+      overscroll-behavior-x: none;
+    }
+  </style>
+
+  <!-- Inline Splash CSS -->
+  <style id="splash-screen-style">
+    :root {
+      /* Light mode colors */
+      --bg-web-blue: #0373ec;
+      --bg-web-blue-more: #0373ec;
+      --bg-web-red: #e1040d;
+      --bg-web-white: #ffffff;
+      --loader-fill-color: #0d4582;
+    }
+
+    /* Dark mode colors */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-web-blue: #2980bb;
+        --bg-web-blue-more: #226b9f;
+        --bg-web-red: #d93139;
+        --bg-web-white: #101419;
+        --loader-fill-color: #4285f4;
+      }
+    }
+
+    .gradient-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .gradient-1 {
+      background: radial-gradient(circle at 50% -100%, var(--bg-web-blue) 0%, var(--bg-web-white) 70%);
+      opacity: 0.8;
+    }
+
+    .gradient-2 {
+      background: radial-gradient(circle at 100% 0%, var(--bg-web-blue-more) 0%, var(--bg-web-white) 60%);
+      opacity: 0.6;
+    }
+
+    .gradient-3 {
+      background: radial-gradient(circle at 100% 0%, var(--bg-web-blue) 0%, var(--bg-web-white) 30%);
+      opacity: 0.3;
+    }
+
+    .gradient-4 {
+      background: radial-gradient(circle at 30% -100%, var(--bg-web-blue) 0%, var(--bg-web-white) 30%);
+      opacity: 0.2;
+    }
+
+    .gradient-5 {
+      background: radial-gradient(circle at 50% -100%, var(--bg-web-red) 0%, var(--bg-web-white) 20%);
+      opacity: 0.15;
+    }
+
+    .gradient-6 {
+      background: radial-gradient(circle at -60% 120%, var(--bg-web-red) 0%, var(--bg-web-white) 30%);
+      opacity: 0.2;
+    }
+
+    .gradient-7 {
+      background: radial-gradient(circle at -90% 50%, var(--bg-web-blue-more) 0%, var(--bg-web-white) 60%);
+      opacity: 0.2;
+    }
+
+    .gradient-8 {
+      background: radial-gradient(circle at 70% 100%, var(--bg-web-blue) 0%, var(--bg-web-white) 20%);
+      opacity: 0.1;
+    }
+
+    .gradient-9 {
+      background: radial-gradient(circle at 100% 100%, var(--bg-web-blue) 0%, var(--bg-web-white) 30%);
+      opacity: 0.15;
+    }
+
+    .splash-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: var(--bg-web-white);
+      transition: background-color 0.3s ease;
+    }
+
+
+    .splash-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      height: 100%;
+      width: 100%;
+    }
+
+    .splash-logo {
+      position: static;
+      width: 128px;
+      height: 80px;
+      flex-grow: 0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .splash-logo {
+        filter: brightness(0.9);
+      }
+    }
+
+    /* .loading-spinner {
+      width: 60px;
+      height: 60px;
+      flex-grow: 0;
+      object-fit: contain;
+      animation: spin 1s linear infinite;
+      transition: 0.3s ease;
+    } */
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      margin-top: 10px;
+      border: 3px solid transparent;
+      border-top: 3px solid var(--loader-fill-color);
+      border-right: 3px solid var(--loader-fill-color);
+      border-bottom: 3px solid var(--loader-fill-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      transition: 0.3s ease;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+
+  <!-- Deferred JS script -->
+  <script src="loader.js" defer></script>
+</head>
+
+<body>
+  <!-- Splash Screen -->
+  <div class="splash-container">
+    <div class="gradient-layer gradient-1"></div>
+    <div class="gradient-layer gradient-2"></div>
+    <div class="gradient-layer gradient-3"></div>
+    <div class="gradient-layer gradient-4"></div>
+    <div class="gradient-layer gradient-5"></div>
+    <div class="gradient-layer gradient-6"></div>
+    <div class="gradient-layer gradient-7"></div>
+    <div class="gradient-layer gradient-8"></div>
+    <div class="gradient-layer gradient-9"></div>
+    <div class="splash-content">
+      <img class="splash-logo" src="icons/neo_logo.svg" alt="Kotak Neo Logo" loading="eager" fetchpriority="high">
+      <!-- <img class="loading-spinner" src="icons/spinner-big.svg" alt="Loading Spinner"> -->
+      <div class="loading-spinner" role="status" aria-label="Loading" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- Flutter Web Bootstrap -->
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+
+
+</html>

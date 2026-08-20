@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>HYCM</title>
+		<base href="/" />
+		<link
+			href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&amp;subset=latin-ext"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css?family=Mulish:300,400,500,700&amp;display=swap&amp;subset=latin-ext"
+			rel="stylesheet"
+		/>
+		<script src="https://apis.google.com/js/api.js" type="text/javascript"></script>
+		<meta
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+			name="viewport"
+		/>
+		<link href="favicon.ico" rel="icon" type="image/x-icon" />
+	<link rel="stylesheet" href="styles.ab2ba9b3a3acf8b9bb99.css"></head>
+	<body class="notranslate">
+		<app-root></app-root>
+		<script src="https://rum-static.pingdom.net/pa-5b67f2d5c587a20015000075.js" async></script>
+	<script src="runtime.9915ea2f06686cf973ea.js" defer></script><script src="polyfills-es5.20b22b78b5b94fcf28e6.js" nomodule defer></script><script src="polyfills.16d5bbaa3ef4bfdee4fe.js" defer></script><script src="scripts.36fe865669939f16897a.js" defer></script><script src="main.255ad55a9c1dbaa52e6d.js" defer></script></body>
+</html>

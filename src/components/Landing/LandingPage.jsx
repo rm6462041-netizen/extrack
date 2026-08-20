@@ -290,7 +290,7 @@ const analyticsGuideSections = [
 
 const analyticsFeatureVisuals = {
   overview: {
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&q=85',
+    image: '/assets/landing/stats-cards.png',
     imageAlt: 'Trading analytics dashboard with performance charts',
     definition: 'Entrack Analytics is the full review layer of the product. It collects your trading records, turns them into performance signals, and helps you decide what to improve next.',
     bestFor: 'Use this when you want a complete view of your trading behavior instead of checking one isolated stat.',
@@ -301,7 +301,7 @@ const analyticsFeatureVisuals = {
     routine: ['Start with the overview', 'Choose the weakest visible area', 'Open that dedicated analytics page', 'Write one action for the next session'],
   },
   dashboard: {
-    image: 'https://images.unsplash.com/photo-1642790551116-18e150f248e8?w=1400&q=85',
+    image: null,
     imageAlt: 'Performance dashboard on a trading workspace',
     definition: 'Dashboard is the quick health check of your trading account. It tells you whether the current period is stable, risky, improving or drifting.',
     bestFor: 'Use it at the start of review before opening deeper tools.',
@@ -312,7 +312,7 @@ const analyticsFeatureVisuals = {
     routine: ['Set the date range', 'Check P&L and win rate together', 'Look for unusual trade count', 'Open the tool that explains the weakest number'],
   },
   radar: {
-    image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=1400&q=85',
+    image: '/assets/landing/radar-score.png',
     imageAlt: 'Analyst reviewing score charts and performance metrics',
     definition: 'Radar Score compresses multiple performance qualities into one shape. It shows if your trading is balanced or if one weak metric is damaging the whole system.',
     bestFor: 'Use it when results feel confusing and you need to know which metric needs attention first.',
@@ -323,7 +323,7 @@ const analyticsFeatureVisuals = {
     routine: ['Read the lowest radar spoke', 'Compare it with the overall score', 'Open trades connected to that weakness', 'Adjust one rule before the next live session'],
   },
   'progress-tracker': {
-    image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1400&q=85',
+    image: '/assets/landing/progress-tracker.png',
     imageAlt: 'Weekly planning wall showing consistent activity',
     definition: 'Progress Tracker is a consistency map. It shows whether you are building enough clean trading data to actually learn from your journal.',
     bestFor: 'Use it to catch overtrading clusters, missing review days and inconsistent journaling.',
@@ -334,7 +334,7 @@ const analyticsFeatureVisuals = {
     routine: ['Scan the densest blocks', 'Mark missing review days', 'Compare activity with P&L calendar', 'Set a weekly journaling target'],
   },
   calendar: {
-    image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=1400&q=85',
+    image: '/assets/landing/pnl-calendar.png',
     imageAlt: 'Calendar planning board for daily trading review',
     definition: 'P&L Calendar turns every trading day into a visible result block. It makes daily performance patterns easy to scan.',
     bestFor: 'Use it to find red-day patterns, weekly behavior and days that need a deeper Day Review.',
@@ -345,7 +345,7 @@ const analyticsFeatureVisuals = {
     routine: ['Open the current month', 'Find the strongest and weakest day cells', 'Open Day Review for the worst day', 'Set a rule for that weekday or session'],
   },
   'day-review': {
-    image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1400&q=85',
+    image: '/assets/landing/trade-detail-loss.png',
     imageAlt: 'Desk setup for reviewing a trading day with notes',
     definition: 'Day Review is the post-session breakdown. It explains what happened on one specific date and turns it into one practical lesson.',
     bestFor: 'Use it after every active session, especially after emotional wins or losses.',
@@ -356,7 +356,7 @@ const analyticsFeatureVisuals = {
     routine: ['Open the exact date', 'Read the intraday curve', 'Compare largest winner and loser', 'Write the next-session lesson'],
   },
   'specific-day-chart': {
-    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1400&q=85',
+    image: '/assets/landing/trade-detail-strategy.png',
     imageAlt: 'Candlestick chart for trade timing analysis',
     definition: 'Specific Day Chart brings candle context into trade review. It shows where entries and exits happened on the actual market move.',
     bestFor: 'Use it when you need to review execution quality, entry timing and exit discipline.',
@@ -367,7 +367,7 @@ const analyticsFeatureVisuals = {
     routine: ['Select the trade date', 'Check the entry marker', 'Switch timeframes', 'Compare exit marker with the move that followed'],
   },
   'charting-analytics': {
-    image: 'https://images.unsplash.com/photo-1642543492481-44e81e3914a7?w=1400&q=85',
+    image: null,
     imageAlt: 'Financial chart analytics displayed on screens',
     definition: 'Charting Analytics shows the shape of performance. It helps you see whether your account is climbing steadily or surviving through random spikes.',
     bestFor: 'Use it to understand equity curve quality, drawdown periods and recovery behavior.',
@@ -378,7 +378,7 @@ const analyticsFeatureVisuals = {
     routine: ['Read the curve direction', 'Mark the largest drawdown zone', 'Inspect trades inside that zone', 'Reduce or refine risk if the curve is unstable'],
   },
   heatmap: {
-    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1400&q=85',
+    image: null,
     imageAlt: 'Data heatmap and analytics screen',
     definition: 'Heatmap makes repeated behavior visible. Instead of reading tables, you scan blocks and instantly see where profit or damage clusters.',
     bestFor: 'Use it when you want to identify weak sessions, symbols, weekdays or behavior zones quickly.',
@@ -389,7 +389,7 @@ const analyticsFeatureVisuals = {
     routine: ['Pick the heatmap grouping', 'Find the darkest weak cluster', 'Open trades from that cluster', 'Create an avoid-or-reduce rule'],
   },
   'ai-analysis': {
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1400&q=85',
+    image: '/assets/landing/ai-analysis.png',
     imageAlt: 'AI analytics interface for structured review',
     definition: 'AI Analysis converts trade data into plain-language feedback. It acts like a review assistant that summarizes repeated patterns.',
     bestFor: 'Use it when you want a fast review draft after a busy session or week.',
@@ -400,7 +400,7 @@ const analyticsFeatureVisuals = {
     routine: ['Select the trade period', 'Generate the analysis', 'Verify the claim against actual trades', 'Keep only one action item'],
   },
   'replay-backtesting': {
-    image: 'https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=1400&q=85',
+    image: null,
     imageAlt: 'Trader practicing with historical chart replay',
     definition: 'Replay and Backtesting let you practice your rule before using live money. It converts lessons into reps.',
     bestFor: 'Use it after analytics identifies a mistake you need to train out.',
@@ -411,7 +411,7 @@ const analyticsFeatureVisuals = {
     routine: ['Choose the weakness from analytics', 'Replay similar market conditions', 'Place virtual trades by rule', 'Compare replay behavior with live journal behavior'],
   },
   'broker-session-insights': {
-    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1400&q=85',
+    image: '/assets/landing/trade-filter.png',
     imageAlt: 'Trading workstation comparing market sources and sessions',
     definition: 'Broker and Session Insights show where performance actually comes from: account, broker, market, symbol or time window.',
     bestFor: 'Use it when one broker, session or source feels different but you need proof from data.',
@@ -561,8 +561,8 @@ function AnalyticsGuidePage() {
           </section>
 
           <section className="analytics-image-band">
-            <figure className="analytics-feature-visual">
-              <img src={visual.image} alt={visual.imageAlt} />
+            <figure className={`analytics-feature-visual ${visual.image ? '' : 'is-empty'}`}>
+              {visual.image ? <img src={visual.image} alt={visual.imageAlt} /> : null}
               <figcaption>
                 <span>{activeSection.eyebrow}</span>
                 <strong>{activeSection.label}</strong>
@@ -716,7 +716,7 @@ const demoSections = [
     slug: 'news',
     title: 'Market news',
     eyebrow: 'News',
-    image: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1400&q=80',
+    image: null,
     description: 'Track market headlines as trading context without letting news noise take over the review.',
     features: ['Headline context', 'Market awareness', 'Trade review notes'],
     details: [
@@ -729,7 +729,7 @@ const demoSections = [
     slug: 'economic-calendar',
     title: 'Economic calendar',
     eyebrow: 'Calendar',
-    image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=1400&q=80',
+    image: '/assets/landing/economic-calendar.png',
     description: 'Plan trading sessions around scheduled events, high-impact releases and session risk.',
     features: ['Event planning', 'Impact awareness', 'Session preparation'],
     details: [
@@ -742,7 +742,7 @@ const demoSections = [
     slug: 'ai-analysis',
     title: 'AI analysis',
     eyebrow: 'AI Review',
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1400&q=80',
+    image: '/assets/landing/ai-analysis.png',
     description: 'Use AI to summarize trading behavior, repeated mistakes and improvement ideas from your records.',
     features: ['Behavior summary', 'Mistake patterns', 'Review prompts'],
     details: [
@@ -758,7 +758,7 @@ const demoShowcaseSections = [
     slug: 'dashboard',
     title: 'Dashboard overview',
     eyebrow: 'Performance',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&q=80',
+    image: '/assets/landing/stats-cards.png',
     description: 'Account health, daily PnL, win rate and trade quality stay in one calm overview.',
     features: ['Fast performance scan', 'Currency aware stats', 'Review-ready layout'],
     details: [
@@ -771,7 +771,7 @@ const demoShowcaseSections = [
     slug: 'add-trade',
     title: 'Add trade',
     eyebrow: 'Trade Entry',
-    image: 'https://images.unsplash.com/photo-1642790551116-18e150f248e8?w=1400&q=80',
+    image: '/assets/landing/entrack-add-trade-feature.png',
     description: 'Create clean trade records manually with entry, exit, risk, screenshots and notes.',
     features: ['Manual entry', 'Risk fields', 'Screenshot notes'],
     details: [
@@ -784,7 +784,7 @@ const demoShowcaseSections = [
     slug: 'csv-import',
     title: 'CSV import',
     eyebrow: 'Import',
-    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1400&q=80',
+    image: '/assets/landing/csv-upload.png',
     description: 'Bring trade history from files and map old records into the Entrack review workflow.',
     features: ['Bulk import', 'Broker file support', 'Mapped history'],
     details: [
@@ -800,7 +800,7 @@ const featureSections = [
     slug: 'journal',
     eyebrow: 'Journal',
     title: 'Track every trade with context.',
-    image: 'https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=1400&q=80',
+    image: '/assets/landing/trades-list.png',
     description: 'Journal keeps entries, exits, screenshots, notes and lessons attached to each trade.',
     points: ['Trade notes and screenshots', 'Setup quality review', 'Mistake and lesson tracking'],
   },
@@ -808,7 +808,7 @@ const featureSections = [
     slug: 'brokers',
     eyebrow: 'Brokers',
     title: 'Broker coverage without switching tabs.',
-    image: 'https://images.unsplash.com/photo-1642543492481-44e81e3914a7?w=1400&q=80',
+    image: null,
     description: 'Broker pages organize trading sources, supported accounts and coverage notes in one clean view.',
     points: ['Supported broker list', 'Account source context', 'Market coverage preview'],
   },
@@ -816,7 +816,7 @@ const featureSections = [
     slug: 'analytics',
     eyebrow: 'Analytics',
     title: 'Find the patterns behind performance.',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&q=80',
+    image: '/assets/landing/stats-cards.png',
     description: 'Analytics turns trade history into readable stats, weaknesses and repeatable performance patterns.',
     points: ['Win rate and RR breakdown', 'Session and symbol behavior', 'Weakness detection'],
   },
@@ -824,7 +824,7 @@ const featureSections = [
     slug: 'replay',
     eyebrow: 'Replay',
     title: 'Practice markets before risking capital.',
-    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1400&q=80',
+    image: null,
     description: 'Replay helps traders test entries, exits and risk rules against historical market movement.',
     points: ['Historical candle replay', 'Virtual execution practice', 'Strategy confidence building'],
   },
@@ -835,7 +835,7 @@ const brokerGalleryItems = [
     slug: 'exness',
     name: 'Exness',
     type: 'Forex broker',
-    coverage: 'MT5 sync ready',
+    coverage: 'Trade import ready',
     image: '/assets/broker/exness%20image.svg',
     mark: 'EX',
     description: 'Track Exness account activity with journal context, screenshots and broker-specific review notes.',
@@ -1062,7 +1062,7 @@ function DemoDetailPage({ section }) {
             <p>{section.description}</p>
           </div>
           <div className="demo-detail-image">
-            <img src={section.image} alt={`${section.title} detail preview`} />
+            {section.image ? <img src={section.image} alt={`${section.title} detail preview`} /> : null}
           </div>
         </section>
 
@@ -1114,7 +1114,7 @@ function FeatureDetailPage({ section }) {
             <p>{section.description}</p>
           </div>
           <div className="demo-detail-image">
-            <img src={section.image} alt={`${section.eyebrow} feature preview`} />
+            {section.image ? <img src={section.image} alt={`${section.eyebrow} feature preview`} /> : null}
           </div>
         </section>
 
@@ -1219,7 +1219,7 @@ function DemoPage() {
             <article className="demo-card" key={section.title}>
               <a className="demo-card__link" href={`/demo/${section.slug}`}>
                 <div className="demo-card__media">
-                <img src={section.image} alt={`${section.title} preview`} loading="lazy" />
+                  {section.image ? <img src={section.image} alt={`${section.title} preview`} loading="lazy" /> : null}
                 </div>
                 <div className="demo-card__body">
                   <span>{section.eyebrow}</span>
@@ -1238,7 +1238,7 @@ function DemoPage() {
 
         <section className="demo-slider-shell" ref={hoverShellRef} aria-label="Interactive demo screenshots">
           <div className="demo-slider-bg" aria-hidden="true">
-            <img src={activeDemo.image} alt="" />
+            {activeDemo.image ? <img src={activeDemo.image} alt="" /> : null}
           </div>
           <div
             className={`demo-slider-highlight ${hoverBg.visible ? 'is-visible' : ''}`}
@@ -1278,7 +1278,7 @@ function DemoPage() {
                 <h2>{section.title}</h2>
                 <p>{section.description}</p>
                 <div className="demo-slide-image">
-                  <img src={section.image} alt={`${section.title} preview`} loading="lazy" />
+                  {section.image ? <img src={section.image} alt={`${section.title} preview`} loading="lazy" /> : null}
                 </div>
                 <div className="demo-feature-list">
                   {section.features.slice(0, 2).map((feature) => (

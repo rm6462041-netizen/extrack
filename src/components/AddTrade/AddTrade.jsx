@@ -1,85 +1,135 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ManualTradeForm from './ManualTradeForm';
-import ApiImportForm from './ApiImportForm';
-import './AddTrade.css';
-import LegacyIcon from '../Common/LegacyIcon';
-import CustomSelect from '../Common/CustomSelect';
-import { API_URL } from "../../utils/constants";
+import ManualTradeForm from './ManualTradeForm/ManualTradeForm';
+import SyncAccounts from './SyncAccounts/SyncAccounts';
 import MainContentWrapper from '../Layout/MainContentWrapper';
 import PageHeader from '../Layout/PageHeader';
+import CurrencyFilterDropdown from '../Header/CurrencyFilterDropdown';
+import { Button } from "@/components/Common/base/buttons/button";
 
-const brokers = [
-  { id: 1, name: 'MT5 Broker 1' },
-  { id: 2, name: 'MT5 Broker 2' },
-  { id: 3, name: 'Binance' },
-];
-
-function AddTrade({ trades }) {
+function AddTrade({ currencyCode = 'USD', defaultCurrencyCode = 'USD', onCurrencyChange }) {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('manual');
+  const openSyncTab = new URLSearchParams(window.location.search).has('ctrader') || new URLSearchParams(window.location.search).get('tab') === 'sync';
+  const [activeTab, setActiveTab] = useState(openSyncTab ? 'sync' : null);
+  const [showEntryMethods, setShowEntryMethods] = useState(openSyncTab);
   const [csvData, setCsvData] = useState(null);
-  const [selectedBrokerId, setSelectedBrokerId] = useState(brokers[0].id);
+  const [brokers, setBrokers] = useState([]);
+  const [selectedBrokerId, setSelectedBrokerId] = useState(null);
 
   const selectedBroker = brokers.find((broker) => broker.id === selectedBrokerId);
+  const openTradeEntry = (broker = selectedBroker) => {
+    const supportsSync = String(broker?.tradeMethod || '').endsWith('_sync');
+    setShowEntryMethods(true);
+    setActiveTab(supportsSync ? 'sync' : 'manual');
+  };
+  const openManualEntry = () => {
+    setShowEntryMethods(true);
+    setActiveTab('manual');
+  };
 
   return (
     <MainContentWrapper className="add-trade-page">
-      <section className="add-trade-shell">
+      <section className="flex flex-col gap-3.5 w-full">
         <PageHeader
-          title={activeTab === 'manual' ? 'Add Trade' : 'Trade Import'}
+          title={showEntryMethods ? 'Add Trade' : 'Trading Accounts'}
           onBack={() => navigate('/')}
           className="add-trade-header"
-          actions={activeTab === 'manual' ? (
-            <div className="broker-select-card">
-              <LegacyIcon className="fas fa-network-wired broker-select-icon" />
-              <span className="broker-select-card__label">Broker</span>
-              <CustomSelect
-                className="broker-dropdown"
-                value={selectedBrokerId}
-                onChange={(e) => setSelectedBrokerId(parseInt(e.target.value, 10))}
-                options={brokers.map((broker) => ({ value: broker.id, label: broker.name }))}
-                ariaLabel="Broker"
+          actions={
+            <div className="flex items-center gap-2">
+              <CurrencyFilterDropdown
+                currencyCode={currencyCode}
+                defaultCurrencyCode={defaultCurrencyCode}
+                onCurrencyChange={onCurrencyChange}
               />
+              {showEntryMethods && (
+                <Button
+                  color="secondary"
+                  size="sm"
+                  onClick={() => {
+                    setShowEntryMethods(false);
+                    setActiveTab(null);
+                  }}
+                >
+                  Accounts
+                </Button>
+              )}
             </div>
-          ) : null}
+          }
         />
 
-        <section className="add-trade-mode-bar" aria-label="Trade entry mode">
-          <div className="trade-tabs">
-            <button
-              type="button"
-              className={`tab-btn ${activeTab === 'manual' ? 'active' : ''}`}
-              onClick={() => setActiveTab('manual')}
-            >
-              <LegacyIcon className="fas fa-keyboard" /> Manually
-            </button>
-            <button
-              type="button"
-              className={`tab-btn ${activeTab === 'api' ? 'active' : ''}`}
-              onClick={() => setActiveTab('api')}
-            >
-              <LegacyIcon className="fas fa-sync-alt" /> Exact Sync
-            </button>
-          </div>
-        </section>
+        {showEntryMethods ? (
+          <section className="flex items-center justify-end w-full pb-0.5" aria-label="Trade entry mode">
+            <div className="grid grid-cols-3 items-stretch gap-1 p-1 w-full max-w-[440px] min-h-[44px] border border-[var(--divider-strong)] rounded-2xl bg-[var(--bg-card)] shadow-xs">
+              <button
+                type="button"
+                className={`w-full min-w-0 min-h-[34px] px-2.5 py-1.5 border rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer ${
+                  activeTab === 'manual'
+                    ? 'bg-[var(--button-bg)] text-[var(--button-text)] border-[var(--button-bg)] shadow-xs'
+                    : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--heading)] hover:bg-[var(--surface-subtle)]'
+                }`}
+                onClick={() => setActiveTab('manual')}
+              >
+                Manually
+              </button>
+              <button
+                type="button"
+                className={`w-full min-w-0 min-h-[34px] px-2.5 py-1.5 border rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer ${
+                  activeTab === 'file'
+                    ? 'bg-[var(--button-bg)] text-[var(--button-text)] border-[var(--button-bg)] shadow-xs'
+                    : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--heading)] hover:bg-[var(--surface-subtle)]'
+                }`}
+                onClick={() => setActiveTab('file')}
+              >
+                File Upload
+              </button>
+              <button
+                type="button"
+                className={`w-full min-w-0 min-h-[34px] px-2.5 py-1.5 border rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer ${
+                  activeTab === 'sync'
+                    ? 'bg-[var(--button-bg)] text-[var(--button-text)] border-[var(--button-bg)] shadow-xs'
+                    : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--heading)] hover:bg-[var(--surface-subtle)]'
+                }`}
+                onClick={() => setActiveTab('sync')}
+              >
+                Exact Sync
+              </button>
+            </div>
+          </section>
+        ) : null}
 
-        <section className="add-trade-stage">
-          {activeTab === 'manual' ? (
+        <section className="flex flex-col gap-3.5 w-full">
+          {!showEntryMethods ? (
             <ManualTradeForm
-              API_URL={API_URL}
-              trades={trades}
               csvData={csvData}
               setCsvData={setCsvData}
               broker={selectedBroker}
-            />
-          ) : (
-            <ApiImportForm
-              API_URL={API_URL}
-              selectedBroker={selectedBroker}
+              entryMode="accounts"
+              brokers={brokers}
+              selectedBrokerId={selectedBrokerId}
               setSelectedBrokerId={setSelectedBrokerId}
+              setBrokers={setBrokers}
+              onOpenEntryMethods={openTradeEntry}
+              onOpenManualEntry={openManualEntry}
+              currencyCode={currencyCode}
+              onCurrencyChange={onCurrencyChange}
             />
-          )}
+          ) : activeTab === 'manual' ? (
+            <ManualTradeForm
+              csvData={csvData}
+              setCsvData={setCsvData}
+              entryMode="trade"
+              brokers={brokers}
+              selectedBrokerId={selectedBrokerId}
+              setSelectedBrokerId={setSelectedBrokerId}
+              setBrokers={setBrokers}
+              currencyCode={currencyCode}
+              onCurrencyChange={onCurrencyChange}
+            />
+          ) : activeTab === 'file' ? (
+            <ManualTradeForm csvData={csvData} setCsvData={setCsvData} entryMode="file" brokers={brokers} selectedBrokerId={selectedBrokerId} setSelectedBrokerId={setSelectedBrokerId} setBrokers={setBrokers} currencyCode={currencyCode} onCurrencyChange={onCurrencyChange} />
+          ) : activeTab === 'sync' ? (
+            <SyncAccounts accounts={brokers} />
+          ) : null}
         </section>
       </section>
     </MainContentWrapper>

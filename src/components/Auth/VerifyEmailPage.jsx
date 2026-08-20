@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
-import Logo from '../Common/Logo';
-import { API_URL } from '../../utils/constants';
+import Logo from '../Common/Logo/Logo';
+import { API_URL } from '../../utils/common/constants';
 import './AuthPages.css';
 
 function VerifyEmailPage() {
@@ -33,7 +33,7 @@ function VerifyEmailPage() {
         setState({
           loading: false,
           status: data.success ? 'success' : 'error',
-          message: data.message || (data.success ? 'Email verified.' : 'Verification failed.'),
+          message: data.success ? 'Email verified.' : 'Verification failed. Please request a new link.',
         });
       } catch {
         if (isCurrent) {

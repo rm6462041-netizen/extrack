@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head><style id="font-fb">@font-face{font-family:"Poppins Fallback";src:local("Arial");size-adjust:110%;ascent-override:93%;descent-override:31%;line-gap-override:0%}@font-face{font-family:"Montserrat Fallback";src:local("Arial");size-adjust:113.1%;ascent-override:85%;descent-override:22%;line-gap-override:0%}@font-face{font-family:"Open Sans Fallback";src:local("Arial");size-adjust:105.6%;ascent-override:101%;descent-override:27%;line-gap-override:0%}@font-face{font-family:"Roboto Fallback";src:local("Arial");size-adjust:100.3%;ascent-override:92%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"Inter Fallback";src:local("Arial");size-adjust:107%;ascent-override:90%;descent-override:22%;line-gap-override:0%}@font-face{font-family:"Lato Fallback";src:local("Arial");size-adjust:108%;ascent-override:98%;descent-override:21%;line-gap-override:0%}@font-face{font-family:"Raleway Fallback";src:local("Arial");size-adjust:105%;ascent-override:93%;descent-override:25%;line-gap-override:0%}@font-face{font-family:"Nunito Fallback";src:local("Arial");size-adjust:107.5%;ascent-override:96%;descent-override:26%;line-gap-override:0%}@font-face{font-family:"Source Sans Pro Fallback";src:local("Arial");size-adjust:104%;ascent-override:94%;descent-override:25%;line-gap-override:0%}@font-face{font-family:"Oswald Fallback";src:local("Arial");size-adjust:80%;ascent-override:118%;descent-override:25%;line-gap-override:0%}@font-face{font-family:"Roboto Condensed Fallback";src:local("Arial");size-adjust:88.5%;ascent-override:102%;descent-override:27%;line-gap-override:0%}@font-face{font-family:"Exo 2 Fallback";src:local("Arial");size-adjust:107%;ascent-override:93%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"Titillium Web Fallback";src:local("Arial");size-adjust:101%;ascent-override:96%;descent-override:28%;line-gap-override:0%}@font-face{font-family:"Rubik Fallback";src:local("Arial");size-adjust:107.5%;ascent-override:95%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"Karla Fallback";src:local("Arial");size-adjust:106%;ascent-override:96%;descent-override:23%;line-gap-override:0%}@font-face{font-family:"Work Sans Fallback";src:local("Arial");size-adjust:108%;ascent-override:91%;descent-override:22%;line-gap-override:0%}@font-face{font-family:"DM Sans Fallback";src:local("Arial");size-adjust:107%;ascent-override:93%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"Sora Fallback";src:local("Arial");size-adjust:106%;ascent-override:93%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"Plus Jakarta Sans Fallback";src:local("Arial");size-adjust:107%;ascent-override:93%;descent-override:23%;line-gap-override:0%}@font-face{font-family:"Manrope Fallback";src:local("Arial");size-adjust:106.5%;ascent-override:93%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"IBM Plex Sans Fallback";src:local("Arial");size-adjust:105%;ascent-override:95%;descent-override:25%;line-gap-override:0%}@font-face{font-family:"Space Grotesk Fallback";src:local("Arial");size-adjust:109%;ascent-override:93%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"Orbitron Fallback";src:local("Arial");size-adjust:122%;ascent-override:83%;descent-override:19%;line-gap-override:0%}@font-face{font-family:"Archivo Fallback";src:local("Arial");size-adjust:102%;ascent-override:94%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"Public Sans Fallback";src:local("Arial");size-adjust:105%;ascent-override:93%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"Red Hat Display Fallback";src:local("Arial");size-adjust:106%;ascent-override:95%;descent-override:23%;line-gap-override:0%}@font-face{font-family:"Red Hat Text Fallback";src:local("Arial");size-adjust:105.5%;ascent-override:96%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"Outfit Fallback";src:local("Arial");size-adjust:107%;ascent-override:93%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"Figtree Fallback";src:local("Arial");size-adjust:106%;ascent-override:95%;descent-override:24%;line-gap-override:0%}@font-face{font-family:"Space Mono Fallback";src:local("Courier New");size-adjust:106%;ascent-override:100%;descent-override:25%;line-gap-override:0%}@font-face{font-family:"Roboto Mono Fallback";src:local("Courier New");size-adjust:102%;ascent-override:98%;descent-override:23%;line-gap-override:0%}@font-face{font-family:"JetBrains Mono Fallback";src:local("Courier New");size-adjust:107%;ascent-override:98%;descent-override:25%;line-gap-override:0%}@font-face{font-family:"Fira Code Fallback";src:local("Courier New");size-adjust:105%;ascent-override:97%;descent-override:24%;line-gap-override:0%}.btn,.btn-primary,.btn-secondary,.btn-cta{transition:opacity .3s ease,background-color .3s ease !important}.trust-badge i,.trust-badge .fa-solid,.trust-badge .fa-regular,.trust-badge [class*="fa-"]{display:inline-block;width:1em;height:1em;vertical-align:middle;text-align:center;line-height:1}.trust-row{contain:content}.hero-decor{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:-1;contain:strict}.cookie-consent,.disclaimer-popup-overlay,.terms-popup-overlay{contain:layout style paint}.cookie-consent{position:fixed;bottom:0;left:0;right:0;z-index:9999;display:none}.disclaimer-popup-overlay{position:fixed;bottom:0;left:0;width:100%;z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s ease}.disclaimer-popup-overlay.active{opacity:1;pointer-events:auto}.disclaimer-popup{background:#fff;color:#333;border-radius:12px 12px 0 0;padding:20px 24px;box-shadow:0 -4px 20px rgba(0,0,0,.15);max-height:80vh;overflow-y:auto}.disclaimer-popup-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.disclaimer-popup-header h4{margin:0;font-size:1.1rem}.disclaimer-close-btn{background:none;border:none;font-size:1.5rem;cursor:pointer;color:#333;padding:4px 8px}.disclaimer-main-text{font-size:.9rem;line-height:1.5;margin:0 0 8px}.disclaimer-read-more{color:#0066cc;text-decoration:underline;cursor:pointer;font-size:.85rem}.disclaimer-understand-btn{background:#0066cc;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:.95rem;cursor:pointer;margin-top:12px;width:100%}.disclaimer-more-text{display:none;margin-top:12px}.disclaimer-more-text.expanded{display:block}.terms-popup-overlay{position:fixed;inset:0;z-index:10000;display:none}.cards-section,.features-section,.steps-section,.pricing-section,.faq-section,.warning-section{content-visibility:auto;contain-intrinsic-size:auto 500px}</style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<meta content="#23292e" name="theme-color"/>
+<meta content="Funded Trading Plus delivers AI-driven trading automation insights, bot-workflow breakdowns, risk-aware controls, and elegant multi-asset execution for modern markets." name="description"/>
+<title>funded trading plus | AI Trading Platform | Official Website</title>
+<link rel="preload" href="styles.css" as="style"/>
+
+
+
+
+<link as="style" href="https://fonts.googleapis.com/css2?family=Rubik:wght@600;700&amp;family=Karla:wght@400&amp;display=swap" rel="preload"/>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="f903b9c4443dbbaad3621550-|49"></script><style type="text/css">@font-face {font-family:Rubik;font-style:normal;font-weight:600;src:url(/cf-fonts/v/rubik/5.2.8/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:Rubik;font-style:normal;font-weight:600;src:url(/cf-fonts/v/rubik/5.2.8/hebrew/wght/normal.woff2);unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F;font-display:swap;}@font-face {font-family:Rubik;font-style:normal;font-weight:600;src:url(/cf-fonts/v/rubik/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:Rubik;font-style:normal;font-weight:600;src:url(/cf-fonts/v/rubik/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:Rubik;font-style:normal;font-weight:600;src:url(/cf-fonts/v/rubik/5.2.8/arabic/wght/normal.woff2);unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1;font-display:swap;}@font-face {font-family:Rubik;font-style:normal;font-weight:600;src:url(/cf-fonts/v/rubik/5.2.8/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:Rubik;font-style:normal;font-weight:700;src:url(/cf-fonts/v/rubik/5.2.8/cyrillic-ext/wght/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:Rubik;font-style:normal;font-weight:700;src:url(/cf-fonts/v/rubik/5.2.8/latin/wght/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:Rubik;font-style:normal;font-weight:700;src:url(/cf-fonts/v/rubik/5.2.8/hebrew/wght/normal.woff2);unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F;font-display:swap;}@font-face {font-family:Rubik;font-style:normal;font-weight:700;src:url(/cf-fonts/v/rubik/5.2.8/latin-ext/wght/normal.woff2);unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:Rubik;font-style:normal;font-weight:700;src:url(/cf-fonts/v/rubik/5.2.8/arabic/wght/normal.woff2);unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1;font-display:swap;}@font-face {font-family:Rubik;font-style:normal;font-weight:700;src:url(/cf-fonts/v/rubik/5.2.8/cyrillic/wght/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}</style>
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Rubik:wght@600;700&amp;family=Karla:wght@400&amp;display=swap"/><link href="https://fonts.googleapis.com/css2?family=Rubik:wght@600;700&amp;family=Karla:wght@400&amp;display=swap" media="print" onload="this.media='all'" rel="stylesheet"/><noscript><link href="https://fonts.googleapis.com/css2?family=Rubik:wght@600;700&amp;family=Karla:wght@400&amp;display=swap" rel="stylesheet"/></noscript></noscript>
+<link href="https://cdnjs.cloudflare.com" rel="preconnect"/>
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com"/>
+<link as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css" rel="preload"/>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="f903b9c4443dbbaad3621550-|49"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css" media="print" onload="this.media='all'" rel="stylesheet"/>
+<noscript><link as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css" rel="preload"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css" media="print" onload="this.media='all'" rel="stylesheet"/>
+<noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css" rel="stylesheet"/></noscript></noscript>
+<link as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/solid.min.css" rel="preload"/>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="f903b9c4443dbbaad3621550-|49"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/solid.min.css" media="print" onload="this.media='all'" rel="stylesheet"/>
+<noscript><link as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/solid.min.css" rel="preload"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/solid.min.css" media="print" onload="this.media='all'" rel="stylesheet"/>
+<noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/solid.min.css" rel="stylesheet"/></noscript></noscript>
+<style id="critical-css">@font-face{font-family:"Rubik Fallback";src:local("Arial");size-adjust:107.5%;ascent-override:95%;descent-override:24%;line-gap-override:0%}:root{--bg:#23292e;--bg2:#2d3439;--text:#ffffff;--muted:#d2d6dc;--muted2:#adb1b8;--accent:#e84142;--btnText:#FFFFFF;--shadow:0 8px 32px rgba(232,65,66,0.25);--radius:0px;--fontHead:"Rubik","Rubik Fallback","Rubik Fallback",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--fontBody:"Karla","Karla Fallback",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--container:1200px;--padX:40px;--padY:72px;--gap:8px;--cardPad:18px;--line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.14);--focus:2px solid var(--accent)}*,*::before,*::after{box-sizing:border-box;overflow-wrap:break-word;word-wrap:break-word}html{font-size:100%;overflow-x:hidden;scroll-behavior:smooth}body{margin:0;font-family:var(--fontBody);font-size:1rem;line-height:1.65;color:var(--text);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}img{max-width:100%;height:auto;display:block}a{color:inherit;text-decoration:none}p{margin:0 0 1rem;color:var(--muted);-webkit-hyphens:auto;hyphens:auto}h1,h2,h3,h4,h5,h6{font-family:var(--fontHead);color:var(--text);margin:0 0 .75rem;hyphens:none;letter-spacing:.2px}h1{font-size:3rem;line-height:1.18}h2{font-size:2.25rem;line-height:1.22}h3{font-size:1.45rem;line-height:1.28}.container{width:min(var(--container),92vw);margin:0 auto}.section{padding:var(--padY) var(--padX)}.section-alt{padding:var(--padY) var(--padX);background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);content-visibility:auto;contain-intrinsic-size:auto 500px}.section:not(.hero){content-visibility:auto;contain-intrinsic-size:auto 500px}.trust-badge i,[class*="fa-"]{display:inline-block;width:1em;height:1em;vertical-align:middle;line-height:1}.site-header{position:sticky;top:0;z-index:999;background:rgba(35,41,46,.92);backdrop-filter:saturate(120%) blur(10px);border-bottom:1px solid var(--line)}.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0}.brand{display:flex;align-items:center;gap:10px;min-width:fit-content}.brand-mark{width:18px;height:18px;border:2px solid var(--accent);background:linear-gradient(135deg,rgba(232,65,66,.25),rgba(232,65,66,.05));box-shadow:var(--shadow)}.brand-text{font-weight:700;letter-spacing:.6px;text-transform:uppercase}.nav-links{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.nav-links a{font-family:var(--fontHead);font-weight:600;font-size:.95rem;color:var(--muted);padding:8px 10px;border:1px solid transparent}.nav-links a:hover{color:var(--text);border-color:rgba(232,65,66,.35)}.nav-cta{border:1px solid var(--accent)!important;color:var(--accent)!important}.lang-menu{position:relative}.lang-btn{cursor:pointer;display:flex;align-items:center;gap:.25rem;padding:.35rem .6rem;border:1px solid currentColor;border-radius:4px;font-size:.85rem;color:inherit;opacity:.75}.lang-btn:hover{opacity:1}.lang-arrow{font-size:.7rem;transition:transform .2s}.lang-dropdown{display:none;position:absolute;top:100%;right:0;margin-top:.25rem;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.1);max-height:320px;overflow-y:auto;z-index:1000;min-width:160px;padding:.25rem 0}.lang-menu:hover .lang-dropdown,.lang-menu:focus-within .lang-dropdown{display:block}.lang-menu:hover .lang-arrow,.lang-menu:focus-within .lang-arrow{transform:rotate(180deg)}.lang-option{display:block;padding:.4rem 1rem;text-decoration:none;color:#333;font-size:.85rem;white-space:nowrap}.lang-option:hover{background:#f0f0f0}.lang-option.active{font-weight:bold;background:#f5f5f5}.lang-dropdown,.lang-list{background:#ffffff}.lang-option{color:#000000 !important;background:#ffffff}.lang-option:hover{background:rgba(0,0,0,.05);color:#000000 !important}.mobile-toggle-input{display:none}.hamburger{display:none;background:transparent;border:1px solid currentColor;color:inherit;padding:10px 12px;cursor:pointer;opacity:.75}.hamburger:hover{opacity:1}.mobile-menu{display:none;background:var(--bg,#111);border-top:1px solid rgba(255,255,255,.1)}.mobile-menu a{display:block;padding:12px 20px;color:var(--text,#fff);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.06)}.mobile-menu a:hover{background:rgba(255,255,255,.08)}@media (max-width:768px){.nav-links{display:none}.hamburger{display:flex;align-items:center;justify-content:center}.mobile-toggle-input:checked~.mobile-menu{display:block}}.hero{position:relative;min-height:600px;overflow:hidden;background:radial-gradient(900px 500px at 12% 22%,rgba(232,65,66,.22),transparent 60%),radial-gradient(700px 420px at 85% 65%,rgba(173,177,184,.10),transparent 65%),linear-gradient(180deg,rgba(255,255,255,.02),transparent 40%);padding:32px 0 24px;;contain:layout style}.hero-inner{display:flex;align-items:flex-start;gap:40px;max-width:1200px;margin:0 auto;padding:60px 0}.hero-left{flex:1;min-width:0}.hero-kicker{display:flex;align-items:center;gap:10px;margin-bottom:14px;color:var(--muted2);font-size:.95rem}.trust-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px;contain:content}.trust-badge{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line2);background:rgba(45,52,57,.45)}.trust-badge span{color:var(--muted);font-size:.95rem}.hero-form{width:100%;max-width:460px;flex-shrink:0}.form-shell{border:1px solid rgba(232,65,66,.35);background:linear-gradient(180deg,rgba(45,52,57,.92),rgba(45,52,57,.78));box-shadow:var(--shadow);padding:20px}.form-title{font-size:1.35rem;margin-bottom:6px}.form-subtitle{margin:0 0 14px;color:var(--muted)}.phone-input-wrapper{display:flex;align-items:center;border:1px solid rgba(255,255,255,.16);background:rgba(35,41,46,.70);border-radius:var(--radius)}.phone-input-wrapper:focus-within{outline:var(--focus);outline-offset:2px}.phone-prefix{padding:12px 10px;background:rgba(173,177,184,.12);color:var(--text);font-weight:700;min-width:64px;text-align:center;border-right:1px solid rgba(255,255,255,.10);white-space:nowrap}.phone-input-wrapper input{border:0;background:transparent;min-height:44px}.form-terms a,.form-disclaimer a{color:var(--accent);text-decoration:underline;font-weight:700}.form-terms a:hover,.form-disclaimer a:hover{opacity:.9}.submit-btn{background:transparent;color:var(--accent);border:1px solid var(--accent);padding:12px 16px;font-family:var(--fontHead);font-weight:800;letter-spacing:.6px;text-transform:uppercase;cursor:pointer;border-radius:var(--radius);min-height:46px;transition:transform .2s ease}.submit-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);background-color:rgba(232,65,66,.08)}.submit-btn:active{transform:translateY(0)}.submit-btn:disabled{opacity:.6;cursor:not-allowed}.form-message{padding:10px 12px;border-radius:var(--radius);font-size:.9rem;margin-bottom:8px;display:none}.form-message.error{display:block;background:rgba(232,65,66,.10);border:1px solid rgba(232,65,66,.35);color:var(--text)}.form-message.success{display:block;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:var(--text)}.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 14px;border-radius:var(--radius);border:1px solid rgba(255,255,255,.14);font-family:var(--fontHead);font-weight:800;letter-spacing:.4px;text-transform:uppercase;transition:transform .2s ease}.btn-ghost{background:transparent;color:var(--accent);border-color:var(--accent)}.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);background-color:rgba(232,65,66,.08)}@media (max-width:768px){.section,.section-alt{padding:30px 16px}.hero{min-height:auto}.hero-inner{flex-direction:column;align-items:flex-start;padding:0}.hero-left{text-align:center}.trust-row{grid-template-columns:1fr}.hero-form{width:100%;max-width:520px}h1{font-size:1.8rem}}@media (max-width:480px){h1{font-size:1.5rem}h2{font-size:1.3rem}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;scroll-behavior:auto !important}}body{overflow-wrap:break-word;word-wrap:break-word}h1,h2,h3,h4,p,span,a,li,label,button,.btn,.submit-btn,.kicker,.kicker-pill,.kicker-chip,.kicker-text,.chip,.tag,.badge,.pill,.pill-text,.circular-label,.progress-label,.stat-title,.stat-desc,.stat-kicker,.stat-label,.metric-label,.metric-value,.glow-stat-card,.feature-card,.step-card,.faq-question,.faq-q,.card h3,.card p,.form-disclaimer,.terms-read-more,.nav-links a,.mobile-menu a,.footer-links a{overflow-wrap:break-word;word-wrap:break-word}.kicker-pill,.kicker-chip,.kicker-text{hyphens:auto;-webkit-hyphens:auto}@media (max-width:480px){.kicker-pill,.kicker-chip{font-size:0.8rem;padding:6px 10px;white-space:normal;text-align:center}.phone-prefix{min-width:auto;padding:0 6px;font-size:12px}}@media (max-width:768px){.hero-metrics{flex-direction:column}}@media (max-width:480px){.trust-badge{padding:12px}.trust-badge strong{font-size:12px}.trust-badge span{font-size:12px}}</style>
+<link rel="preload" href="styles.css" as="style" fetchpriority="high"/>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="f903b9c4443dbbaad3621550-|49"></script><link href="styles.css" rel="stylesheet" media="print" onload="this.media='all'"/>
+<noscript><link href="styles.css" rel="stylesheet"/></noscript>
+<link rel="canonical" href="https://fundedtradingplus.click/"/>
+
+<meta content="index, follow" name="robots"/>
+<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
+<meta content="website" property="og:type"/>
+<meta content="funded trading plus | AI Trading Automation Overview" property="og:title"/>
+<meta content="funded trading plus delivers AI-powered trading automation insights, bot-workflow breakdowns, risk-aware controls, and elegant multi-asset execution for modern markets." property="og:description"/>
+<meta property="og:url" content="https://fundedtradingplus.click/logo.svg" />
+<meta content="funded trading plus" property="og:site_name"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="funded trading plus | AI Trading Automation Overview" name="twitter:title"/>
+<meta content="funded trading plus delivers AI-powered trading automation insights, bot-workflow breakdowns, risk-aware controls, and elegant multi-asset execution for modern markets." name="twitter:description"/>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebSite",
+  "name":"funded trading plus",
+  "url":"https://fundedtradingplus.click/",
+  "inLanguage":"en",
+  "description":"funded trading plus presents AI-powered trading automation insights, bot workflow breakdowns, feature highlights, and risk-focused controls for modern multi-asset trading."
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Organization",
+  "name":"funded trading plus",
+  "url":"https://fundedtradingplus.click/",
+  "logo":"https://fundedtradingplus.click/favicon.svg"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {
+      "@type":"Question",
+      "name":"What is funded trading plus designed to present?",
+      "acceptedAnswer":{"@type":"Answer","text":"funded trading plus presents a structured overview of AI-powered trading assistance, automated bot workflow components, and operational tooling that supports data-driven execution."}
+    },
+    {
+      "@type":"Question",
+      "name":"How does the FAQ search work on funded trading plus?",
+      "acceptedAnswer":{"@type":"Answer","text":"The funded trading plus FAQ search filters questions instantly as you type, helping visitors locate details about automation modules, controls, and account setup flow."}
+    },
+    {
+      "@type":"Question",
+      "name":"Which controls are highlighted for risk handling?",
+      "acceptedAnswer":{"@type":"Answer","text":"funded trading plus highlights configurable exposure controls, order safeguards, and monitoring views that support structured risk handling when using automated trading bots."}
+    }
+  ]
+}
+</script>
+<style>
+.hero-decor{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:-1;contain:strict;transform:translateZ(0)}
+.orb{position:absolute;border-radius:50%;contain:strict}
+.hero-form{width:100%;max-width:460px;flex-shrink:0}
+.hero-kicker{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+</style>
+<style>/* critical-hero-inline */
+.hero-lead{font-size:1.06rem;line-height:1.7;max-width:62ch;display:block}
+.hero-title,#hero-title{display:block}
+</style>
+<style>/* fa-font-display-fix */
+@font-face{font-family:"Font Awesome 6 Free";font-display:swap}
+@font-face{font-family:"Font Awesome 6 Solid";font-display:swap}
+</style>
+<link rel="alternate" hreflang="en" href="https://fundedtradingplus.click/logo.svg" />
+<link rel="alternate" hreflang="de" href="https://fundedtradingplus.click/de/logo.svg" />
+<link rel="alternate" hreflang="es" href="https://fundedtradingplus.click/es/logo.svg" />
+<link rel="alternate" hreflang="fr" href="https://fundedtradingplus.click/fr/logo.svg" />
+<link rel="alternate" hreflang="it" href="https://fundedtradingplus.click/it/logo.svg" />
+<link rel="alternate" hreflang="pt" href="https://fundedtradingplus.click/pt/logo.svg" />
+<link rel="alternate" hreflang="nl" href="https://fundedtradingplus.click/nl/logo.svg" />
+<link rel="alternate" hreflang="pl" href="https://fundedtradingplus.click/pl/logo.svg" />
+<link rel="alternate" hreflang="sv" href="https://fundedtradingplus.click/sv/logo.svg" />
+<link rel="alternate" hreflang="da" href="https://fundedtradingplus.click/da/logo.svg" />
+<link rel="alternate" hreflang="no" href="https://fundedtradingplus.click/no/logo.svg" />
+<link rel="alternate" hreflang="fi" href="https://fundedtradingplus.click/fi/logo.svg" />
+<link rel="alternate" hreflang="cs" href="https://fundedtradingplus.click/cs/logo.svg" />
+<link rel="alternate" hreflang="sk" href="https://fundedtradingplus.click/sk/logo.svg" />
+<link rel="alternate" hreflang="hu" href="https://fundedtradingplus.click/hu/logo.svg" />
+<link rel="alternate" hreflang="ro" href="https://fundedtradingplus.click/ro/logo.svg" />
+<link rel="alternate" hreflang="bg" href="https://fundedtradingplus.click/bg/logo.svg" />
+<link rel="alternate" hreflang="hr" href="https://fundedtradingplus.click/hr/logo.svg" />
+<link rel="alternate" hreflang="el" href="https://fundedtradingplus.click/el/logo.svg" />
+<link rel="alternate" hreflang="tr" href="https://fundedtradingplus.click/tr/logo.svg" />
+<link rel="alternate" hreflang="ar" href="https://fundedtradingplus.click/ar/logo.svg" />
+<link rel="alternate" hreflang="th" href="https://fundedtradingplus.click/th/logo.svg" />
+<link rel="alternate" hreflang="id" href="https://fundedtradingplus.click/id/logo.svg" />
+<link rel="alternate" hreflang="ja" href="https://fundedtradingplus.click/ja/logo.svg" />
+<link rel="alternate" hreflang="ko" href="https://fundedtradingplus.click/ko/logo.svg" />
+<link rel="alternate" hreflang="zh" href="https://fundedtradingplus.click/zh/logo.svg" />
+<link rel="alternate" hreflang="hi" href="https://fundedtradingplus.click/hi/logo.svg" />
+<link rel="alternate" hreflang="ru" href="https://fundedtradingplus.click/ru/logo.svg" />
+<link rel="alternate" hreflang="x-default" href="https://fundedtradingplus.click/logo.svg" />
+<meta property="og:locale" content="en_US"/>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header">
+<div class="container header-inner">
+<a aria-label="funded trading plus home" class="brand" href="/">
+<span aria-hidden="true" class="brand-mark"></span>
+<span class="brand-text">funded trading plus</span>
+</a>
+<nav aria-label="Main navigation" class="nav">
+<div class="nav-links">
+<a href="/">Home</a>
+<a href="about">About</a>
+<a href="contact">Contact</a>
+<a href="login">Login</a>
+<a class="nav-cta" href="signup">Sign Up</a>
+</div>
+<div class="header-tools">
+<div aria-haspopup="true" aria-label="Language menu" class="lang-menu" role="button" tabindex="0">
+<span class="lang-btn">
+<span class="lang-current">EN</span>
+<span class="lang-arrow">▾</span>
+</span>
+<div aria-label="Languages" class="lang-dropdown">
+    <a href="/" class="lang-option active">English</a>
+    <a href="/de/" class="lang-option">Deutsch</a>
+    <a href="/es/" class="lang-option">Español</a>
+    <a href="/fr/" class="lang-option">Français</a>
+    <a href="/it/" class="lang-option">Italiano</a>
+    <a href="/pt/" class="lang-option">Português</a>
+    <a href="/nl/" class="lang-option">Nederlands</a>
+    <a href="/pl/" class="lang-option">Polski</a>
+    <a href="/sv/" class="lang-option">Svenska</a>
+    <a href="/da/" class="lang-option">Dansk</a>
+    <a href="/no/" class="lang-option">Norsk</a>
+    <a href="/fi/" class="lang-option">Suomi</a>
+    <a href="/cs/" class="lang-option">Čeština</a>
+    <a href="/sk/" class="lang-option">Slovenčina</a>
+    <a href="/hu/" class="lang-option">Magyar</a>
+    <a href="/ro/" class="lang-option">Română</a>
+    <a href="/bg/" class="lang-option">Български</a>
+    <a href="/hr/" class="lang-option">Hrvatski</a>
+    <a href="/el/" class="lang-option">Ελληνικά</a>
+    <a href="/tr/" class="lang-option">Türkçe</a>
+    <a href="/ar/" class="lang-option">العربية</a>
+    <a href="/th/" class="lang-option">ไทย</a>
+    <a href="/id/" class="lang-option">Bahasa Indonesia</a>
+    <a href="/ja/" class="lang-option">日本語</a>
+    <a href="/ko/" class="lang-option">한국어</a>
+    <a href="/zh/" class="lang-option">中文</a>
+    <a href="/hi/" class="lang-option">हिन्दी</a>
+    <a href="/ru/" class="lang-option">Русский</a>
+  </div>
+</div>
+<input aria-hidden="true" class="mobile-toggle-input" id="mobileToggle" type="checkbox"/>
+<label aria-label="Toggle menu" class="hamburger" for="mobileToggle">
+<span aria-hidden="true" class="hamburger-lines"></span>
+</label>
+<div aria-label="Mobile navigation" class="mobile-menu" id="mobileMenu">
+<a href="/">Home</a>
+<a href="about">About</a>
+<a href="contact">Contact</a>
+<a href="login">Login</a>
+<a href="signup">Sign Up</a>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id="main" role="main">
+<!-- HERO -->
+<section aria-labelledby="heroTitle" class="hero section">
+<div class="container hero-inner">
+<div class="hero-left">
+<div class="hero-kicker">
+<span aria-hidden="true" class="kicker-dot"></span>
+<span class="kicker-text">Decentralized execution tooling</span>
+</div>
+<h1 id="heroTitle">funded trading plus</h1>
+<p class="hero-lead">
+          At funded trading plus, explore a refined blueprint of AI-driven trading automation and autonomous bots, engineered for crisp workflows, adjustable safeguards, and transparent operations across diverse asset classes.
+          The platform highlights execution blocks, real-time monitoring dashboards, and robust data governance designed for today’s professional markets.
+        </p>
+<div aria-label="Key highlights" class="hero-quicklist">
+<span class="chip"><i aria-hidden="true" class="fa-solid fa-robot"></i> Autonomous bot modules</span>
+<span class="chip"><i aria-hidden="true" class="fa-solid fa-shield-halved"></i> Rigorous risk governance</span>
+<span class="chip"><i aria-hidden="true" class="fa-solid fa-layer-group"></i> Unified multi-venue routing</span>
+<span class="chip"><i aria-hidden="true" class="fa-solid fa-lock"></i> Privacy-forward data flow</span>
+</div>
+<div aria-label="Trust badges" class="trust-row">
+<div class="trust-badge"><i aria-hidden="true" class="fa-solid fa-bolt"></i><span>Ultra-fast orchestration</span></div>
+<div class="trust-badge"><i aria-hidden="true" class="fa-solid fa-sliders"></i><span>Customizable parameter sets</span></div>
+<div class="trust-badge"><i aria-hidden="true" class="fa-solid fa-chart-line"></i><span>Comprehensive monitoring views</span></div>
+</div>
+</div>
+<aside aria-label="Registration panel" class="hero-form">
+<div class="form-shell">
+<h2 class="form-title" id="heroFormTitle">Open your funded trading plus profile</h2>
+<p class="form-subtitle">
+            Share your contact details to receive timely updates and begin your onboarding for AI-powered automation tools.
+          </p>
+<div id="lead-form-container">
+<div class="form-message" id="formMessage"></div>
+<form aria-label="Registration form" class="reg-form" id="registrationForm" novalidate="">
+<div class="form-grid">
+<div class="form-col">
+<label for="firstName">First Name *</label>
+<input aria-required="true" autocomplete="given-name" id="firstName" name="firstName" placeholder="Enter your first name" required="" type="text"/>
+</div>
+<div class="form-col">
+<label for="lastName">Last Name *</label>
+<input aria-required="true" autocomplete="family-name" id="lastName" name="lastName" placeholder="Your last name" required="" type="text"/>
+</div>
+</div>
+<div class="form-block">
+<label for="email">Email *</label>
+<input aria-required="true" autocomplete="email" id="email" name="email" placeholder="Enter your email" required="" type="email"/>
+</div>
+<input id="country" name="country" type="hidden" value=""/>
+<div class="form-block">
+<label for="phone">Phone *</label>
+<div class="phone-input-wrapper">
+<span class="phone-prefix" id="phonePrefix"></span>
+<input aria-required="true" autocomplete="tel" id="phone" name="phone" placeholder="Your phone number" required="" type="tel"/>
+</div>
+</div>
+<p class="form-disclaimer">By creating an account you accept our <a href="terms" target="_blank">Terms of Service</a>, <a href="privacy-policy" target="_blank">Privacy Policy</a> and <a href="cookie-policy" target="_blank">Cookie Policy</a>. This website serves as a marketing platform only. <a class="terms-read-more" href="#" onclick="if (!window.__cfRLUnblockHandlers) return false; _i2oh2uiv(event)" data-cf-modified-f903b9c4443dbbaad3621550-="">Read More</a></p>
+<button class="submit-btn" id="submitBtn" type="submit">GET STARTED</button>
+</form>
+</div>
+</div>
+</aside>
+</div>
+</section>
+<!-- FEATURES -->
+<section aria-labelledby="featuresTitle" class="features section-alt">
+<div class="container">
+<div class="section-head" id="featuresHead">
+<h2 id="featuresTitle">Key automation capabilities for execution</h2>
+<p>
+          funded trading plus clusters automation elements into concise feature groups, outlining how AI-driven assistants enable setup, oversight, and disciplined control across advanced trading setups. Each module is described with practitioner-focused detail, matching modern workflow patterns and modular architecture.
+        </p>
+</div>
+<div aria-labelledby="featuresHead" class="numbered-grid features-grid">
+<article class="numbered-card card">
+<div aria-hidden="true" class="card-number">01</div>
+<h3><i aria-hidden="true" class="fa-solid fa-diagram-project"></i> Strategy routing overview</h3>
+<p>funded trading plus maps the flow of automated strategies, showing venue selection, order routes, and execution stages in a clear sequence.</p>
+<ul class="mini-list">
+<li>Exchange-specific order routes</li>
+<li>Real-time stage visibility</li>
+<li>Rule-driven behavior</li>
+</ul>
+</article>
+<article class="numbered-card card">
+<div aria-hidden="true" class="card-number">02</div>
+<h3><i aria-hidden="true" class="fa-solid fa-sliders"></i> Configuration surfaces</h3>
+<p>funded trading plus highlights controls for AI-assisted trading, including risk boundaries, sizing rules, and session constraints in a tidy layout.</p>
+<ul class="mini-list">
+<li>Exposure limits</li>
+<li>Position sizing presets</li>
+<li>Session constraints</li>
+</ul>
+</article>
+<article class="numbered-card card">
+<div aria-hidden="true" class="card-number">03</div>
+<h3><i aria-hidden="true" class="fa-solid fa-chart-simple"></i> Monitoring &amp; telemetry</h3>
+<p>funded trading plus presents dashboards that summarize bot activity, execution status, and key metrics for review and compliance-friendly tracking.</p>
+<ul class="mini-list">
+<li>Activity timelines</li>
+<li>Execution summaries</li>
+<li>Operational snapshots</li>
+</ul>
+</article>
+<article class="numbered-card card">
+<div aria-hidden="true" class="card-number">04</div>
+<h3><i aria-hidden="true" class="fa-solid fa-lock"></i> Data handling patterns</h3>
+<p>funded trading plus describes privacy-focused data flow patterns that support secure handling of account fields and controlled sharing across integrated services.</p>
+<ul class="mini-list">
+<li>Scoped data access controls</li>
+<li>Encrypted transport channels</li>
+<li>Audit-ready data structures</li>
+</ul>
+</article>
+<article class="numbered-card card">
+<div aria-hidden="true" class="card-number">05</div>
+<h3><i aria-hidden="true" class="fa-solid fa-gauge-high"></i> Performance layout</h3>
+<p>funded trading plus emphasizes fast rendering, stable layout, and responsive grids so content remains readable across desktop and mobile trading contexts.</p>
+<ul class="mini-list">
+<li>Stable typography</li>
+<li>Dense information grid</li>
+<li>Responsive section flow</li>
+</ul>
+</article>
+<article class="numbered-card card">
+<div aria-hidden="true" class="card-number">06</div>
+<h3><i aria-hidden="true" class="fa-solid fa-shield-halved"></i> Risk-aware design</h3>
+<p>funded trading plus frames automation around structured risk handling, presenting controls and checklists that align with disciplined execution practices.</p>
+<ul class="mini-list">
+<li>Pre-trade verifications</li>
+<li>Exposure constraints</li>
+<li>Operational reviews</li>
+</ul>
+</article>
+</div>
+</div>
+</section>
+<!-- HOW IT WORKS -->
+<section aria-labelledby="howTitle" class="how section">
+<div class="container">
+<div class="section-head">
+<h2 id="howTitle">How the automation lifecycle is laid out</h2>
+<p>
+          funded trading plus breaks down a standard automation lifecycle into crisp stages, illustrating how AI-enabled guidance helps you design, configure, and observe sophisticated trading flows.
+        </p>
+</div>
+<div aria-label="Workflow steps" class="steps-arrows">
+<article class="step-card card">
+<div class="step-top">
+<span class="step-pill">Step 1</span>
+<i aria-hidden="true" class="fa-solid fa-id-card"></i>
+</div>
+<h3>Profile and preferences</h3>
+<p>funded trading plus captures essential account details and choices to harmonize automation modules with a consistent operating profile.</p>
+</article>
+<div aria-hidden="true" class="step-arrow">➜</div>
+<article class="step-card card">
+<div class="step-top">
+<span class="step-pill">Step 2</span>
+<i aria-hidden="true" class="fa-solid fa-sliders"></i>
+</div>
+<h3>Bot configuration</h3>
+<p>arranges bot controls, including risk limits, sizing rules, and session boundaries, in an orderly interface.</p>
+</article>
+<div aria-hidden="true" class="step-arrow">➜</div>
+<article class="step-card card">
+<div class="step-top">
+<span class="step-pill">Step 3</span>
+<i aria-hidden="true" class="fa-solid fa-route"></i>
+</div>
+<h3>Execution path overview</h3>
+<p>demonstrates the stages and routing for automated orders, enabling review of how actions traverse the predefined path.</p>
+</article>
+<div aria-hidden="true" class="step-arrow">➜</div>
+<article class="step-card card">
+<div class="step-top">
+<span class="step-pill">Step 4</span>
+<i aria-hidden="true" class="fa-solid fa-chart-line"></i>
+</div>
+<h3>Monitoring and evaluation</h3>
+<p>highlights dashboards that summarize activity and performance for ongoing assessment.</p>
+</article>
+</div>
+</div>
+</section>
+<!-- FAQ (search_filter) -->
+<section aria-labelledby="faqTitle" class="faq section-alt">
+<div class="container">
+<div class="section-head">
+<h2 id="faqTitle">FAQ: fast answers at your fingertips</h2>
+<p>
+          funded trading plus includes a searchable FAQ that organizes common questions about AI-assisted trading, automation workflows, configuration controls, and operational flow. Use the search field to filter entries instantly and locate details quickly.
+        </p>
+</div>
+<div class="faq-search-box" role="search">
+<label class="sr-only" for="faqSearch">Search FAQs</label>
+<input autocomplete="off" class="faq-search-input" id="faqSearch" placeholder="Search questions (filters instantly)" type="search"/>
+<span aria-hidden="true" class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+</div>
+<div aria-label="Frequently asked questions" class="faq-search-results" id="faqList">
+<article class="faq-search-item" data-q="what is equiloompro designed to present">
+<h3 class="faq-question">What is funded trading plus designed to present?</h3>
+<p class="faq-answer">funded trading plus delivers a curated overview of AI-assisted trading, automated bot workflows, and operational tooling that supports data-driven execution.</p>
+</article>
+<article class="faq-search-item" data-q="how are automated trading bots described">
+<h3 class="faq-question">How are automated trading bots described?</h3>
+<p class="faq-answer">funded trading plus portrays automated bots as configurable modules with defined execution stages, complemented by monitoring views that summarize activity and status.</p>
+</article>
+<article class="faq-search-item" data-q="what types of controls are highlighted">
+<h3 class="faq-question">What types of controls are highlighted?</h3>
+<p class="faq-answer">funded trading plus emphasizes exposure boundaries, sizing presets, and session guardrails to support structured risk handling within automation workflows.</p>
+</article>
+<article class="faq-search-item" data-q="how does the faq search work">
+<h3 class="faq-question">How does the FAQ search function?</h3>
+<p class="faq-answer">funded trading plus filters items instantly as you type using built-in browser filtering for a fast, responsive experience.</p>
+</article>
+<article class="faq-search-item" data-q="what is included in monitoring views">
+<h3 class="faq-question">What is included in monitoring views?</h3>
+<p class="faq-answer">funded trading plus presents dashboards that summarize automation activity, execution flow checkpoints, and telemetry-style metrics for clear review.</p>
+</article>
+<article class="faq-search-item" data-q="how is privacy presented">
+<h3 class="faq-question">How is privacy presented?</h3>
+<p class="faq-answer">funded trading plus outlines privacy-first data handling patterns that support scoped access, encrypted transport, and controlled sharing across services.</p>
+</article>
+</div>
+<p aria-hidden="true" class="faq-hint">
+        Tip: Try searching “bots”, “controls”, “monitoring”, or “privacy”.
+      </p>
+</div>
+</section>
+<!-- CTA BANNER (split_image without external images; CSS-only background) -->
+<section aria-labelledby="ctaTitle" class="cta section">
+<div class="container cta-split">
+<div class="cta-left">
+<h2 id="ctaTitle">Move from overview to configuration flow</h2>
+<p>
+          funded trading plus maintains a sharp focus on automation tooling and AI-powered trading guidance, presenting setup surfaces and monitoring views in a polished, professional layout.
+          Use the registration panel to connect with the onboarding sequence and explore the workflow structure.
+        </p>
+<div class="cta-actions">
+<a class="btn btn-ghost" href="#heroFormTitle"><i aria-hidden="true" class="fa-solid fa-arrow-right"></i> Open the form</a>
+<a class="btn btn-ghost" href="about"><i aria-hidden="true" class="fa-solid fa-circle-info"></i> Read about funded trading plus</a>
+</div>
+</div>
+<div aria-label="Decorative market mesh background" class="cta-right">
+<div aria-hidden="true" class="cta-art">
+<div class="mesh"></div>
+<div class="gridlines"></div>
+<div class="pulse"></div>
+<div class="stats">
+<div class="stat">
+<div class="stat-top"><i aria-hidden="true" class="fa-solid fa-microchip"></i><span>Automation</span></div>
+<div class="stat-val">Modules</div>
+</div>
+<div class="stat">
+<div class="stat-top"><i aria-hidden="true" class="fa-solid fa-shield"></i><span>Controls</span></div>
+<div class="stat-val">Guardrails</div>
+</div>
+<div class="stat">
+<div class="stat-top"><i aria-hidden="true" class="fa-solid fa-chart-area"></i><span>Monitoring</span></div>
+<div class="stat-val">Dashboards</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TESTIMONIALS -->
+<section aria-labelledby="testTitle" class="testimonials section-alt">
+<div class="container">
+<div class="section-head">
+<h2 id="testTitle">User insights in focus</h2>
+<p>
+          funded trading plus presents an information-first experience centered on AI-assisted trading and automated bots, highlighting structured workflow descriptions and clear control surfaces.
+          The cards below capture common feedback about layout clarity, module organization, and monitoring visibility.
+        </p>
+</div>
+<div class="testimonials-grid">
+<article class="testimonial-card card">
+<header class="testimonial-header">
+<div aria-hidden="true" class="avatar"><i class="fa-solid fa-user"></i></div>
+<div class="testimonial-meta">
+<h3 class="t-name">Operations-focused assessment</h3>
+<p class="t-sub">Workflow clarity</p>
+</div>
+</header>
+<p class="testimonial-text">
+            funded trading plus presents automation stages in a clean sequence, making the bot workflow and monitoring checkpoints easy to follow during configuration planning.
+          </p>
+</article>
+<article class="testimonial-card card">
+<header class="testimonial-header">
+<div aria-hidden="true" class="avatar"><i class="fa-solid fa-user"></i></div>
+<div class="testimonial-meta">
+<h3 class="t-name">Controls &amp; guardrails</h3>
+<p class="t-sub">Parameter visibility</p>
+</div>
+</header>
+<p class="testimonial-text">
+            funded trading plus highlights exposure boundaries and session controls in a structured layout, supporting a consistent approach to automated trading bot configuration.
+          </p>
+</article>
+<article class="testimonial-card card">
+<header class="testimonial-header">
+<div aria-hidden="true" class="avatar"><i class="fa-solid fa-user"></i></div>
+<div class="testimonial-meta">
+<h3 class="t-name">Monitoring presentation</h3>
+<p class="t-sub">Dashboard framing</p>
+</div>
+</header>
+<p class="testimonial-text">
+            funded trading plus organizes monitoring views as concise summaries, keeping AI-powered trading telemetry readable across desktop and mobile screens.
+          </p>
+</article>
+</div>
+</div>
+</section>
+<!-- RISK MANAGEMENT (accordion_tips) -->
+<section aria-labelledby="riskTitle" class="risk section">
+<div class="container">
+<div class="section-head">
+<h2 id="riskTitle">Risk management tips for automation workflows</h2>
+<p>
+          funded trading plus frames automation around structured risk handling, offering practical configuration tips that align with disciplined execution routines.
+          The accordion below describes common control areas for automated bots and AI-powered trading assistance, focusing on clarity and parameter hygiene.
+        </p>
+</div>
+<div aria-label="Risk management tips" class="risk-accordion">
+<details class="risk-item">
+<summary><span class="risk-sum"><i aria-hidden="true" class="fa-solid fa-sliders"></i> Set exposure limits</span><span aria-hidden="true" class="risk-plus">+</span></summary>
+<div class="risk-body">
+<p>funded trading plus presents exposure limits as a core control surface, supporting consistent sizing logic and clear boundaries that fit structured automation routines.</p>
+</div>
+</details>
+<details class="risk-item">
+<summary><span class="risk-sum"><i aria-hidden="true" class="fa-solid fa-shield-halved"></i> Use guardrails for order behavior</span><span aria-hidden="true" class="risk-plus">+</span></summary>
+<div class="risk-body">
+<p>funded trading plus highlights guardrails that shape automated order behavior, offering configuration fields that bolster stable execution flow and predictable parameter handling.</p>
+</div>
+</details>
+<details class="risk-item">
+<summary><span class="risk-sum"><i aria-hidden="true" class="fa-solid fa-chart-line"></i> Monitor activity summaries</span><span aria-hidden="true" class="risk-plus">+</span></summary>
+<div class="risk-body">
+<p>funded trading plus emphasizes monitoring summaries for bots, presenting activity timelines and operational snapshots for clear review.</p>
+</div>
+</details>
+<details class="risk-item">
+<summary><span class="risk-sum"><i aria-hidden="true" class="fa-solid fa-lock"></i> Keep data handling structured</span><span aria-hidden="true" class="risk-plus">+</span></summary>
+<div class="risk-body">
+<p>funded trading plus describes structured data handling patterns, supporting scoped access and secure transport that align with privacy-first practices.</p>
+</div>
+</details>
+<details class="risk-item">
+<summary><span class="risk-sum"><i aria-hidden="true" class="fa-solid fa-clipboard-check"></i> Maintain a configuration checklist</span><span aria-hidden="true" class="risk-plus">+</span></summary>
+<div class="risk-body">
+<p>funded trading plus provides practical configuration checklists to ensure parameter reviews stay consistent for AI-powered automation.</p>
+</div>
+</details>
+</div>
+<div aria-label="Risk section call to action" class="risk-cta-card">
+<div class="risk-cta-text">
+<h3>Ready to review the funded trading plus workflow?</h3>
+<p>funded trading plus keeps the focus on automation tooling, presenting bot stages, controls, and monitoring views in a dense, professional layout.</p>
+</div>
+<div class="risk-cta-actions">
+<a class="btn btn-ghost" href="#heroFormTitle"><i aria-hidden="true" class="fa-solid fa-pen-to-square"></i> Continue to sign up</a>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer aria-label="Site footer" class="site-footer">
+<div class="container footer-top">
+<div class="footer-col">
+<h2 class="footer-title">About funded trading plus</h2>
+<p>
+        funded trading plus delivers structured information about AI-powered trading assistance and automated trading bots, focusing on workflow visibility, configuration controls, and monitoring-oriented layouts for modern trading contexts.
+      </p>
+</div>
+<div class="footer-col">
+<h2 class="footer-title">Links</h2>
+<ul class="footer-links">
+<li><a href="/">Home</a></li>
+<li><a href="about">About</a></li>
+<li><a href="contact">Contact</a></li>
+<li><a href="login">Login</a></li>
+<li><a href="signup">Sign Up</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h2 class="footer-title">Policies</h2>
+<ul class="footer-links">
+<li><a href="terms">Terms and Conditions</a></li>
+<li><a href="privacy-policy">Privacy Policy</a></li>
+<li><a href="cookie-policy">Cookie Policy</a></li>
+</ul>
+</div>
+</div>
+<div class="footer-disclaimer-wrap">
+<img alt="Disclaimer" class="footer-disclaimer desktop-only" height="260" loading="lazy" src="disclaimer-text.svg" width="1200"/>
+<img alt="Disclaimer" class="footer-disclaimer mobile-only" height="520" loading="lazy" src="disclaimer-mobile.svg" width="720"/>
+</div>
+<div class="container footer-bottom">
+<p>© 2026 funded trading plus. All rights reserved.</p>
+</div>
+</footer>
+
+<!-- Cookie Consent -->
+
+
+<!-- Disclaimer Popup -->
+
+
+<!-- Terms Popup -->
+
+
+<!-- Popup Scripts -->
+<script type="f903b9c4443dbbaad3621550-text/javascript">/* replaced */</script>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="f903b9c4443dbbaad3621550-|49" defer></script><script>(function(){var q=window.location.search;if(q){document.addEventListener('click',function(e){var a=e.target.closest('a');if(a&&a.href&&a.hostname===window.location.hostname&&!a.href.includes('?')){a.href=a.href+q;}});}})();</script><div aria-label="Cookie consent" class="cookie-consent" id="cookieConsent" role="dialog" style="position:fixed;bottom:0;left:0;right:0;display:none;contain:layout style paint"><div class="cookie-content"><p>We use cookies to enhance your browsing experience. By continuing to use our website, you agree to our use of cookies. See our <a href="cookie-policy.html">Cookie Policy</a> for more information.</p><button class="cookie-btn" id="acceptCookiesBtn">Accept</button></div></div><div class="disclaimer-popup-overlay" id="disclaimerPopup" style="position:fixed;bottom:0;left:0;width:100%;contain:layout style paint"><div class="disclaimer-popup"><div class="disclaimer-popup-header"><h4>Disclaimer</h4><button class="disclaimer-close-btn" id="closeDisclaimerBtn">&times;</button></div><div class="disclaimer-popup-body"><div class="disclaimer-popup-row"><div class="disclaimer-popup-content"><p class="disclaimer-main-text">This website functions solely as a marketing platform and does not provide, endorse, or facilitate any trading, brokerage, or investment services.</p><a class="disclaimer-read-more" href="#" id="disclaimerReadMore">Read More</a></div><div class="disclaimer-popup-footer"><button class="disclaimer-understand-btn" id="acceptDisclaimerBtn">I Understand</button></div></div></div></div></div><div aria-hidden="true" class="terms-popup-overlay" id="termsPopup" role="dialog" style="display: none; position:fixed; inset:0; contain:layout style paint"><div class="terms-popup-content"><button aria-label="Close" class="close-btn" id="closeTermsBtn">&times;</button><img class="terms-img desktop-only" src="terms-popup.svg" width="560" height="340"/><img class="terms-img mobile-only" src="terms-popup-mobile.svg" width="340" height="520"/></div></div><script>var LANG_MSGS={"en":{"err_required":"Please fill in all required fields.","err_phone_digits":"Phone number can only contain digits.","err_fn_min":"First name must be at least 3 characters.","err_fn_numbers":"First name cannot contain numbers.","err_fn_long":"First name is too long.","err_ln_min":"Last name must be at least 3 characters.","err_ln_numbers":"Last name cannot contain numbers.","err_ln_long":"Last name is too long.","err_email":"Please enter a valid email address.","err_phone_short":"Phone number is too short.","err_phone_long":"Phone number is too long.","btn_processing":"Processing...","btn_register":"REGISTER NOW","cookie_text":"We use cookies to enhance your browsing experience. By continuing to use our website, you agree to our use of cookies. See our","cookie_policy":"Cookie Policy","cookie_more":"for more information.","cookie_accept":"Accept","disc_title":"Disclaimer","disc_text":"This website functions solely as a marketing platform and does not provide, endorse, or facilitate any trading, brokerage, or investment services.","disc_read_more":"Read More","disc_understand":"I Understand","err_country_blocked":"Registration is not available in your region.","err_fn_special":"First name cannot contain numbers or special characters.","err_ln_special":"Last name cannot contain numbers or special characters.","form_disc":"By registering, you confirm that you have read and agreed to our","form_terms":"Terms and Conditions","form_privacy":"Privacy Policy","form_cookie":"Cookie Policy","form_marketing":"This website operates exclusively as a marketing platform.","err_email_exists":"This email is already registered. Please try logging in.","err_register_failed":"Registration failed. Please try again later.","loading_text":"Registering you..."},"de":{"err_required":"Bitte füllen Sie alle Pflichtfelder aus.","err_phone_digits":"Die Telefonnummer darf nur Ziffern enthalten.","err_fn_min":"Der Vorname muss mindestens 3 Zeichen lang sein.","err_fn_numbers":"Der Vorname darf keine Ziffern enthalten.","err_fn_long":"Der Vorname ist zu lang.","err_ln_min":"Der Nachname muss mindestens 3 Zeichen lang sein.","err_ln_numbers":"Der Nachname darf keine Ziffern enthalten.","err_ln_long":"Der Nachname ist zu lang.","err_email":"Bitte geben Sie eine gültige E-Mail-Adresse ein.","err_phone_short":"Die Telefonnummer ist zu kurz.","err_phone_long":"Die Telefonnummer ist zu lang.","btn_processing":"Verarbeite...","btn_register":"JETZT REGISTRIEREN","cookie_text":"Wir verwenden Cookies, um Ihr Surferlebnis zu verbessern. Indem Sie unsere Website weiterhin nutzen, stimmen Sie unserer Verwendung von Cookies zu. Siehe unsere","cookie_policy":"Cookie-Richtlinie","cookie_more":"für weitere Informationen.","cookie_accept":"Akzeptieren","disc_title":"Haftungsausschluss","disc_text":"Diese Website dient ausschließlich als Marketingplattform und bietet keine, befürwortet keine und erleichtert keine Handels-, Brokerage- oder Investmentdienstleistungen.","disc_read_more":"Mehr lesen","disc_understand":"Ich verstehe","err_country_blocked":"Die Registrierung ist in Ihrer Region nicht verfügbar.","err_fn_special":"Der Vorname darf keine Zahlen oder Sonderzeichen enthalten.","err_ln_special":"Der Nachname darf keine Zahlen oder Sonderzeichen enthalten.","form_disc":"Mit der Registrierung bestätigen Sie, dass Sie unsere gelesen und akzeptiert haben","form_terms":"Allgemeine Geschäftsbedingungen","form_privacy":"Datenschutzrichtlinie","form_cookie":"Cookie-Richtlinie","form_marketing":"Diese Website dient ausschließlich als Marketingplattform.","err_email_exists":"Diese E-Mail ist bereits registriert. Bitte versuchen Sie sich einzuloggen.","err_register_failed":"Registrierung fehlgeschlagen. Bitte versuchen Sie es später erneut.","loading_text":"Wir registrieren Sie..."},"es":{"err_required":"Por favor, completa todos los campos obligatorios.","err_phone_digits":"El número de teléfono solo puede contener dígitos.","err_fn_min":"El nombre debe tener al menos 3 caracteres.","err_fn_numbers":"El nombre no puede contener números.","err_fn_long":"El nombre es demasiado largo.","err_ln_min":"El apellido debe tener al menos 3 caracteres.","err_ln_numbers":"El apellido no puede contener números.","err_ln_long":"El apellido es demasiado largo.","err_email":"Por favor, ingresa una dirección de correo electrónico válida.","err_phone_short":"El número de teléfono es demasiado corto.","err_phone_long":"El número de teléfono es demasiado largo.","btn_processing":"Procesando...","btn_register":"REGÍSTRATE AHORA","cookie_text":"Usamos cookies para mejorar su experiencia de navegación. Al continuar usando nuestro sitio web, acepta nuestro uso de cookies. Consulte nuestro","cookie_policy":"Política de Cookies","cookie_more":"para más información.","cookie_accept":"Aceptar","disc_title":"Aviso Legal","disc_text":"Este sitio web funciona únicamente como una plataforma de marketing y no proporciona, respalda ni facilita ningún servicio de comercio, corretaje o inversión.","disc_read_more":"Leer más","disc_understand":"Entiendo","err_country_blocked":"El registro no está disponible en tu región.","err_fn_special":"El nombre no puede contener números ni caracteres especiales.","err_ln_special":"El apellido no puede contener números ni caracteres especiales.","form_disc":"Al registrarte, confirmas que has leído y aceptado nuestros","form_terms":"Términos y Condiciones","form_privacy":"Política de Privacidad","form_cookie":"Política de Cookies","form_marketing":"Este sitio web opera exclusivamente como plataforma de marketing.","err_email_exists":"Este correo ya está registrado. Intenta iniciar sesión.","err_register_failed":"Error en el registro. Inténtalo más tarde.","loading_text":"Registrándote..."},"it":{"err_required":"Si prega di compilare tutti i campi obbligatori.","err_phone_digits":"Il numero di telefono può contenere solo cifre.","err_fn_min":"Il nome deve contenere almeno 3 caratteri.","err_fn_numbers":"Il nome non può contenere numeri.","err_fn_long":"Il nome è troppo lungo.","err_ln_min":"Il cognome deve contenere almeno 3 caratteri.","err_ln_numbers":"Il cognome non può contenere numeri.","err_ln_long":"Il cognome è troppo lungo.","err_email":"Si prega di inserire un indirizzo email valido.","err_phone_short":"Il numero di telefono è troppo corto.","err_phone_long":"Il numero di telefono è troppo lungo.","btn_processing":"Elaborazione...","btn_register":"REGISTRATI ORA","cookie_text":"Utilizziamo i cookie per migliorare la tua esperienza di navigazione. Continuando a usare il nostro sito, accetti l'uso dei cookie. Vedi il nostro","cookie_policy":"Politica sui cookie","cookie_more":"per ulteriori informazioni.","cookie_accept":"Accetta","disc_title":"Dichiarazione di non responsabilità","disc_text":"Questo sito web funziona esclusivamente come piattaforma di marketing e non fornisce, approva o facilita servizi di trading, brokeraggio o investimento.","disc_read_more":"Leggi di più","disc_understand":"Capisco","err_country_blocked":"La registrazione non è disponibile nella tua regione.","err_fn_special":"Il nome non può contenere numeri o caratteri speciali.","err_ln_special":"Il cognome non può contenere numeri o caratteri speciali.","form_disc":"Registrandoti, confermi di aver letto e accettato i nostri","form_terms":"Termini e Condizioni","form_privacy":"Informativa sulla Privacy","form_cookie":"Politica sui Cookie","form_marketing":"Questo sito web opera esclusivamente come piattaforma di marketing.","err_email_exists":"Questa email è già registrata. Prova ad accedere.","err_register_failed":"Registrazione fallita. Riprova più tardi.","loading_text":"Ti stiamo registrando..."},"sv":{"err_required":"Vänligen fyll i alla obligatoriska fält.","err_phone_digits":"Telefonnumret får endast innehålla siffror.","err_fn_min":"Förnamnet måste vara minst 3 tecken.","err_fn_numbers":"Förnamnet får inte innehålla siffror.","err_fn_long":"Förnamnet är för långt.","err_ln_min":"Efternamnet måste vara minst 3 tecken.","err_ln_numbers":"Efternamnet får inte innehålla siffror.","err_ln_long":"Efternamnet är för långt.","err_email":"Vänligen ange en giltig e-postadress.","err_phone_short":"Telefonnumret är för kort.","err_phone_long":"Telefonnumret är för långt.","btn_processing":"Bearbetar...","btn_register":"REGISTRERA DIG NU","cookie_text":"Vi använder cookies för att förbättra din surfupplevelse. Genom att fortsätta använda vår webbplats godkänner du vår användning av cookies. Se vår","cookie_policy":"Cookiepolicy","cookie_more":"för mer information.","cookie_accept":"Acceptera","disc_title":"Ansvarsfriskrivning","disc_text":"Denna webbplats fungerar enbart som en marknadsföringsplattform och tillhandahåller, rekommenderar eller underlättar inte någon handel, mäklar- eller investeringsservice.","disc_read_more":"Läs mer","disc_understand":"Jag förstår","err_country_blocked":"Registrering är inte tillgänglig i din region.","err_fn_special":"Förnamnet får inte innehålla siffror eller specialtecken.","err_ln_special":"Efternamnet får inte innehålla siffror eller specialtecken.","form_disc":"Genom att registrera dig bekräftar du att du har läst och godkänt våra","form_terms":"Villkor","form_privacy":"Integritetspolicy","form_cookie":"Cookiepolicy","form_marketing":"Denna webbplats fungerar uteslutande som en marknadsföringsplattform.","err_email_exists":"Denna e-post är redan registrerad. Försök logga in.","err_register_failed":"Registreringen misslyckades. Försök igen senare.","loading_text":"Registrerar dig..."},"tr":{"err_required":"Lütfen tüm gerekli alanları doldurun.","err_phone_digits":"Telefon numarası sadece rakamlardan oluşabilir.","err_fn_min":"İsim en az 3 karakter olmalı.","err_fn_numbers":"İsim sayıları içermemelidir.","err_fn_long":"İsim çok uzun.","err_ln_min":"Soy isim en az 3 karakter olmalı.","err_ln_numbers":"Soy isim sayıları içermemelidir.","err_ln_long":"Soy isim çok uzun.","err_email":"Lütfen geçerli bir e-posta adresi girin.","err_phone_short":"Telefon numarası çok kısa.","err_phone_long":"Telefon numarası çok uzun.","btn_processing":"İşleniyor...","btn_register":"ŞİMDİ KAYIT OL","cookie_text":"Tarayıcı deneyiminizi geliştirmek için çerezler kullanıyoruz. Web sitemizi kullanmaya devam ederek, çerezlerimizi kullanmamıza kabul etmiş olursunuz. Bunu görün","cookie_policy":"Çerez Politikası","cookie_more":"daha fazla bilgi için.","cookie_accept":"Kabul Et","disc_title":"Feragatname","disc_text":"Bu web sitesi sadece bir pazarlama platformu olarak işlev görmektedir ve herhangi bir alım satım, aracı kurum veya yatırım hizmeti sağlamak, onaylamak veya kolaylaştırmak amacıyla kullanılmamaktadır.","disc_read_more":"Daha Fazla Oku","disc_understand":"Anladım","err_country_blocked":"Kayıt bölgenizde mevcut değil.","err_fn_special":"Ad, sayı veya özel karakter içeremez.","err_ln_special":"Soyad, sayı veya özel karakter içeremez.","form_disc":"Kayıt olarak, aşağıdakileri okuduğunuzu ve kabul ettiğinizi onaylırsınız","form_terms":"Şartlar ve Koşullar","form_privacy":"Gizlilik Politikası","form_cookie":"Çerez Politikası","form_marketing":"Bu web sitesi yalnızca bir pazarlama platformu olarak çalışmaktadır.","err_email_exists":"Bu e-posta zaten kayıtlı. Giriş yapmayı deneyin.","err_register_failed":"Kayıt başarısız. Daha sonra tekrar deneyin.","loading_text":"Kayıt yapılıyor..."},"nl":{"err_required":"Vul alle verplichte velden in.","err_phone_digits":"Telefoonnummer mag alleen cijfers bevatten.","err_fn_min":"Voornaam moet minimaal 3 tekens bevatten.","err_fn_numbers":"Voornaam mag geen cijfers bevatten.","err_fn_long":"Voornaam is te lang.","err_ln_min":"Achternaam moet minimaal 3 tekens bevatten.","err_ln_numbers":"Achternaam mag geen cijfers bevatten.","err_ln_long":"Achternaam is te lang.","err_email":"Voer een geldig e-mailadres in.","err_phone_short":"Telefoonnummer is te kort.","err_phone_long":"Telefoonnummer is te lang.","btn_processing":"Verwerken...","btn_register":"NU REGISTREREN","cookie_text":"We gebruiken cookies om uw browse-ervaring te verbeteren. Door onze website te blijven gebruiken, gaat u akkoord met ons gebruik van cookies. Zie onze","cookie_policy":"Cookiebeleid","cookie_more":"voor meer informatie.","cookie_accept":"Accepteren","disc_title":"Disclaimer","disc_text":"Deze website fungeert uitsluitend als marketingplatform en biedt geen, onderschrijft geen, of faciliteert geen handels-, brokerage- of investeringsdiensten.","disc_read_more":"Lees meer","disc_understand":"Ik begrijp het","err_country_blocked":"Registratie is niet beschikbaar in uw regio.","err_fn_special":"Voornaam mag geen cijfers of speciale tekens bevatten.","err_ln_special":"Achternaam mag geen cijfers of speciale tekens bevatten.","form_disc":"Door u te registreren bevestigt u dat u onze heeft gelezen en ermee akkoord gaat","form_terms":"Algemene Voorwaarden","form_privacy":"Privacybeleid","form_cookie":"Cookiebeleid","form_marketing":"Deze website werkt uitsluitend als marketingplatform.","err_email_exists":"Dit e-mailadres is al geregistreerd. Probeer in te loggen.","err_register_failed":"Registratie mislukt. Probeer het later opnieuw.","loading_text":"U wordt geregistreerd..."},"pt":{"err_required":"Por favor, preencha todos os campos obrigatórios.","err_phone_digits":"O número de telefone só pode conter dígitos.","err_fn_min":"O nome deve ter pelo menos 3 caracteres.","err_fn_numbers":"O nome não pode conter números.","err_fn_long":"O nome é muito longo.","err_ln_min":"O sobrenome deve ter pelo menos 3 caracteres.","err_ln_numbers":"O sobrenome não pode conter números.","err_ln_long":"O sobrenome é muito longo.","err_email":"Por favor, insira um endereço de e-mail válido.","err_phone_short":"O número de telefone é muito curto.","err_phone_long":"O número de telefone é muito longo.","btn_processing":"Processando...","btn_register":"REGISTRE-SE AGORA","cookie_text":"Usamos cookies para melhorar sua experiência de navegação. Ao continuar usando nosso site, você concorda com o uso de cookies. Veja nossa","cookie_policy":"Política de Cookies","cookie_more":"para mais informações.","cookie_accept":"Aceitar","disc_title":"Aviso Legal","disc_text":"Este site funciona exclusivamente como uma plataforma de marketing e não fornece, endossa ou facilita qualquer serviço de negociação, corretagem ou investimento.","disc_read_more":"Leia Mais","disc_understand":"Entendo","err_country_blocked":"O registro não está disponível na sua região.","err_fn_special":"O primeiro nome não pode conter números ou caracteres especiais.","err_ln_special":"O sobrenome não pode conter números ou caracteres especiais.","form_disc":"Ao se registrar, você confirma que leu e concordou com nossos","form_terms":"Termos e Condições","form_privacy":"Política de Privacidade","form_cookie":"Política de Cookies","form_marketing":"Este site opera exclusivamente como plataforma de marketing.","err_email_exists":"Este email já está registrado. Tente fazer login.","err_register_failed":"Falha no registro. Tente novamente mais tarde.","loading_text":"Registrando você..."},"pl":{"err_required":"Prosimy wypełnić wszystkie wymagane pola.","err_phone_digits":"Numer telefonu może zawierać tylko cyfry.","err_fn_min":"Imię musi mieć co najmniej 3 znaki.","err_fn_numbers":"Imię nie może zawierać cyfr.","err_fn_long":"Imię jest za długie.","err_ln_min":"Nazwisko musi mieć co najmniej 3 znaki.","err_ln_numbers":"Nazwisko nie może zawierać cyfr.","err_ln_long":"Nazwisko jest za długie.","err_email":"Prosimy wprowadzić poprawny adres e-mail.","err_phone_short":"Numer telefonu jest za krótki.","err_phone_long":"Numer telefonu jest za długi.","btn_processing":"Przetwarzanie...","btn_register":"ZAREJESTRUJ SIĘ TERAZ","cookie_text":"Używamy plików cookie, aby poprawić Twoje wrażenia z przeglądania. Kontynuując korzystanie z naszej strony, zgadzasz się na naszą politykę plików cookie. Zobacz naszą","cookie_policy":"Polityka plików cookie","cookie_more":"po więcej informacji.","cookie_accept":"Akceptuję","disc_title":"Zwolnienie z odpowiedzialności","disc_text":"Ta strona internetowa działa wyłącznie jako platforma marketingowa i nie świadczy, nie popiera ani nie ułatwia żadnych usług handlowych, brokerskich czy inwestycyjnych.","disc_read_more":"Czytaj więcej","disc_understand":"Rozumiem","err_country_blocked":"Rejestracja nie jest dostępna w Twoim regionie.","err_fn_special":"Imię nie może zawierać cyfr ani znaków specjalnych.","err_ln_special":"Nazwisko nie może zawierać cyfr ani znaków specjalnych.","form_disc":"Rejestrując się, potwierdzasz, że przeczytałeś i akceptujesz nasze","form_terms":"Regulamin","form_privacy":"Polityka Prywatności","form_cookie":"Polityka Plików Cookie","form_marketing":"Ta strona internetowa działa wyłącznie jako platforma marketingowa.","err_email_exists":"Ten email jest już zarejestrowany. Spróbuj się zalogować.","err_register_failed":"Rejestracja nie powiodła się. Spróbuj ponownie później.","loading_text":"Rejestrujemy Cię..."},"no":{"err_required":"Vennligst fyll ut alle påkrevede felt.","err_phone_digits":"Telefonnummer kan bare inneholde siffer.","err_fn_min":"Fornavn må være minst 3 tegn.","err_fn_numbers":"Fornavn kan ikke inneholde tall.","err_fn_long":"Fornavn er for langt.","err_ln_min":"Etternavn må være minst 3 tegn.","err_ln_numbers":"Etternavn kan ikke inneholde tall.","err_ln_long":"Etternavn er for langt.","err_email":"Vennligst skriv inn en gyldig e-postadresse.","err_phone_short":"Telefonnummeret er for kort.","err_phone_long":"Telefonnummeret er for langt.","btn_processing":"Behandler...","btn_register":"REGISTRER DEG NÅ","cookie_text":"Vi bruker informasjonskapsler for å forbedre din surfingopplevelse. Ved å fortsette å bruke nettstedet vårt, godtar du vår bruk av informasjonskapsler. Se vår","cookie_policy":"Informasjonskapselpolicy","cookie_more":"for mer informasjon.","cookie_accept":"Aksepter","disc_title":"Ansvarsfraskrivelse","disc_text":"Dette nettstedet fungerer utelukkende som en markedsføringsplattform og tilbyr, støtter eller tilrettelegger ikke for noen handels-, meglings- eller investerings tjenester.","disc_read_more":"Les mer","disc_understand":"Jeg forstår","err_country_blocked":"Registrering er ikke tilgjengelig i din region.","err_fn_special":"Fornavn kan ikke inneholde tall eller spesialtegn.","err_ln_special":"Etternavn kan ikke inneholde tall eller spesialtegn.","form_disc":"Ved å registrere deg bekrefter du at du har lest og godtar våre","form_terms":"Vilkår og Betingelser","form_privacy":"Personvernpolicy","form_cookie":"Informasjonskapselpolicy","form_marketing":"Dette nettstedet fungerer utelukkende som en markedsføringsplattform.","err_email_exists":"Denne e-posten er allerede registrert. Prøv å logge inn.","err_register_failed":"Registrering mislyktes. Prøv igjen senere.","loading_text":"Registrerer deg..."},"dk":{"err_required":"Udfyld venligst alle obligatoriske felter.","err_phone_digits":"Telefonnummer kan kun indeholde cifre.","err_fn_min":"Fornavn skal være mindst 3 tegn.","err_fn_numbers":"Fornavn kan ikke indeholde tal.","err_fn_long":"Fornavn er for langt.","err_ln_min":"Efternavn skal være mindst 3 tegn.","err_ln_numbers":"Efternavn kan ikke indeholde tal.","err_ln_long":"Efternavn er for langt.","err_email":"Indtast venligst en gyldig e-mailadresse.","err_phone_short":"Telefonnummeret er for kort.","err_phone_long":"Telefonnummeret er for langt.","btn_processing":"Behandler...","btn_register":"TILMELD NU","cookie_text":"Vi bruger cookies for at forbedre din browsingoplevelse. Ved at fortsætte med at bruge vores hjemmeside accepterer du vores brug af cookies. Se vores","cookie_policy":"Cookiepolitik","cookie_more":"for mere information.","cookie_accept":"Accepter","disc_title":"Ansvarsfraskrivelse","disc_text":"Denne hjemmeside fungerer udelukkende som en markedsføringsplatform og tilbyder, understøtter eller faciliterer ikke nogen handels-, mægler- eller investeringstjenester.","disc_read_more":"Læs mere","disc_understand":"Jeg forstår","err_country_blocked":"Registrering er ikke tilgængelig i din region.","err_fn_special":"Fornavn må ikke indeholde tal eller specialtegn.","err_ln_special":"Efternavn må ikke indeholde tal eller specialtegn.","form_disc":"Ved at registrere dig bekræfter du, at du har læst og accepteret vores","form_terms":"Vilkår og Betingelser","form_privacy":"Privatlivspolitik","form_cookie":"Cookiepolitik","form_marketing":"Denne hjemmeside fungerer udelukkende som en markedsføringsplatform.","err_email_exists":"Denne e-mail er allerede registreret. Prøv at logge ind.","err_register_failed":"Registrering mislykkedes. Prøv igen senere.","loading_text":"Registrerer dig..."},"fi":{"err_required":"Täytä kaikki pakolliset kentät.","err_phone_digits":"Puhelinnumero voi sisältää vain numeroita.","err_fn_min":"Etunimen on oltava vähintään 3 merkkiä.","err_fn_numbers":"Etunimi ei voi sisältää numeroita.","err_fn_long":"Etunimi on liian pitkä.","err_ln_min":"Sukunimen on oltava vähintään 3 merkkiä.","err_ln_numbers":"Sukunimi ei voi sisältää numeroita.","err_ln_long":"Sukunimi on liian pitkä.","err_email":"Syötä kelvollinen sähköpostiosoite.","err_phone_short":"Puhelinnumero on liian lyhyt.","err_phone_long":"Puhelinnumero on liian pitkä.","btn_processing":"Käsitellään...","btn_register":"REKISTERÖIDY NYT","cookie_text":"Käytämme evästeitä parantaaksemme selauskokemustasi. Jatkamalla sivustomme käyttöä hyväksyt evästeiden käytön. Katso meidän","cookie_policy":"Evästekäytäntö","cookie_more":"lisätietoja.","cookie_accept":"Hyväksy","disc_title":"Vastuuvapauslauseke","disc_text":"Tämä verkkosivusto toimii ainoastaan markkinointialustana eikä tarjoa, tue tai helpota mitään kaupankäyntiä, välitystä tai sijoituspalveluita.","disc_read_more":"Lue lisää","disc_understand":"Ymmärrän","err_country_blocked":"Rekisteröinti ei ole käytettävissä alueellasi.","err_fn_special":"Etunimi ei saa sisältää numeroita tai erikoismerkkejä.","err_ln_special":"Sukunimi ei saa sisältää numeroita tai erikoismerkkejä.","form_disc":"Rekisteröitymällä vahvistat, että olet lukenut ja hyväksynyt","form_terms":"Käyttöehdot","form_privacy":"Tietosuojakäytäntö","form_cookie":"Evästekäytäntö","form_marketing":"Tämä verkkosivusto toimii ainoastaan markkinointialustana.","err_email_exists":"Tämä sähköposti on jo rekisteröity. Yritä kirjautua sisään.","err_register_failed":"Rekisteröinti epäonnistui. Yritä myöhemmin uudelleen.","loading_text":"Rekisteröidään..."},"ru":{"err_required":"Пожалуйста, заполните все обязательные поля.","err_phone_digits":"Номер телефона может содержать только цифры.","err_fn_min":"Имя должно быть минимум 3 символа.","err_fn_numbers":"Имя не может содержать числа.","err_fn_long":"Имя слишком длинное.","err_ln_min":"Фамилия должна быть минимум 3 символа.","err_ln_numbers":"Фамилия не может содержать числа.","err_ln_long":"Фамилия слишком длинная.","err_email":"Пожалуйста, введите действительный адрес электронной почты.","err_phone_short":"Номер телефона слишком короткий.","err_phone_long":"Номер телефона слишком длинный.","btn_processing":"Обработка...","btn_register":"ЗАРЕГИСТРИРОВАТЬСЯ СЕЙЧАС","cookie_text":"Мы используем файлы cookie для улучшения вашего опыта просмотра. Продолжая использовать наш сайт, вы соглашаетесь с нашим использованием файлов cookie. Смотреть наш","cookie_policy":"Политика cookies","cookie_more":"для получения дополнительной информации.","cookie_accept":"Принять","disc_title":"Отказ от ответственности","disc_text":"Этот сайт выступает исключительно как маркетинговая платформа и не предоставляет, не одобряет и не способствует каким-либо торговым, брокерским или инвестиционным услугам.","disc_read_more":"Подробнее","disc_understand":"Я понимаю","err_country_blocked":"Регистрация недоступна в вашем регионе.","err_fn_special":"Имя не может содержать цифры или специальные символы.","err_ln_special":"Фамилия не может содержать цифры или специальные символы.","form_disc":"Регистрируясь, вы подтверждаете, что прочитали и согласны с нашими","form_terms":"Условия использования","form_privacy":"Политика конфиденциальности","form_cookie":"Политика cookies","form_marketing":"Этот сайт работает исключительно как маркетинговая платформа.","err_email_exists":"Этот email уже зарегистрирован. Попробуйте войти.","err_register_failed":"Регистрация не удалась. Попробуйте позже.","loading_text":"Регистрируем вас..."},"th":{"err_required":"กรุณากรอกข้อมูลในช่องที่บังคับให้กรอก","err_phone_digits":"หมายเลขโทรศัพท์สามารถประกอบด้วยเฉพาะตัวเลขเท่านั้น","err_fn_min":"ชื่อจริงต้องมีอย่างน้อย 3 ตัวอักษร","err_fn_numbers":"ชื่อจริงห้ามมีตัวเลข","err_fn_long":"ชื่อจริงยาวเกินไป","err_ln_min":"นามสกุลต้องมีอย่างน้อย 3 ตัวอักษร","err_ln_numbers":"นามสกุลห้ามมีตัวเลข","err_ln_long":"นามสกุลยาวเกินไป","err_email":"กรุณากรอกที่อยู่อีเมลที่ถูกต้อง","err_phone_short":"หมายเลขโทรศัพท์สั้นเกินไป","err_phone_long":"หมายเลขโทรศัพท์ยาวเกินไป","btn_processing":"กำลังดำเนินการ...","btn_register":"ลงทะเบียนตอนนี้","cookie_text":"เราใช้คุกกี้เพื่อปรับปรุงประสบการณ์การเรียกดูของคุณ โดยการใช้งานเว็บไซต์ของเราต่อไป คุณยอมรับการใช้คุกกี้ของเรา ดูข้อมูลเพิ่มเติมได้ที่","cookie_policy":"นโยบายคุกกี้","cookie_more":"สำหรับข้อมูลเพิ่มเติม","cookie_accept":"ยอมรับ","disc_title":"ข้อยกเว้นความรับผิดชอบ","disc_text":"เว็บไซต์นี้ทำหน้าที่เป็นแพลตฟอร์มการตลาดเท่านั้น และไม่ได้ให้บริการ ส่งเสริม หรืออำนวยความสะดวกในด้านการซื้อขาย ตัวแทนซื้อขาย หรือบริการด้านการลงทุนใด ๆ","disc_read_more":"อ่านเพิ่มเติม","disc_understand":"ฉันเข้าใจแล้ว","err_country_blocked":"การลงทะเบียนไม่พร้อมใช้งานในภูมิภาคของคุณ","err_fn_special":"ชื่อไม่สามารถมีตัวเลขหรืออักขระพิเศษ","err_ln_special":"นามสกุลไม่สามารถมีตัวเลขหรืออักขระพิเศษ","form_disc":"การลงทะเบียนถือว่าคุณยืนยันว่าได้อ่านและยอมรับ","form_terms":"ข้อกำหนดและเงื่อนไข","form_privacy":"นโยบายความเป็นส่วนตัว","form_cookie":"นโยบายคุกกี้","form_marketing":"เว็บไซต์นี้ทำหน้าที่เป็นแพลตฟอร์มการตลาดเท่านั้น","err_email_exists":"อีเมลนี้ลงทะเบียนแล้ว กรุณาเข้าสู่ระบบ","err_register_failed":"การลงทะเบียนล้มเหลว กรุณาลองใหม่ภายหลัง","loading_text":"กำลังลงทะเบียน..."},"ph":{"err_required":"Mangyaring punan ang lahat ng kinakailangang field.","err_phone_digits":"Mga numero lang ang pwede sa phone number.","err_fn_min":"Ang pangalan ay dapat hindi bababa sa 3 character.","err_fn_numbers":"Hindi pwedeng may numero ang pangalan.","err_fn_long":"Masyadong mahaba ang pangalan.","err_ln_min":"Ang apelyido ay dapat hindi bababa sa 3 character.","err_ln_numbers":"Hindi pwedeng may numero ang apelyido.","err_ln_long":"Masyadong mahaba ang apelyido.","err_email":"Mangyaring maglagay ng valid na email address.","err_phone_short":"Masyadong maikli ang phone number.","err_phone_long":"Masyadong mahaba ang phone number.","btn_processing":"Pinoproseso...","btn_register":"MAG-REGISTER NGAYON","cookie_text":"Gumagamit kami ng cookies para pagandahin ang iyong browsing experience.","cookie_policy":"Cookie Policy","cookie_more":"para sa karagdagang impormasyon.","cookie_accept":"Tanggapin","disc_title":"Disclaimer","disc_text":"Ang website na ito ay marketing platform lamang.","disc_read_more":"Magbasa pa","disc_understand":"Naiintindihan ko","err_country_blocked":"Hindi available ang registration sa iyong rehiyon.","err_fn_special":"Hindi pwedeng may numero o special character ang pangalan.","err_ln_special":"Hindi pwedeng may numero o special character ang apelyido.","form_disc":"Sa pag-register, kinukumpirma mo na nabasa at tinanggap mo ang aming","form_terms":"Mga Tuntunin at Kundisyon","form_privacy":"Patakaran sa Privacy","form_cookie":"Patakaran sa Cookie","form_marketing":"Ang website na ito ay isang marketing platform lamang.","err_email_exists":"Ang email na ito ay nakarehistro na. Subukan mag-login.","err_register_failed":"Nabigo ang pagpaparehistro. Subukan muli mamaya.","loading_text":"Nirerehistro ka..."},"ar":{"err_required":"يرجى ملء جميع الحقول المطلوبة.","err_phone_digits":"رقم الهاتف لا يقبل إلا الأرقام.","err_fn_min":"اسم الشخص الأول يجب أن يكون على الأقل 3 أحرف.","err_fn_numbers":"اسم الشخص الأول لا يمкن أن يحتوي على أرقام.","err_fn_long":"اسم الشخص الأول طويل جدًا.","err_ln_min":"اسم العائلة يجب أن يكون على الأقل 3 أحرف.","err_ln_numbers":"اسم العائلة لا يمкن أن يحتوي على أرقام.","err_ln_long":"اسم العائلة طويل جدًا.","err_email":"يرجى إدخال عنوان بريد إلكتروني صحيح.","err_phone_short":"رقم الهاتف قصير جدًا.","err_phone_long":"رقم الهاتف طويل جدًا.","btn_processing":"جار المعالجة...","btn_register":"سجل الآن","cookie_text":"نستخدم ملفات تعريف الارتباط لتحسين تجربتك في التصفح. بمواصلتك استخدام موقعنا، فإنك توافق على استخدام ملفات تعريف الارتباط الخاصة بنا. انظر إلى","cookie_policy":"سياسة ملفات تعريف الارتباط","cookie_more":"لمزيد من المعلومات.","cookie_accept":"أوافق","disc_title":"إخلاء المسؤولية","disc_text":"يعمل هذا الموقع كمنصة تسويق فقط ولا يقدّم أو يؤيد أو يسهل أي خدمات تداول أو وساطة أو استثمار.","disc_read_more":"اقرأ المزيد","disc_understand":"أنا أفهم","err_country_blocked":"التسجيل غير متاح في منطقتك.","err_fn_special":"الاسم الأول لا يمكن أن يحتوي على أرقام أو أحرف خاصة.","err_ln_special":"الاسم الأخير لا يمكن أن يحتوي على أرقام أو أحرف خاصة.","form_disc":"بالتسجيل، تؤكد أنك قرأت ووافقت على","form_terms":"الشروط والأحكام","form_privacy":"سياسة الخصوصية","form_cookie":"سياسة ملفات تعريف الارتباط","form_marketing":"يعمل هذا الموقع حصرياً كمنصة تسويقية.","err_email_exists":"هذا البريد الإلكتروني مسجل بالفعل. حاول تسجيل الدخول.","err_register_failed":"فشل التسجيل. حاول مرة أخرى لاحقاً.","loading_text":"جاري تسجيلك..."},"sk":{"err_required":"Prosím, vyplňte všetky povinné polia.","err_phone_digits":"Telefónne číslo môže obsahovať iba číslice.","err_fn_min":"Meno musí mať najmenej 3 znaky.","err_fn_numbers":"Meno nemôže obsahovať číslice.","err_fn_long":"Meno je príliš dlhé.","err_ln_min":"Priezvisko musí mať najmenej 3 znaky.","err_ln_numbers":"Priezvisko nemôže obsahovať číslice.","err_ln_long":"Priezvisko je príliš dlhé.","err_email":"Prosím, zadajte platnú emailovú adresu.","err_phone_short":"Telefónne číslo je príliš krátke.","err_phone_long":"Telefónne číslo je príliš dlhé.","btn_processing":"Spracúvam...","btn_register":"Registrovať sa teraz","cookie_text":"Za izboljšanje vaše izkušnje brskanja uporabljamo piškotke. S nadaljevanjem uporabe naše spletne strani se strinjate z našo uporabo piškotkov. Več o naših","cookie_policy":"Politika piškotkov","cookie_more":"za več informacij.","cookie_accept":"Sprejmi","disc_title":"Izjava o odpovedi odgovornosti","disc_text":"Ta spletna stran deluje izključno kot marketinška platforma in ne nudi, ne odobrava ali olajšuje nobenih storitev trgovanja, posredovanja ali naložb.","disc_read_more":"Preberi več","disc_understand":"Razumem","err_country_blocked":"Registrácia nie je dostupná vo vašom regióne.","err_fn_special":"Meno nesmie obsahovať čísla ani špeciálne znaky.","err_ln_special":"Priezvisko nesmie obsahovať čísla ani špeciálne znaky.","form_disc":"Registráciou potvrdzujete, že ste si prečítali a súhlasíte s našimi","form_terms":"Obchodné podmienky","form_privacy":"Zásady ochrany osobných údajov","form_cookie":"Zásady cookies","form_marketing":"Táto webová stránka funguje výhradne ako marketingová platforma.","err_email_exists":"Tento email je už zaregistrovaný. Skúste sa prihlásiť.","err_register_failed":"Registrácia zlyhala. Skúste to neskôr.","loading_text":"Registrujeme vás..."},"cs":{"err_required":"Vyplňte prosím všechna požadovaná pole.","err_phone_digits":"Telefonní číslo může obsahovat pouze číslice.","err_fn_min":"Jméno musí mít nejméně 3 znaky.","err_fn_numbers":"Jméno nesmí obsahovat číslice.","err_fn_long":"Jméno je příliš dlouhé.","err_ln_min":"Příjmení musí mít nejméně 3 znaky.","err_ln_numbers":"Příjmení nesmí obsahovat číslice.","err_ln_long":"Příjmení je příliš dlouhé.","err_email":"Zadejte platnou e-mailovou adresu.","err_phone_short":"Telefonní číslo je příliš krátké.","err_phone_long":"Telefonní číslo je příliš dlouhé.","btn_processing":"Probíhá zpracování...","btn_register":"ZAREGISTRUJTE SE NYNÍ","cookie_text":"Používáme cookies k vylepšení vašeho zážitku z prohlížení. Pokračováním v používání našeho webu souhlasíte s naším použitím cookies. Viz náš","cookie_policy":"Zásady cookies","cookie_more":"pro více informací.","cookie_accept":"Souhlasím","disc_title":"Vyloučení odpovědnosti","disc_text":"Tato webová stránka slouží výhradně jako marketingová platforma a neposkytuje, nepodporuje ani neusnadňuje žádné obchodní, zprostředkovatelské nebo investiční služby.","disc_read_more":"Číst více","disc_understand":"Rozumím","err_country_blocked":"Registrace není ve vašem regionu dostupná.","err_fn_special":"Jméno nesmí obsahovat čísla ani speciální znaky.","err_ln_special":"Příjmení nesmí obsahovat čísla ani speciální znaky.","form_disc":"Registrací potvrzujete, že jste si přečetli a souhlasíte s našimi","form_terms":"Obchodní podmínky","form_privacy":"Zásady ochrany osobních údajů","form_cookie":"Zásady cookies","form_marketing":"Tato webová stránka slouží výhradně jako marketingová platforma.","err_email_exists":"Tento email je již zaregistrován. Zkuste se přihlásit.","err_register_failed":"Registrace se nezdařila. Zkuste to později.","loading_text":"Registrujeme vás..."},"ro":{"err_required":"Vă rugăm să completați toate câmpurile obligatorii.","err_phone_digits":"Numărul de telefon poate conține doar cifre.","err_fn_min":"Numele de botez trebuie să aibă cel puțin 3 caractere.","err_fn_numbers":"Numele de botez nu poate conține cifre.","err_fn_long":"Numele de botez este prea lung.","err_ln_min":"Numele de familie trebuie să aibă cel puțin 3 caractere.","err_ln_numbers":"Numele de familie nu poate conține cifre.","err_ln_long":"Numele de familie este prea lung.","err_email":"Vă rugăm să introduceți o adresă de email validă.","err_phone_short":"Numărul de telefon este prea scurt.","err_phone_long":"Numărul de telefon este prea lung.","btn_processing":"Se procesează...","btn_register":"ÎNREGISTREAZĂ ACUM","cookie_text":"Folosim cookie-uri pentru a vă îmbunătăți experiența de navigare. Prin continuarea utilizării site-ului nostru, sunteți de acord cu utilizarea cookie-urilor noastre. Consultați","cookie_policy":"Politica Cookie-urilor","cookie_more":"pentru mai multe informații.","cookie_accept":"Acceptă","disc_title":"Declinare a responsabilității","disc_text":"Acest site web funcționează exclusiv ca o platformă de marketing și nu furnizează, aproba sau facilitează servicii de tranzacționare, brokeraj sau investiții.","disc_read_more":"Citește mai mult","disc_understand":"Înțeleg","err_country_blocked":"Înregistrarea nu este disponibilă în regiunea dvs.","err_fn_special":"Prenumele nu poate conține cifre sau caractere speciale.","err_ln_special":"Numele de familie nu poate conține cifre sau caractere speciale.","form_disc":"Prin înregistrare, confirmați că ați citit și sunteți de acord cu","form_terms":"Termeni și Condiții","form_privacy":"Politica de Confidențialitate","form_cookie":"Politica Cookie-urilor","form_marketing":"Acest site web funcționează exclusiv ca platformă de marketing.","err_email_exists":"Acest email este deja înregistrat. Încercați să vă conectați.","err_register_failed":"Înregistrarea a eșuat. Încercați mai târziu.","loading_text":"Vă înregistrăm..."},"hu":{"err_required":"Kérjük, töltse ki az összes kötelező mezőt.","err_phone_digits":"A telefonszám csak számokat tartalmazhat.","err_fn_min":"A keresztnév legalább 3 karakter hosszú kell, hogy legyen.","err_fn_numbers":"A keresztnév nem tartalmazhat számokat.","err_fn_long":"A keresztnév túl hosszú.","err_ln_min":"A vezetéknév legalább 3 karakter hosszú kell, hogy legyen.","err_ln_numbers":"A vezetéknév nem tartalmazhat számokat.","err_ln_long":"A vezetéknév túl hosszú.","err_email":"Kérjük, adjon meg egy érvényes e-mail címet.","err_phone_short":"A telefonszám túl rövid.","err_phone_long":"A telefonszám túl hosszú.","btn_processing":"Feldolgozás...","btn_register":"AJÁNLJA MEG MOST","cookie_text":"Kekszeket használunk a böngészési élmény fokozása érdekében. Az oldal további használatával elfogadja kekszhasználatunkat. Tekintse meg a","cookie_policy":"Kekszszabályzatot","cookie_more":"a további információkért.","cookie_accept":"Elfogadom","disc_title":"Felelősség kizárása","disc_text":"Ez a weboldal kizárólag marketing platformként működik, és nem nyújt, jóváhagy vagy segíti semmilyen kereskedési, bróker vagy befektetési szolgáltatást.","disc_read_more":"További információk","disc_understand":"Értem","err_country_blocked":"A regisztráció nem érhető el az Ön régiójában.","err_fn_special":"A keresztnév nem tartalmazhat számokat vagy speciális karaktereket.","err_ln_special":"A vezetéknév nem tartalmazhat számokat vagy speciális karaktereket.","form_disc":"A regisztrációval megerősíti, hogy elolvasta és elfogadja a","form_terms":"Felhasználási feltételek","form_privacy":"Adatvédelmi szabályzat","form_cookie":"Cookie szabályzat","form_marketing":"Ez a weboldal kizárólag marketing platformként működik.","err_email_exists":"Ez az email már regisztrálva van. Próbáljon bejelentkezni.","err_register_failed":"A regisztráció sikertelen. Próbálja újra később.","loading_text":"Regisztrálás folyamatban..."},"hr":{"err_required":"Molimo ispunite sva obvezna polja.","err_phone_digits":"Broj telefona smije sadržavati samo brojeve.","err_fn_min":"Ime mora imati najmanje 3 znaka.","err_fn_numbers":"Ime ne smije sadržavati brojeve.","err_fn_long":"Ime je predugačko.","err_ln_min":"Prezime mora imati najmanje 3 znaka.","err_ln_numbers":"Prezime ne smije sadržavati brojeve.","err_ln_long":"Prezime je predugačko.","err_email":"Molimo unesite važeću e-mail adresu.","err_phone_short":"Broj telefona je prekratak.","err_phone_long":"Broj telefona je predugačak.","btn_processing":"Obrada...","btn_register":"REGISTRIRAJ SE ODMAH","cookie_text":"Koristimo kolačiće kako bismo unaprijedili vaše iskustvo pregledavanja. Nastavkom korištenja naše web stranice, pristajete na našu upotrebu kolačića. Pogledajte našu","cookie_policy":"Politika kolačića","cookie_more":"za više informacija.","cookie_accept":"Prihvaćam","disc_title":"Odgoda odgovornosti","disc_text":"Ova web stranica djeluje isključivo kao marketinška platforma i ne pruža, odobrava ili olakšava bilo kakve trgovinske, posredničke ili investicijske usluge.","disc_read_more":"Pročitajte više","disc_understand":"Razumijem","err_country_blocked":"Registracija nije dostupna u vašoj regiji.","err_fn_special":"Ime ne smije sadržavati brojeve ili posebne znakove.","err_ln_special":"Prezime ne smije sadržavati brojeve ili posebne znakove.","form_disc":"Registracijom potvrđujete da ste pročitali i prihvatili naše","form_terms":"Uvjeti korištenja","form_privacy":"Politika privatnosti","form_cookie":"Politika kolačića","form_marketing":"Ova web stranica djeluje isključivo kao marketinška platforma.","err_email_exists":"Ovaj email je već registriran. Pokušajte se prijaviti.","err_register_failed":"Registracija nije uspjela. Pokušajte ponovo kasnije.","loading_text":"Registriramo vas..."},"bg":{"err_required":"Моля, попълнете всички задължителни полета.","err_phone_digits":"Телефонният номер може да съдържа само цифри.","err_fn_min":"Първото име трябва да е поне 3 символа.","err_fn_numbers":"Първото име не може да съдържа цифри.","err_fn_long":"Първото име е твърде дълго.","err_ln_min":"Фамилията трябва да е поне 3 символа.","err_ln_numbers":"Фамилията не може да съдържа цифри.","err_ln_long":"Фамилията е твърде дълга.","err_email":"Моля, въведете валиден имейл адрес.","err_phone_short":"Телефонният номер твърде къс.","err_phone_long":"Телефонният номер твърде дълъг.","btn_processing":"Обработване...","btn_register":"Регистрирай сега","cookie_text":"Използваме бисквити, за да подобрим вашето сърфиране. Продължавайки да използвате нашия уебсайт, вие се съгласявате с нашата политика за бисквити. Вижте нашия","cookie_policy":"Политика за бисквити","cookie_more":"за повече информация.","cookie_accept":"Приеми","disc_title":"Д disclaimer","disc_text":"Този уебсайт функционира единствено като маркетингова платформа и не предоставя, одобрява или улеснява никакви търговски, брокерски или инвестиционни услуги.","disc_read_more":"Прочетете повече","disc_understand":"Разбирам","err_country_blocked":"Регистрацията не е достъпна във вашия регион.","err_fn_special":"Името не може да съдържа цифри или специални символи.","err_ln_special":"Фамилията не може да съдържа цифри или специални символи.","form_disc":"С регистрацията потвърждавате, че сте прочели и приемате нашите","form_terms":"Общи условия","form_privacy":"Политика за поверителност","form_cookie":"Политика за бисквитки","form_marketing":"Този уебсайт функционира единствено като маркетингова платформа.","err_email_exists":"Този имейл вече е регистриран. Опитайте да влезете.","err_register_failed":"Регистрацията неуспешна. Опитайте отново по-късно.","loading_text":"Регистрираме ви..."},"id":{"err_required":"Harap isi semua bidang yang wajib diisi.","err_phone_digits":"Nomor telepon hanya dapat berisi angka.","err_fn_min":"Nama depan harus minimal 3 karakter.","err_fn_numbers":"Nama depan tidak boleh mengandung angka.","err_fn_long":"Nama depan terlalu panjang.","err_ln_min":"Nama belakang harus minimal 3 karakter.","err_ln_numbers":"Nama belakang tidak boleh mengandung angka.","err_ln_long":"Nama belakang terlalu panjang.","err_email":"Harap masukkan alamat email yang valid.","err_phone_short":"Nomor telepon terlalu pendek.","err_phone_long":"Nomor telepon terlalu panjang.","btn_processing":"Sedang diproses...","btn_register":"DAFTAR SEKARANG","cookie_text":"Kami menggunakan cookie untuk meningkatkan pengalaman penelusuran Anda. Dengan terus menggunakan situs web kami, Anda menyetujui penggunaan cookie kami. Lihat","cookie_policy":"Kebijakan Cookie","cookie_more":"untuk informasi lebih lanjut.","cookie_accept":"Terima","disc_title":"Pernyataan Penafian","disc_text":"Situs web ini berfungsi semata-mata sebagai platform pemasaran dan tidak menyediakan, mendukung, atau memfasilitasi layanan trading, broker, atau investasi apa pun.","disc_read_more":"Baca Selengkapnya","disc_understand":"Saya Mengerti","err_country_blocked":"Pendaftaran tidak tersedia di wilayah Anda.","err_fn_special":"Nama depan tidak boleh mengandung angka atau karakter khusus.","err_ln_special":"Nama belakang tidak boleh mengandung angka atau karakter khusus.","form_disc":"Dengan mendaftar, Anda mengkonfirmasi bahwa Anda telah membaca dan menyetujui","form_terms":"Syarat dan Ketentuan","form_privacy":"Kebijakan Privasi","form_cookie":"Kebijakan Cookie","form_marketing":"Situs web ini beroperasi secara eksklusif sebagai platform pemasaran.","err_email_exists":"Email ini sudah terdaftar. Coba masuk.","err_register_failed":"Pendaftaran gagal. Coba lagi nanti.","loading_text":"Mendaftarkan Anda..."},"gr":{"err_required":"Παρακαλώ συμπληρώστε όλα τα υποχρεωτικά πεδία.","err_phone_digits":"Ο αριθμός τηλεφώνου μπορεί να περιέχει μόνο ψηφία.","err_fn_min":"Το όνομα πρέπει να είναι τουλάχιστον 3 χαρακτήρες.","err_fn_numbers":"Το όνομα δεν μπορεί να περιέχει αριθμούς.","err_fn_long":"Το όνομα είναι πολύ μακρύ.","err_ln_min":"Το επώνυμο πρέπει να είναι τουλάχιστον 3 χαρακτήρες.","err_ln_numbers":"Το επώνυμο δεν μπορεί να περιέχει αριθμούς.","err_ln_long":"Το επώνυμο είναι πολύ μακρύ.","err_email":"Εισάγετε μια έγκυρη διεύθυνση email.","err_phone_short":"Ο αριθμός τηλεφώνου είναι πολύ μικρός.","err_phone_long":"Ο αριθμός τηλεφώνου είναι πολύ μεγάλος.","btn_processing":"Επεξεργασία...","btn_register":"ΕΓΓΡΑΦΗ ΤΩΡΑ","cookie_text":"Χρησιμοποιούμε cookies για να βελτιώσουμε την εμπειρία σας.","cookie_policy":"Πολιτική Cookies","cookie_more":"για περισσότερες πληροφορίες.","cookie_accept":"Αποδοχή","disc_title":"Αποποίηση ευθυνών","disc_text":"Αυτός ο ιστότοπος λειτουργεί αποκλειστικά ως πλατφόρμα μάρκετινγκ.","disc_read_more":"Διαβάστε περισσότερα","disc_understand":"Κατανοώ","err_country_blocked":"Η εγγραφή δεν είναι διαθέσιμη στην περιοχή σας.","err_fn_special":"Το όνομα δεν μπορεί να περιέχει αριθμούς ή ειδικούς χαρακτήρες.","err_ln_special":"Το επώνυμο δεν μπορεί να περιέχει αριθμούς ή ειδικούς χαρακτήρες.","form_disc":"Με την εγγραφή σας επιβεβαιώνετε ότι έχετε διαβάσει και αποδεχτεί τους","form_terms":"Όροι και Προϋποθέσεις","form_privacy":"Πολιτική Απορρήτου","form_cookie":"Πολιτική Cookies","form_marketing":"Αυτός ο ιστότοπος λειτουργεί αποκλειστικά ως πλατφόρμα μάρκετινγκ.","err_email_exists":"Αυτό το email είναι ήδη εγγεγραμμένο. Δοκιμάστε να συνδεθείτε.","err_register_failed":"Η εγγραφή απέτυχε. Δοκιμάστε αργότερα.","loading_text":"Σας εγγράφουμε..."},"fr":{"err_required":"Veuillez remplir tous les champs obligatoires.","err_phone_digits":"Le numéro de téléphone ne peut contenir que des chiffres.","err_fn_min":"Le prénom doit comporter au moins 3 caractères.","err_fn_numbers":"Le prénom ne peut pas contenir de chiffres.","err_fn_long":"Le prénom est trop long.","err_ln_min":"Le nom de famille doit comporter au moins 3 caractères.","err_ln_numbers":"Le nom de famille ne peut pas contenir de chiffres.","err_ln_long":"Le nom de famille est trop long.","err_email":"Veuillez saisir une adresse e-mail valide.","err_phone_short":"Le numéro de téléphone est trop court.","err_phone_long":"Le numéro de téléphone est trop long.","btn_processing":"Traitement en cours...","btn_register":"INSCRIVEZ-VOUS MAINTENANT","cookie_text":"Nous utilisons des cookies pour améliorer votre expérience de navigation. En continuant à utiliser notre site Web, vous acceptez notre utilisation des cookies. Voir notre","cookie_policy":"Politique de cookies","cookie_more":"pour plus d'informations.","cookie_accept":"Accepter","disc_title":"Avertissement","disc_text":"Ce site Web fonctionne uniquement comme une plateforme de marketing et ne fournit, n'approuve ni ne facilite aucun service de trading, de courtage ou d'investissement.","disc_read_more":"En savoir plus","disc_understand":"Je comprends","err_country_blocked":"L'inscription n'est pas disponible dans votre région.","err_fn_special":"Le prénom ne peut pas contenir de chiffres ou de caractères spéciaux.","err_ln_special":"Le nom de famille ne peut pas contenir de chiffres ou de caractères spéciaux.","form_disc":"En vous inscrivant, vous confirmez avoir lu et accepté nos","form_terms":"Conditions Générales","form_privacy":"Politique de Confidentialité","form_cookie":"Politique de Cookies","form_marketing":"Ce site web fonctionne exclusivement comme plateforme de marketing.","err_email_exists":"Cet email est déjà enregistré. Veuillez vous connecter.","err_register_failed":"L'inscription a échoué. Veuillez réessayer plus tard.","loading_text":"Inscription en cours..."},"jp":{"err_required":"すべての必須フィールドに入力してください。","err_phone_digits":"電話番号は数字のみ入力できます。","err_fn_min":"名前は3文字以上必要です。","err_fn_numbers":"名前に数字を含めることはできません。","err_fn_long":"名前が長すぎます。","err_ln_min":"姓は3文字以上必要です。","err_ln_numbers":"姓に数字を含めることはできません。","err_ln_long":"姓が長すぎます。","err_email":"有効なメールアドレスを入力してください。","err_phone_short":"電話番号が短すぎます。","err_phone_long":"電話番号が長すぎます。","btn_processing":"処理中...","btn_register":"今すぐ登録","cookie_text":"ブラウジング体験を向上させるためにCookieを使用しています。","cookie_policy":"Cookieポリシー","cookie_more":"詳細はこちら。","cookie_accept":"同意する","disc_title":"免責事項","disc_text":"本ウェブサイトはマーケティングプラットフォームとしてのみ運営されています。","disc_read_more":"続きを読む","disc_understand":"了解しました","err_country_blocked":"お住まいの地域では登録できません。","err_fn_special":"名前に数字や特殊文字は使用できません。","err_ln_special":"姓に数字や特殊文字は使用できません。","form_disc":"登録することで、以下を読み同意したことを確認します","form_terms":"利用規約","form_privacy":"プライバシーポリシー","form_cookie":"Cookieポリシー","form_marketing":"本ウェブサイトはマーケティングプラットフォームとしてのみ運営されています。","err_email_exists":"このメールは既に登録されています。ログインしてください。","err_register_failed":"登録に失敗しました。後でもう一度お試しください。","loading_text":"登録しています..."},"az":{"err_required":"Bütün məcburi sahələri doldurun.","err_phone_digits":"Telefon nömrəsi yalnız rəqəmlərdən ibarət ola bilər.","err_fn_min":"Ad ən azı 3 simvol olmalıdır.","err_fn_numbers":"Ad rəqəm ehtiva edə bilməz.","err_fn_long":"Ad çox uzundur.","err_ln_min":"Soyad ən azı 3 simvol olmalıdır.","err_ln_numbers":"Soyad rəqəm ehtiva edə bilməz.","err_ln_long":"Soyad çox uzundur.","err_email":"Düzgün e-poçt ünvanı daxil edin.","err_phone_short":"Telefon nömrəsi çox qısadır.","err_phone_long":"Telefon nömrəsi çox uzundur.","btn_processing":"Emal edilir...","btn_register":"İNDİ QEYDİYYATDAN KEÇ","cookie_text":"Təcrübənizi yaxşılaşdırmaq üçün kukilərdən istifadə edirik.","cookie_policy":"Kuki Siyasəti","cookie_more":"ətraflı məlumat üçün.","cookie_accept":"Qəbul et","disc_title":"İmtina","disc_text":"Bu vebsayt yalnız marketinq platforması kimi fəaliyyət göstərir.","disc_read_more":"Daha çox oxu","disc_understand":"Başa düşürəm","err_country_blocked":"Qeydiyyat regionunuzda mövcud deyil.","err_fn_special":"Ad rəqəm və ya xüsusi simvol ehtiva edə bilməz.","err_ln_special":"Soyad rəqəm və ya xüsusi simvol ehtiva edə bilməz.","form_disc":"Qeydiyyatdan keçməklə oxuduğunuzu və qəbul etdiyinizi təsdiq edirsiniz","form_terms":"Şərtlər","form_privacy":"Məxfilik Siyasəti","form_cookie":"Kuki Siyasəti","form_marketing":"Bu vebsayt yalnız marketinq platforması kimi fəaliyyət göstərir.","err_email_exists":"Bu e-poçt artıq qeydiyyatdan keçib. Daxil olmağı sınayın.","err_register_failed":"Qeydiyyat uğursuz oldu. Daha sonra yenidən cəhd edin.","loading_text":"Sizi qeydiyyatdan keçiririk..."},"kk":{"err_required":"Барлық міндетті өрістерді толтырыңыз.","err_phone_digits":"Телефон нөмірі тек сандардан тұруы керек.","err_fn_min":"Аты кемінде 3 таңба болуы керек.","err_fn_numbers":"Атында сандар болмауы керек.","err_fn_long":"Аты тым ұзын.","err_ln_min":"Тегі кемінде 3 таңба болуы керек.","err_ln_numbers":"Тегінде сандар болмауы керек.","err_ln_long":"Тегі тым ұзын.","err_email":"Жарамды электрондық пошта мекенжайын енгізіңіз.","err_phone_short":"Телефон нөмірі тым қысқа.","err_phone_long":"Телефон нөмірі тым ұзын.","btn_processing":"Өңделуде...","btn_register":"ҚАЗІР ТІРКЕЛУ","cookie_text":"Тәжірибеңізді жақсарту үшін cookie файлдарын пайдаланамыз.","cookie_policy":"Cookie саясаты","cookie_more":"қосымша ақпарат.","cookie_accept":"Қабылдау","disc_title":"Жауапкершіліктен бас тарту","disc_text":"Бұл веб-сайт тек маркетинг платформасы ретінде жұмыс істейді.","disc_read_more":"Толығырақ","disc_understand":"Түсіндім","err_country_blocked":"Тіркелу аймағыңызда қолжетімді емес.","err_fn_special":"Атында сандар немесе арнайы таңбалар болмауы керек.","err_ln_special":"Тегінде сандар немесе арнайы таңбалар болмауы керек.","form_disc":"Тіркелу арқылы оқығаныңызды және келісетініңізді растайсыз","form_terms":"Шарттар мен ережелер","form_privacy":"Құпиялылық саясаты","form_cookie":"Cookie саясаты","form_marketing":"Бұл веб-сайт тек маркетинг платформасы ретінде жұмыс істейді.","err_email_exists":"Бұл email тіркелген. Кіруді көріңіз.","err_register_failed":"Тіркелу сәтсіз. Кейінірек қайталаңыз.","loading_text":"Сізді тіркеп жатырмыз..."},"sr":{"err_required":"Попуните сва обавезна поља.","err_phone_digits":"Број телефона може садржати само цифре.","err_fn_min":"Име мора имати најмање 3 карактера.","err_fn_numbers":"Име не може садржати бројеве.","err_fn_long":"Име је предугачко.","err_ln_min":"Презиме мора имати најмање 3 карактера.","err_ln_numbers":"Презиме не може садржати бројеве.","err_ln_long":"Презиме је предугачко.","err_email":"Унесите важећу имејл адресу.","err_phone_short":"Број телефона је прекратак.","err_phone_long":"Број телефона је предугачак.","btn_processing":"Обрада...","btn_register":"РЕГИСТРАЦИЈА","cookie_text":"Користимо колачиће за побољшање вашег искуства.","cookie_policy":"Политика колачића","cookie_more":"за више информација.","cookie_accept":"Прихвати","disc_title":"Одрицање одговорности","disc_text":"Овај веб-сајт функционише искључиво као маркетиншка платформа.","disc_read_more":"Прочитај више","disc_understand":"Разумем","err_country_blocked":"Регистрација није доступна у вашем региону.","err_fn_special":"Име не може садржати бројеве или специјалне знакове.","err_ln_special":"Презиме не може садржати бројеве или специјалне знакове.","form_disc":"Регистрацијом потврђујете да сте прочитали и прихватили наше","form_terms":"Услови коришћења","form_privacy":"Политика приватности","form_cookie":"Политика колачића","form_marketing":"Овај веб-сајт функционише искључиво као маркетиншка платформа.","err_email_exists":"Овај имејл је већ регистрован. Покушајте да се пријавите.","err_register_failed":"Регистрација неуспешна. Покушајте касније.","loading_text":"Региструјемо вас..."},"cn":{"err_required":"请填写所有必填字段。","err_phone_digits":"电话号码只能包含数字。","err_fn_min":"名字至少需要3个字符。","err_fn_numbers":"名字不能包含数字。","err_fn_long":"名字太长了。","err_ln_min":"姓氏至少需要3个字符。","err_ln_numbers":"姓氏不能包含数字。","err_ln_long":"姓氏太长了。","err_email":"请输入有效的电子邮箱地址。","err_phone_short":"电话号码太短了。","err_phone_long":"电话号码太长了。","btn_processing":"处理中……","btn_register":"立即注册","cookie_text":"我们使用Cookies来增强您的浏览体验。","cookie_policy":"Cookie政策","cookie_more":"以获取更多信息。","cookie_accept":"接受","disc_title":"免责声明","disc_text":"本网站仅作为一个营销平台。","disc_read_more":"阅读更多","disc_understand":"我了解","err_country_blocked":"您所在的地区暂不支持注册。","err_fn_special":"名字不能包含数字或特殊字符。","err_ln_special":"姓氏不能包含数字或特殊字符。","form_disc":"注册即表示您确认已阅读并同意我们的","form_terms":"条款和条件","form_privacy":"隐私政策","form_cookie":"Cookie政策","form_marketing":"本网站仅作为营销平台运营。","err_email_exists":"此邮箱已注册。请尝试登录。","err_register_failed":"注册失败。请稍后再试。","loading_text":"正在为您注册..."},"in":{"err_required":"कृपया सभी आवश्यक फ़ील्ड भरें।","err_phone_digits":"फ़ोन नंबर में केवल अंक हो सकते हैं।","err_fn_min":"पहला नाम कम से कम 3 अक्षर का होना चाहिए।","err_fn_numbers":"पहले नाम में अंक नहीं हो सकते।","err_fn_long":"पहला नाम बहुत लंबा है।","err_ln_min":"अंतिम नाम कम से कम 3 अक्षर का होना चाहिए।","err_ln_numbers":"अंतिम नाम में अंक नहीं हो सकते।","err_ln_long":"अंतिम नाम बहुत लंबा है।","err_email":"कृपया एक मान्य ईमेल पता दर्ज करें।","err_phone_short":"फ़ोन नंबर बहुत छोटा है।","err_phone_long":"फ़ोन नंबर बहुत लंबा है।","btn_processing":"प्रोसेसिंग...","btn_register":"अभी रजिस्टर करें","cookie_text":"हम आपके ब्राउज़िंग अनुभव को बेहतर बनाने के लिए कुकीज़ का उपयोग करते हैं।","cookie_policy":"कुकी नीति","cookie_more":"अधिक जानकारी के लिए।","cookie_accept":"स्वीकार करें","disc_title":"अस्वीकरण","disc_text":"यह वेबसाइट केवल एक मार्केटिंग प्लेटफॉर्म के रूप में काम करती है।","disc_read_more":"और पढ़ें","disc_understand":"मैं समझता हूँ","err_country_blocked":"आपके क्षेत्र में पंजीकरण उपलब्ध नहीं है।","err_fn_special":"पहले नाम में अंक या विशेष अक्षर नहीं हो सकते।","err_ln_special":"अंतिम नाम में अंक या विशेष अक्षर नहीं हो सकते।","form_disc":"पंजीकरण करके आप पुष्टि करते हैं कि आपने हमारे","form_terms":"नियम और शर्तें","form_privacy":"गोपनीयता नीति","form_cookie":"कुकी नीति","form_marketing":"यह वेबसाइट विशेष रूप से एक मार्केटिंग प्लेटफॉर्म के रूप में संचालित होती है।","err_email_exists":"यह ईमेल पहले से पंजीकृत है। कृपया लॉगिन करें।","err_register_failed":"पंजीकरण विफल। कृपया बाद में पुनः प्रयास करें।","loading_text":"आपका पंजीकरण हो रहा है..."},"kr":{"err_required":"모든 필수 항목을 입력해주세요.","err_phone_digits":"전화번호는 숫자만 입력할 수 있습니다.","err_fn_min":"이름은 3자 이상이어야 합니다.","err_fn_numbers":"이름에 숫자를 포함할 수 없습니다.","err_fn_long":"이름이 너무 깁니다.","err_ln_min":"성은 3자 이상이어야 합니다.","err_ln_numbers":"성에 숫자를 포함할 수 없습니다.","err_ln_long":"성이 너무 깁니다.","err_email":"유효한 이메일 주소를 입력해주세요.","err_phone_short":"전화번호가 너무 짧습니다.","err_phone_long":"전화번호가 너무 깁니다.","btn_processing":"처리 중...","btn_register":"지금 등록","cookie_text":"더 나은 브라우징 경험을 위해 쿠키를 사용합니다.","cookie_policy":"쿠키 정책","cookie_more":"자세한 내용은","cookie_accept":"수락","disc_title":"면책 조항","disc_text":"이 웹사이트는 마케팅 플랫폼으로만 운영됩니다.","disc_read_more":"더 읽기","disc_understand":"이해합니다","err_country_blocked":"귀하의 지역에서는 등록이 불가합니다.","err_fn_special":"이름에 숫자나 특수 문자를 포함할 수 없습니다.","err_ln_special":"성에 숫자나 특수 문자를 포함할 수 없습니다.","form_disc":"등록함으로써 귀하는 다음을 읽고 동의했음을 확인합니다","form_terms":"이용약관","form_privacy":"개인정보처리방침","form_cookie":"쿠키 정책","form_marketing":"이 웹사이트는 마케팅 플랫폼으로만 운영됩니다.","err_email_exists":"이 이메일은 이미 등록되어 있습니다. 로그인해 주세요.","err_register_failed":"등록에 실패했습니다. 나중에 다시 시도해 주세요.","loading_text":"등록 중입니다..."},"et":{"err_required":"Palun täitke kõik kohustuslikud väljad.","err_phone_digits":"Telefoninumber võib sisaldada ainult numbreid.","err_fn_min":"Eesnimi peab olema vähemalt 3 tähemärki.","err_fn_numbers":"Eesnimi ei tohi sisaldada numbreid.","err_fn_long":"Eesnimi on liiga pikk.","err_ln_min":"Perekonnanimi peab olema vähemalt 3 tähemärki.","err_ln_numbers":"Perekonnanimi ei tohi sisaldada numbreid.","err_ln_long":"Perekonnanimi on liiga pikk.","err_email":"Palun sisestage kehtiv e-posti aadress.","err_phone_short":"Telefoninumber on liiga lühike.","err_phone_long":"Telefoninumber on liiga pikk.","btn_processing":"Töötlemine...","btn_register":"REGISTREERU KOHE","cookie_text":"Kasutame küpsiseid teie sirvimiskogemuse parandamiseks.","cookie_policy":"Küpsiste poliitika","cookie_more":"lisateabe saamiseks.","cookie_accept":"Nõustu","disc_title":"Vastutusest loobumine","disc_text":"See veebisait toimib ainult turundusplatvormina.","disc_read_more":"Loe rohkem","disc_understand":"Saan aru","err_country_blocked":"Registreerimine pole teie piirkonnas saadaval.","err_fn_special":"Eesnimi ei tohi sisaldada numbreid ega erimärke.","err_ln_special":"Perekonnanimi ei tohi sisaldada numbreid ega erimärke.","form_disc":"Registreerudes kinnitate, et olete lugenud ja nõustunud meie","form_terms":"Tingimused","form_privacy":"Privaatsuspoliitika","form_cookie":"Küpsiste poliitika","form_marketing":"See veebisait toimib ainult turundusplatvormina.","err_email_exists":"See e-post on juba registreeritud. Proovige sisse logida.","err_register_failed":"Registreerimine ebaõnnestus. Proovige hiljem uuesti.","loading_text":"Registreerime teid..."}};</script><script src="https://cdn.jsdelivr.net/npm/clientjs@0.2.1/dist/client.min.js"></script><script data-vvmziu="y7itfllolv">+function(){/* handler */
+    try{
+      
+    var y607b8=(window.location.pathname.split('/')[1]||'');
+    if(!LANG_MSGS[y607b8]){var _hL=(document.documentElement.getAttribute('lang')||'');var _lM={'ko':'kr','zh':'cn','hi':'in','da':'dk','el':'gr','ja':'jp','fil':'ph'};y607b8=_lM[_hL]||_hL;}
+    var gu2pn=LANG_MSGS[y607b8]||LANG_MSGS['en'];
+    var _ccE=document.getElementById('cookieConsent');
+    if(_ccE){
+      _ccE.style.background='#ffffff';_ccE.style.color='#000';
+      var _ccP=_ccE.querySelector('p');
+      if(_ccP)_ccP.innerHTML=gu2pn.cookie_text+' <a href="cookie-policy.html">'+gu2pn.cookie_policy+'</a> '+gu2pn.cookie_more;
+      var _ccB=_ccE.querySelector('.cookie-btn');
+      if(_ccB)_ccB.textContent=gu2pn.cookie_accept;
+      if(['ar','he','fa','ur'].indexOf(y607b8)!==-1){_ccE.style.direction='rtl';_ccE.style.textAlign='right';}
+    }
+    var _dpE=document.getElementById('disclaimerPopup');
+    if(_dpE){
+      var _dH=_dpE.querySelector('h4');
+      if(_dH)_dH.textContent=gu2pn.disc_title;
+      var _dT=_dpE.querySelector('.disclaimer-main-text');
+      if(_dT)_dT.textContent=gu2pn.disc_text;
+      var _dR=_dpE.querySelector('.disclaimer-read-more');
+      if(_dR)_dR.textContent=gu2pn.disc_read_more;
+      var _dU=_dpE.querySelector('.disclaimer-understand-btn');
+      if(_dU)_dU.textContent=gu2pn.disc_understand;
+      var _dpI=_dpE.querySelector('.disclaimer-popup');if(_dpI){_dpI.style.background='#ffffff';_dpI.style.color='#333';}
+      if(['ar','he','fa','ur'].indexOf(y607b8)!==-1){_dpE.style.direction='rtl';_dpE.style.textAlign='right';var _svgs=_dpE.querySelectorAll('.popup-svg');for(var _si=0;_si<_svgs.length;_si++){_svgs[_si].style.direction='ltr';}}
+    }
+    var _fdEls=document.querySelectorAll('.form-disclaimer');
+    for(var _fi=0;_fi<_fdEls.length;_fi++){
+      var _fd=_fdEls[_fi];
+      var _tL=_fd.querySelector('a[href*="terms"]');
+      var _pL=_fd.querySelector('a[href*="privacy"]');
+      var _cL=_fd.querySelector('a[href*="cookie"]');
+      var _rL=_fd.querySelector('.terms-read-more');
+      if(_tL)_tL.textContent=gu2pn.form_terms||_tL.textContent;
+      if(_pL)_pL.textContent=gu2pn.form_privacy||_pL.textContent;
+      if(_cL)_cL.textContent=gu2pn.form_cookie||_cL.textContent;
+      if(_rL)_rL.textContent=gu2pn.disc_read_more||_rL.textContent;
+      var _nodes=_fd.childNodes;
+      for(var _ni=0;_ni<_nodes.length;_ni++){
+        if(_nodes[_ni].nodeType===3){
+          var _txt=_nodes[_ni].textContent.trim();
+          if(_txt.length>10&&/register|creating|account/i.test(_txt)){_nodes[_ni].textContent=gu2pn.form_disc+' ';}
+          if(_txt.length>10&&/marketing|platform/i.test(_txt)){_nodes[_ni].textContent=' '+gu2pn.form_marketing+' ';}
+        }
+      }
+    }
+  
+      
+    var spd2=document.querySelector('#cookieConsent');
+    var q4fqi=document.querySelector('#disclaimerPopup');
+    var rr794j8=document.querySelector('#termsPopup');
+    var i7495bw1=document.querySelector('.disclaimer-read-more');
+    var ueexrz67=document.getElementById('disclaimerMoreText');
+  
+      
+    /* start */
+    if(!ueexrz67&&!!q4fqi){
+      ueexrz67=document.createElement('div');
+      ueexrz67.id='disclaimerMoreText';
+      ueexrz67.className='disclaimer-more-text';
+      ueexrz67.innerHTML='<img alt="Disclaimer" class="popup-svg desktop-only" src="disclaimer-popup.svg" width="540" height="260"/><img alt="Disclaimer" class="popup-svg mobile-only" src="disclaimer-popup-mobile.svg" width="320" height="420"/>';
+      var shbrf=q4fqi.querySelector('.disclaimer-popup-body')||q4fqi;
+      if(!!shbrf)shbrf.appendChild(ueexrz67);
+    }
+  
+      function rw3il(){
+    localStorage['_zr43h']='true';
+    localStorage.setItem('disclaimerAccepted','true');
+    if(!!q4fqi)q4fqi.classList.remove('active');
+  }
+      
+    requestAnimationFrame(function(){setTimeout(function(){
+      if(!window.localStorage.getItem('_lebrfl')&&!localStorage.getItem('cookiesAccepted')&&!!spd2)spd2.style.display='block';
+      if(!window.localStorage.getItem('_zr43h')&&!localStorage.getItem('disclaimerAccepted')&&!!q4fqi)q4fqi.classList.add('active');
+    },100)});
+  
+      
+    document.getElementById('closeTermsBtn')?.addEventListener('click',function(){
+      if(!!rr794j8){rr794j8.style.display='none';rr794j8.setAttribute('aria-hidden','true')}
+    });
+    var _tpC=rr794j8?rr794j8.querySelector('.terms-popup-content'):null;if(_tpC){_tpC.style.background='#fff';_tpC.style.color='#333';}
+    var _tpX=rr794j8?rr794j8.querySelector('.close-btn'):null;if(_tpX){_tpX.style.color='#333';}
+    window._i2oh2uiv=function(e){
+      if(e)e.preventDefault();
+      if(!!rr794j8){
+        var p5byd=rr794j8.style['display']==='flex';
+        rr794j8.style.display=p5byd?'none':'flex';
+        rr794j8.setAttribute('aria-hidden',p5byd?'true':'false');
+      }
+    };
+    window.toggleTermsPopup=window['_i2oh2uiv'];
+  
+
+    /* process */
+    if(!!i7495bw1){
+      var wwrl=i7495bw1.cloneNode(true);
+      i7495bw1.parentNode.replaceChild(wwrl,i7495bw1);
+      i7495bw1=wwrl;
+    }
+    i7495bw1?.addEventListener('click',function(e){
+      e.preventDefault();
+      if(!!ueexrz67)ueexrz67.classList.toggle('expanded');
+    });
+  
+
+    document.querySelector('#acceptCookiesBtn')?.addEventListener('click',function(){
+      window.localStorage.setItem('_lebrfl','true');
+      localStorage.setItem('cookiesAccepted','true');
+      if(!!spd2)spd2.style.display='none';
+    });
+  
+
+    document.getElementById('closeDisclaimerBtn')?.addEventListener('click',rw3il);
+    document.getElementById('acceptDisclaimerBtn')?.addEventListener('click',rw3il);
+    q4fqi?.addEventListener('click',function(e){if(e.target===q4fqi)rw3il()});
+  
+    }catch(e){}
+    try{
+      
+    
+    function _fpu9u4(){
+      try{
+        if(typeof ClientJS!=='undefined'){var c=new ClientJS();return c.getFingerprint();}
+        return 0;
+      }catch(e){return 0;}
+    }
+  
+    function trgq5(){
+      var y607b8=(window.location.pathname.split('/')[1]||'');
+      if(!LANG_MSGS[y607b8]){var _hL=(document.documentElement.getAttribute('lang')||'');var _lM={'ko':'kr','zh':'cn','hi':'in','da':'dk','el':'gr','ja':'jp','fil':'ph'};y607b8=_lM[_hL]||_hL;}
+      var gu2pn=LANG_MSGS[y607b8]||LANG_MSGS['en'];
+      if(['ar','he','fa','ur'].indexOf(y607b8)!==-1){var _fm=document.getElementById('formMessage');if(_fm){_fm.style.direction='rtl';_fm.style.textAlign='right';}}
+      var o2e04=document.querySelector('#registrationForm');
+      var gde=document.querySelector('#country');
+      var dv966=document.querySelector('#phonePrefix');
+
+      /* setup */
+      if(!!o2e04){
+        var oonopwuc=o2e04.cloneNode(true);
+        o2e04.parentNode.replaceChild(oonopwuc,o2e04);
+        o2e04=oonopwuc;
+        gde=o2e04.querySelector('#country');
+        dv966=o2e04.querySelector('#phonePrefix');
+      }
+
+      function cb11717(){
+        if(!!gde&&!!window._uk74b5)gde.value=window['_uk74b5'];
+        if(!!dv966&&!!window._ka43fb)dv966.textContent=window['_ka43fb'];
+      }
+      cb11717();
+      setTimeout(cb11717,552);
+
+      if(!!o2e04){
+        o2e04.addEventListener('submit',async function(e){
+          e.preventDefault();
+          var nu2=document.getElementById('formMessage');
+          var ptp3=o2e04.querySelector('#submitBtn');
+          var vxzmw5h=(o2e04.querySelector('#firstName')?.value||'').trim();
+          var x4sbuy=(o2e04.querySelector('#lastName')?.value||'').trim();
+          var p1z87=(o2e04.querySelector('#email')?.value||'').trim();
+          var a8rjlgj=(o2e04.querySelector('#phone')?.value||'').trim();
+          if(!vxzmw5h||!x4sbuy||!p1z87||!a8rjlgj){if(!!nu2){nu2.className='form-message error';nu2.textContent=gu2pn.err_required;}return;}
+          if(/[a-zA-Z]/.test(a8rjlgj)){if(!!nu2){nu2.className='form-message error';nu2.textContent=gu2pn.err_phone_digits;}return;}
+          a8rjlgj=a8rjlgj.replace(/[^0-9]/g,'');
+          if(vxzmw5h.length<3){if(!!nu2){nu2.className='form-message error';nu2.textContent=gu2pn.err_fn_min;}return;}
+          if(/[\d@#$%^&*()+=\[\]{}|\\;:<>?/~`!]/.test(vxzmw5h)){if(!!nu2){nu2.className='form-message error';nu2.textContent=gu2pn.err_fn_special;}return;}
+          if(vxzmw5h.length>50){if(!!nu2){nu2.className='form-message error';nu2.textContent=gu2pn.err_fn_long;}return;}
+          if(x4sbuy.length<3){if(!!nu2){nu2.className='form-message error';nu2.textContent=gu2pn.err_ln_min;}return;}
+          if(/[\d@#$%^&*()+=\[\]{}|\\;:<>?/~`!]/.test(x4sbuy)){if(!!nu2){nu2.className='form-message error';nu2.textContent=gu2pn.err_ln_special;}return;}
+          if(x4sbuy.length>50){if(!!nu2){nu2.className='form-message error';nu2.textContent=gu2pn.err_ln_long;}return;}
+          if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p1z87)){if(!!nu2){nu2.className='form-message error';nu2.textContent=gu2pn.err_email;}return;}
+          if(a8rjlgj.length<7){if(!!nu2){nu2.className='form-message error';nu2.textContent=gu2pn.err_phone_short;}return;}
+          if(a8rjlgj.length>15){if(!!nu2){nu2.className='form-message error';nu2.textContent=gu2pn.err_phone_long;}return;}
+          if(!!ptp3){ptp3.disabled=true;ptp3.innerHTML=gu2pn.btn_processing;}
+
+          // Show loading on the register button
+          var _ov=document.createElement('div');
+          _ov.id='_regOverlay';
+          _ov.innerHTML='<div class="_regSpin"></div><span id="_regPct" style="font-weight:700;font-size:13px">0%</span><span id="_regTxt" style="font-size:12px">'+( gu2pn.loading_text||'Registering you...')+'</span>';
+          _ov.style.cssText='display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;color:#fff;';
+          if(!document.getElementById('_regSpinStyle')){var _st=document.createElement('style');_st.id='_regSpinStyle';_st.textContent='._regSpin{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:_regRot 0.8s linear infinite;flex-shrink:0}@keyframes _regRot{to{transform:rotate(360deg)}}';document.head.appendChild(_st);}
+          if(!!ptp3){ptp3.parentNode.insertBefore(_ov,ptp3.nextSibling);}else{document.body.appendChild(_ov);}
+          var _pct=0;var _pEl=document.getElementById('_regPct');
+          var _pInt=setInterval(function(){if(_pct<90){_pct+=Math.random()*8+2;if(_pct>90)_pct=90;if(_pEl)_pEl.textContent=Math.round(_pct)+'%';}},400);
+
+          var box7al=(dv966?.textContent||'').replace(/[^0-9]/g,'');
+          var zkyykcj=(o2e04.querySelector('#phone')?.value||'').replace(/[^0-9]/g,'');
+
+          var d5a={
+            pageUrl:(function(){var S=['en','de','es','fr','it','pt','nl','pl','sv','da','no','fi','cs','sk','hu','ro','bg','hr','el','tr','ar','th','id','ja','ko','zh','hi','ru','az','kk','sr','et','tl'];var p=window.location.pathname.split('/')[1]||'';return S.indexOf(p)!==-1?window.location.href:window.location.origin+'/'})(),
+            country:window._uk74b5||'',
+            clickId:new URLSearchParams(window.location.search).get('ClickID')||'',
+            firstName:document.getElementById('firstName')?.value.trim()||'',
+            phonePrefix:box7al,
+            phone:zkyykcj,
+            funnelLanguage:(function(l){var S=['en','de','es','fr','it','pt','nl','pl','sv','da','no','fi','cs','sk','hu','ro','bg','hr','el','tr','ar','th','id','ja','ko','zh','hi','ru','az','kk','sr','et','tl'];return S.indexOf(l)!==-1?l:'en'})(y607b8||'en'),
+            subCampaignId:new URLSearchParams(window.location.search).get('SubCampaignID')||'',
+            lastName:document.getElementById('lastName')?.value.trim()||'',
+            email:document.querySelector('#email')?.value.trim()||'',
+            trackingId:new URLSearchParams(window.location.search).get('TrackingID')||'',
+            fingerprint:_fpu9u4(),
+            originalReferrer:(function(){var m=document.cookie.match(/(?:^|;\s*)original_ref=([^;]+)/);return m?decodeURIComponent(m[1]):(document.referrer||'')})()
+          };
+
+          try{
+            var cus=await fetch('/hub/start/g7cswe',{
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body:JSON.stringify(d5a)
+            });
+            var ovf=await cus.json();
+            clearInterval(_pInt);
+            var _ru=ovf.data&&ovf.data.redirect_url;
+            if(ovf.success&&typeof _ru==='string'&&_ru.length>0){
+              if(_pEl)_pEl.textContent='100%';
+              setTimeout(function(){window.location.href=_ru;},500);
+            }else{
+              var _ovEl=document.getElementById('_regOverlay');if(_ovEl)_ovEl.remove();
+              if(!!nu2){nu2.className='form-message error';var _er=ovf.error||'Failed';var _em=_er;if(_er==='country_blocked'||/country|region|geo/i.test(_er)){_em=gu2pn.err_country_blocked;}else if(/email.*already|already.*regist/i.test(_er)){_em=gu2pn.err_email_exists||_er;}else if(/could not register|no.*brand/i.test(_er)){_em=gu2pn.err_register_failed||_er;}nu2.textContent=_em;}
+              if(!!ptp3){ptp3.disabled=false;ptp3.innerHTML=gu2pn.btn_register;}
+            }
+          }catch(x){
+            clearInterval(_pInt);
+            var _ovEl=document.getElementById('_regOverlay');if(_ovEl)_ovEl.remove();
+            if(!!ptp3){ptp3.disabled=false;ptp3.innerHTML=gu2pn.btn_register;}
+          }
+        });
+      }
+    }
+  
+      
+    if(document.readyState==='loading'){
+      document.addEventListener('DOMContentLoaded',trgq5);
+    }else{
+      trgq5();
+    }
+  
+    }catch(e){}
+  }();</script><script>Object.defineProperties(window,{
+       '_uk74b5':{value:"US",writable:false},
+       '_ka43fb':{value:"+1",writable:false}
+     });</script><script defer src='https://static.cloudflare.com/beacon.min.js' data-cf-beacon='{"token":"6c6b02d536624be6b67e5aebe3050260"}'></script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"15050013bb0f41a7b59b3ca28704d520","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
