@@ -1,4 +1,5 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const http = require('http');
 const express = require('express');
@@ -14,16 +15,32 @@ const {
   subscribeLiveTicks,
 } = require('./src/ctrader/socket.client');
 const { connectionState, ctraderConfig, tokenState } = require('./src/ctrader/state');
-const { getData, getStatus, recordTick, seedCandles } = require('./src/feed-cache.service');
+const { loadCtraderTokensFromStore } = require('./src/ctrader/token.service');
+const { getData, getStatus, getSymbolByName, recordTick, seedCandles } = require('./src/feed-cache.service');
 const { requireInternalKey, verifyInternalKey } = require('./src/security');
+const logger = require('./src/logger.service');
 
 const app = express();
 app.disable('x-powered-by');
 app.use(express.json({ limit: '100kb' }));
 
+// Global Request Logger Middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    logger.http(req, res, duration, {
+      candlesCount: res.locals?.candlesCount,
+      source: res.locals?.source,
+      errorReason: res.locals?.errorReason,
+    });
+  });
+  next();
+});
+
 const HOST = process.env.FEED_HOST || '127.0.0.1';
 const PORT = Number(process.env.FEED_PORT || 8020);
-const PRESUBSCRIBED_SYMBOLS = String(process.env.CTRADER_PRESUBSCRIBED_SYMBOLS || process.env.PRESUBSCRIBED_SYMBOLS || 'EURUSD,GBPUSD,USDJPY,AUDUSD,USDCAD,USDCHF,NZDUSD,XAUUSD,XAGUSD,US30,NAS100,SPX500')
+const PRESUBSCRIBED_SYMBOLS = String(process.env.CTRADER_PRESUBSCRIBED_SYMBOLS || process.env.PRESUBSCRIBED_SYMBOLS || 'EURUSD,GBPUSD,USDJPY,AUDUSD,USDCAD,USDCHF,NZDUSD,XAUUSD,XAGUSD,BTCUSD,ETHUSD,US30,NAS100,SPX500')
   .split(',')
   .map((symbol) => symbol.trim())
   .filter(Boolean);
@@ -135,7 +152,8 @@ async function bootstrapCandlesForSymbol(symbol, symbolInfo) {
   if (!BOOTSTRAP_CANDLES || !symbolInfo) return;
 
   const endTime = Date.now();
-  const startTime = endTime - (4 * 60 * 60 * 1000);
+  const todayUtcStart = new Date().setUTCHours(0, 0, 0, 0);
+  const startTime = Math.min(todayUtcStart, endTime - (24 * 60 * 60 * 1000));
 
   for (const interval of BOOTSTRAP_INTERVALS) {
     try {
@@ -144,33 +162,69 @@ async function bootstrapCandlesForSymbol(symbol, symbolInfo) {
         interval,
         startTime,
         endTime,
-        limit: 1000,
+        limit: 1500,
       });
 
+      const count = result?.candles?.length || 0;
       seedCandles(symbolInfo.id, interval, result.candles || []);
-    } catch (_error) {
-      // Suppress bootstrap candle error
+      logger.info('BOOTSTRAP', `Seeded ${symbol} (${interval}): ${count} candles in RAM cache`);
+    } catch (err) {
+      logger.warn('BOOTSTRAP_ERROR', `Failed to seed ${symbol} (${interval}): ${err.message}`);
     }
   }
 }
 
 async function startFeed() {
-  const missing = ['CTRADER_CLIENT_ID', 'CTRADER_CLIENT_SECRET'].filter((key) => !process.env[key]);
-  if (!process.env.CTRADER_ACCESS_TOKEN && !process.env.CTRADER_REFRESH_TOKEN) {
+  await loadCtraderTokensFromStore();
+
+  const missing = [];
+  if (!ctraderConfig.clientId && !process.env.CTRADER_CLIENT_ID) missing.push('CTRADER_CLIENT_ID');
+  if (!ctraderConfig.clientSecret && !process.env.CTRADER_CLIENT_SECRET) missing.push('CTRADER_CLIENT_SECRET');
+  if (!ctraderConfig.accessToken && !ctraderConfig.refreshToken) {
     missing.push('CTRADER_ACCESS_TOKEN or CTRADER_REFRESH_TOKEN');
   }
 
   if (missing.length) {
-    throw new Error(`Missing env: ${missing.join(', ')}`);
+    const errorMsg = `Missing env: ${missing.join(', ')}`;
+    logger.error('STARTUP', errorMsg);
+    throw new Error(errorMsg);
   }
 
+  logger.info('cTrader', 'Connecting WebSocket client...');
   await connectSocket();
-  await ensureCtraderReady();
 
-  // 24/7 subscribe ALL symbols across cTrader in gentle 50-item batches
-  await subscribeAllSymbols(50, 60);
+  // Retry loop for ready state
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    try {
+      await ensureCtraderReady();
+      logger.info('cTrader', `cTrader ready on attempt ${attempt + 1}`);
+      break;
+    } catch (err) {
+      logger.warn('cTrader', `Waiting for ready state attempt ${attempt + 1}/10: ${err.message}`);
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+  }
 
-  // Bootstrap initial recent candle buffer for key watchlist symbols
+  // Subscribe key watchlist symbols without flooding the connection
+  if (PRESUBSCRIBED_SYMBOLS.some((s) => s.toUpperCase() === 'ALL')) {
+    try {
+      logger.info('cTrader', 'Subscribing all available symbols...');
+      await subscribeAllSymbols(Number(process.env.CTRADER_SUBSCRIBE_BATCH_SIZE || 50), 50);
+      logger.info('cTrader', `All symbols subscribed. Total: ${ctraderConfig.liveTickSubscriptions.size}`);
+    } catch (err) {
+      logger.warn('cTrader', `Error subscribing all symbols: ${err.message}`);
+    }
+  } else {
+    for (const requested of PRESUBSCRIBED_SYMBOLS) {
+      try {
+        await subscribeLiveTicks(requested);
+      } catch (err) {
+        logger.warn('cTrader', `Failed to subscribe live ticks for ${requested}: ${err.message}`);
+      }
+    }
+  }
+
+  // Bootstrap initial recent candle buffer for key watchlist symbols (top 50 symbols if ALL)
   const symbols = await getSymbols();
   const byNormalized = new Map(
     symbols.map((symbol) => [
@@ -179,17 +233,21 @@ async function startFeed() {
     ])
   );
 
-  for (const requested of PRESUBSCRIBED_SYMBOLS) {
-    const normalized = requested.replace(/[^a-z0-9]/gi, '').toUpperCase();
-    const match = byNormalized.get(normalized);
-    if (!match) continue;
+  const isAll = PRESUBSCRIBED_SYMBOLS.some((s) => s.toUpperCase() === 'ALL');
+  const symbolsToBootstrap = isAll
+    ? symbols.slice(0, 50)
+    : PRESUBSCRIBED_SYMBOLS.map((s) => byNormalized.get(s.replace(/[^a-z0-9]/gi, '').toUpperCase())).filter(Boolean);
 
+  logger.info('BOOTSTRAP', `Starting candle bootstrap for ${symbolsToBootstrap.length} symbols...`);
+  for (const match of symbolsToBootstrap) {
+    if (!match?.name) continue;
     try {
       await bootstrapCandlesForSymbol(match.name, match);
-    } catch (_error) {
-      // Suppress bootstrap error
+    } catch (error) {
+      logger.warn('BOOTSTRAP_ERROR', `Bootstrap error for ${match.name}: ${error.message}`);
     }
   }
+  logger.info('BOOTSTRAP', `Candle bootstrap complete.`);
 }
 
 app.get('/health', (req, res) => {
@@ -215,6 +273,16 @@ app.get('/internal/status', requireInternalKey, (req, res) => {
   });
 });
 
+app.get('/internal/logs', (req, res) => {
+  const lineCount = Number(req.query.lines) || 200;
+  const logs = logger.getRecentLogs(lineCount);
+  if (req.query.format === 'json') {
+    return res.json({ success: true, count: logs.length, logs });
+  }
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  return res.send(logs.join('\n'));
+});
+
 app.get('/internal/symbols', requireInternalKey, async (req, res) => {
   try {
     const symbols = await getSymbols();
@@ -223,6 +291,7 @@ app.get('/internal/symbols', requireInternalKey, async (req, res) => {
       symbols,
     });
   } catch (error) {
+    res.locals.errorReason = error.message;
     return res.status(error.status || 500).json({
       success: false,
       error: error.message || 'Symbols unavailable',
@@ -243,8 +312,10 @@ app.get('/internal/quotes', requireInternalKey, async (req, res) => {
       connected: connected(),
       ...result,
       serverTime: Math.floor(Date.now() / 1000),
+      serverTimeMs: Date.now(),
     });
   } catch (error) {
+    res.locals.errorReason = error.message;
     return res.status(error.status || 500).json({
       success: false,
       error: error.message || 'Quotes unavailable',
@@ -268,6 +339,7 @@ app.get('/internal/data/:symbol', requireInternalKey, async (req, res) => {
     });
 
     if (!snapshot.found) {
+      res.locals.errorReason = `Symbol ${symbol} not found or not loaded in cache`;
       return res.status(404).json({
         success: false,
         error: 'Symbol not found or not loaded',
@@ -275,12 +347,17 @@ app.get('/internal/data/:symbol', requireInternalKey, async (req, res) => {
       });
     }
 
+    res.locals.candlesCount = snapshot.candles?.length || 0;
+    res.locals.source = 'cache';
+
     return res.json({
       success: true,
       ...snapshot,
       serverTime: Math.floor(Date.now() / 1000),
+      serverTimeMs: Date.now(),
     });
   } catch (error) {
+    res.locals.errorReason = error.message;
     return res.status(error.status || 500).json({
       success: false,
       error: 'Market feed unavailable',
@@ -297,9 +374,30 @@ app.get('/internal/klines', requireInternalKey, async (req, res) => {
 
   try {
     if (!symbol) {
+      res.locals.errorReason = 'Missing symbol query param';
       return res.status(400).json({ success: false, error: 'Invalid symbol' });
     }
 
+    // 1. If memory cache has sufficient rolling candles and no specific historical range requested, return RAM cache instantly (< 1ms)
+    const minRequired = Math.min(Number(limit) || 250, 200);
+    if (!startTime && !endTime) {
+      const snapshot = getData(symbol, { interval, limitCandles: limit });
+      if (snapshot?.found && Array.isArray(snapshot?.candles) && snapshot.candles.length >= minRequired) {
+        res.locals.candlesCount = snapshot.candles.length;
+        res.locals.source = 'cache';
+        return res.json({
+          success: true,
+          symbol,
+          interval,
+          candles: snapshot.candles,
+          source: 'cache',
+          serverTime: Math.floor(Date.now() / 1000),
+          serverTimeMs: Date.now(),
+        });
+      }
+    }
+
+    // 2. Fetch from cTrader API for cold cache, insufficient cache, or explicit historical range
     const result = await fetchCtraderKlines({
       symbol,
       interval,
@@ -308,17 +406,46 @@ app.get('/internal/klines', requireInternalKey, async (req, res) => {
       limit,
     });
 
+    // Populate seed cache with newly fetched candles for rolling live aggregation
+    if (!endTime && Array.isArray(result?.candles) && result.candles.length > 0) {
+      const symbolInfo = getSymbolByName(symbol);
+      if (symbolInfo?.id) {
+        seedCandles(symbolInfo.id, interval, result.candles);
+      }
+    }
+
+    const candleCount = result?.candles?.length || 0;
+    res.locals.candlesCount = candleCount;
+    res.locals.source = 'ctrader-api';
+
     return res.json({
       success: true,
-      ...result,
+      symbol,
+      interval,
+      candles: result?.candles || [],
+      source: 'ctrader-api',
       serverTime: Math.floor(Date.now() / 1000),
+      serverTimeMs: Date.now(),
     });
   } catch (error) {
+    res.locals.errorReason = error.message || 'Market klines unavailable';
+    logger.error('KLINES_ERROR', `Failed fetching klines for ${symbol}: ${error.message}`, {
+      symbol,
+      interval,
+      startTime,
+      endTime,
+      limit,
+    });
     return res.status(error.status || 500).json({
       success: false,
       error: error.message || 'Market klines unavailable',
     });
   }
+});
+
+app.get('/internal/historical-candles', requireInternalKey, (req, res) => {
+  req.url = '/internal/klines' + (req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '');
+  app.handle(req, res);
 });
 
 app.get('/internal/quote/:symbol', requireInternalKey, async (req, res) => {
@@ -329,6 +456,7 @@ app.get('/internal/quote/:symbol', requireInternalKey, async (req, res) => {
     const snapshot = getData(symbol, { limitTicks: 1, limitCandles: 1 });
 
     if (!snapshot.found) {
+      res.locals.errorReason = `Symbol ${symbol} not found or not loaded`;
       return res.status(404).json({
         success: false,
         error: 'Symbol not found or not loaded',
@@ -341,8 +469,10 @@ app.get('/internal/quote/:symbol', requireInternalKey, async (req, res) => {
       symbol: snapshot.symbol,
       quote: snapshot.quote,
       serverTime: Math.floor(Date.now() / 1000),
+      serverTimeMs: Date.now(),
     });
   } catch (error) {
+    res.locals.errorReason = error.message;
     return res.status(error.status || 500).json({
       success: false,
       error: 'Market feed unavailable',
@@ -351,22 +481,34 @@ app.get('/internal/quote/:symbol', requireInternalKey, async (req, res) => {
 });
 
 process.on('SIGINT', () => {
+  logger.info('PROCESS', 'SIGINT received. Cleaning up and exiting...');
   cleanup();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
+  logger.info('PROCESS', 'SIGTERM received. Cleaning up and exiting...');
   cleanup();
   process.exit(0);
 });
 
+process.on('uncaughtException', (err) => {
+  logger.error('FATAL', `Uncaught Exception: ${err.message}`, { stack: err.stack });
+});
+
+process.on('unhandledRejection', (reason) => {
+  logger.error('FATAL', `Unhandled Rejection: ${reason instanceof Error ? reason.message : reason}`, {
+    stack: reason instanceof Error ? reason.stack : undefined,
+  });
+});
+
 server.listen(PORT, HOST, async () => {
-  console.log(`ctrader-feed-service listening on http://${HOST}:${PORT}`);
+  logger.info('SERVER', `ctrader-feed-service listening on http://${HOST}:${PORT}`);
   try {
     await startFeed();
-    console.log('ctrader-feed-service ready');
+    logger.info('SERVER', 'ctrader-feed-service ready and active.');
   } catch (error) {
-    console.error('ctrader-feed-service failed to start feed', error.message);
+    logger.error('SERVER', `ctrader-feed-service failed to start feed: ${error.message}`, { stack: error.stack });
   }
 });
 

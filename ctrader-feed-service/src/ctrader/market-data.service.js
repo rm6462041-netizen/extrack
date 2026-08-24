@@ -249,11 +249,14 @@ function trendbarToCandle(trendbar, symbolId = null) {
 function normalizeCandles(candles = []) {
   const byTime = new Map();
   candles.forEach((candle) => {
-    const time = Number(candle?.time);
-    const open = Number(candle?.open);
-    const high = Number(candle?.high);
-    const low = Number(candle?.low);
-    const close = Number(candle?.close);
+    const isArr = Array.isArray(candle);
+    const time = Number(isArr ? candle[0] : candle?.time);
+    const open = Number(isArr ? candle[1] : candle?.open);
+    const high = Number(isArr ? candle[2] : candle?.high);
+    const low = Number(isArr ? candle[3] : candle?.low);
+    const close = Number(isArr ? candle[4] : candle?.close);
+    const volume = Number(isArr ? candle[5] || 0 : candle?.volume || 0);
+
     if (
       Number.isFinite(time) &&
       Number.isFinite(open) &&
@@ -261,10 +264,23 @@ function normalizeCandles(candles = []) {
       Number.isFinite(low) &&
       Number.isFinite(close)
     ) {
-      byTime.set(Math.floor(time), { time: Math.floor(time), open, high, low, close });
+      const bucketTime = Math.floor(time);
+      const existing = byTime.get(bucketTime);
+      if (existing) {
+        byTime.set(bucketTime, [
+          bucketTime,
+          Number.isFinite(existing[1]) ? existing[1] : open,
+          Math.max(existing[2], high),
+          Math.min(existing[3], low),
+          close,
+          Math.max(existing[5], volume),
+        ]);
+      } else {
+        byTime.set(bucketTime, [bucketTime, open, high, low, close, volume]);
+      }
     }
   });
-  return Array.from(byTime.values()).sort((a, b) => a.time - b.time);
+  return Array.from(byTime.values()).sort((a, b) => a[0] - b[0]);
 }
 
 function buildCurrentCandle({ tick, interval = '1m', previousCandle = null }) {

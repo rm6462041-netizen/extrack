@@ -1,6 +1,7 @@
 const { ctraderConfig } = require('./ctrader/state');
+const { findExactSymbolMatch } = require('./ctrader/symbols.service');
 
-const DEFAULT_RETENTION_MS = 15 * 60 * 1000;
+const DEFAULT_RETENTION_MS = 24 * 60 * 60 * 1000;
 
 function boundedNumber(value, fallback, min, max) {
   const parsed = Number(value);
@@ -12,9 +13,9 @@ const RETENTION_MS = boundedNumber(
   process.env.FEED_RETENTION_MS,
   DEFAULT_RETENTION_MS,
   60 * 1000,
-  4 * 60 * 60 * 1000
+  24 * 60 * 60 * 1000
 );
-const MAX_TICKS_PER_SYMBOL = boundedNumber(process.env.FEED_MAX_TICKS_PER_SYMBOL, 500, 1, 20000);
+const MAX_TICKS_PER_SYMBOL = boundedNumber(process.env.FEED_MAX_TICKS_PER_SYMBOL, 5000, 1, 50000);
 
 const INTERVAL_SECONDS = {
   '1m': 60,
@@ -29,16 +30,14 @@ const INTERVAL_SECONDS = {
 const tickCache = new Map();
 const candleSeedCache = new Map();
 
-function normalizeSymbolName(value) {
-  return String(value || '').replace(/[^a-z0-9]/gi, '').toUpperCase();
+function toSeconds(raw) {
+  const num = Number(raw);
+  if (!Number.isFinite(num)) return 0;
+  return num > 10_000_000_000 ? Math.floor(num / 1000) : Math.floor(num);
 }
 
 function getSymbolByName(symbolName) {
-  const normalized = normalizeSymbolName(symbolName);
-  for (const symbol of ctraderConfig.symbols.values()) {
-    if (symbol.normalizedName === normalized) return symbol;
-  }
-  return null;
+  return findExactSymbolMatch(symbolName);
 }
 
 function tickTimeMs(tick) {
@@ -120,18 +119,28 @@ function seedCandles(symbolId, interval, candles = []) {
   const id = Number(symbolId);
   if (!Number.isFinite(id) || !interval) return;
 
-  const cutoffSeconds = Math.floor((Date.now() - RETENTION_MS) / 1000);
   const valid = candles
-    .filter((candle) => Number(candle?.time) >= cutoffSeconds)
-    .map((candle) => ({
-      time: Math.floor(Number(candle.time)),
-      open: Number(candle.open),
-      high: Number(candle.high),
-      low: Number(candle.low),
-      close: Number(candle.close),
-    }))
+    .map((candle) => {
+      const isArr = Array.isArray(candle);
+      const timeSec = toSeconds(isArr ? candle[0] : candle?.time);
+      const open = Number(isArr ? candle[1] : candle?.open);
+      const high = Number(isArr ? candle[2] : candle?.high);
+      const low = Number(isArr ? candle[3] : candle?.low);
+      const close = Number(isArr ? candle[4] : candle?.close);
+      const volume = Number(isArr ? candle[5] || 0 : candle?.volume || 0);
+      return {
+        time: timeSec,
+        timeMs: timeSec * 1000,
+        open,
+        high,
+        low,
+        close,
+        volume,
+      };
+    })
     .filter((candle) => (
       Number.isFinite(candle.time) &&
+      candle.time > 0 &&
       Number.isFinite(candle.open) &&
       Number.isFinite(candle.high) &&
       Number.isFinite(candle.low) &&
@@ -154,7 +163,7 @@ function buildCandlesFromTicks(ticks, interval = '1m') {
     const existing = byTime.get(bucket);
 
     if (!existing) {
-      byTime.set(bucket, { time: bucket, open: price, high: price, low: price, close: price });
+      byTime.set(bucket, { time: bucket, timeMs: bucket * 1000, open: price, high: price, low: price, close: price });
       continue;
     }
 
@@ -168,8 +177,30 @@ function buildCandlesFromTicks(ticks, interval = '1m') {
 
 function mergeCandles(seed = [], live = []) {
   const byTime = new Map();
-  for (const candle of seed) byTime.set(Number(candle.time), candle);
-  for (const candle of live) byTime.set(Number(candle.time), candle);
+  for (const candle of seed) {
+    if (candle && Number.isFinite(Number(candle.time))) {
+      const time = Number(candle.time);
+      byTime.set(time, { ...candle, timeMs: candle.timeMs || time * 1000 });
+    }
+  }
+  for (const candle of live) {
+    if (!candle || !Number.isFinite(Number(candle.time))) continue;
+    const time = Number(candle.time);
+    const existing = byTime.get(time);
+    if (existing) {
+      // PRESERVE the authoritative seed open price from the true start of the candle bucket!
+      byTime.set(time, {
+        time,
+        timeMs: time * 1000,
+        open: Number.isFinite(Number(existing.open)) ? Number(existing.open) : Number(candle.open),
+        high: Math.max(Number(existing.high), Number(candle.high)),
+        low: Math.min(Number(existing.low), Number(candle.low)),
+        close: Number(candle.close),
+      });
+    } else {
+      byTime.set(time, { ...candle, timeMs: candle.timeMs || time * 1000 });
+    }
+  }
   return Array.from(byTime.values()).sort((a, b) => a.time - b.time);
 }
 
@@ -185,13 +216,19 @@ function getData(symbolName, { interval = '1m', limitTicks = 2000, limitCandles 
   const seed = candleSeedCache.get(`${symbolId}:${interval}`) || [];
   const liveCandles = buildCandlesFromTicks(ticks, interval);
   const candles = mergeCandles(seed, liveCandles);
+  const sliced = candles.slice(-Math.min(Math.max(Number(limitCandles) || 1, 1), 2000));
+  const arrayCandles = sliced.map((c) => (
+    Array.isArray(c)
+      ? c
+      : [Number(c.time), Number(c.open), Number(c.high), Number(c.low), Number(c.close), Number(c.volume || 0)]
+  ));
 
   return {
     found: true,
     symbol,
     quote: latestTick,
     ticks: ticks.slice(-Math.min(Math.max(Number(limitTicks) || 1, 1), MAX_TICKS_PER_SYMBOL)),
-    candles: candles.slice(-Math.min(Math.max(Number(limitCandles) || 1, 1), 2000)),
+    candles: arrayCandles,
     retentionMs: RETENTION_MS,
     retainedHours: RETENTION_MS / (60 * 60 * 1000),
     maxTicksPerSymbol: MAX_TICKS_PER_SYMBOL,
@@ -231,6 +268,7 @@ module.exports = {
   getData,
   getQuoteSnapshot,
   getStatus,
+  getSymbolByName,
   pruneAll,
   recordTick,
   seedCandles,

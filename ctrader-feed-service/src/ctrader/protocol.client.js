@@ -38,7 +38,7 @@ function createProtocolClient({ getRoot, getSocket }) {
       const msg = Message.create({
         payloadType,
         payload: encodedPayload,
-        requestId,
+        clientMsgId: String(requestId),
       });
 
       if (waitForResponse) {
@@ -104,7 +104,8 @@ function createProtocolClient({ getRoot, getSocket }) {
 
   function resolvePendingResponse(decoded) {
     const root = getRoot();
-    const requestId = Number(decoded.requestId || 0);
+    const parsedId = decoded.clientMsgId ? Number(decoded.clientMsgId) : Number(decoded.requestId || 0);
+    const requestId = Number.isFinite(parsedId) && parsedId > 0 ? parsedId : 0;
     let resolvedRequestId = requestId;
     let pending = requestId ? pendingRequests.get(requestId) : null;
 

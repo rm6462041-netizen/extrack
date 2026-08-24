@@ -10,6 +10,7 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "check": "node --check server.js",
+    "test:local": "node scripts/test-local.js",
     "setup:local": "node scripts/setup-local-env.js",
     "rotate-key": "node scripts/rotate-feed-key.js",
     "check:key": "node scripts/check-feed-key.js",

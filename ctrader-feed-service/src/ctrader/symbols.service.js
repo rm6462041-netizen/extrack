@@ -80,10 +80,32 @@ function cacheSymbolDetails(symbols = []) {
 
 function findExactSymbolMatch(symbol) {
   const normalized = normalizeStoredSymbol(symbol);
+  if (!normalized) return null;
 
+  // 1. Direct match by candidate normalized name or raw name
   for (const candidate of ctraderConfig.symbols.values()) {
-    if (candidate.normalizedName === normalized) {
+    if (candidate.normalizedName === normalized || candidate.name === symbol) {
       return candidate;
+    }
+  }
+
+  // 2. Match by candidate's displayName or requestSymbol
+  for (const candidate of ctraderConfig.symbols.values()) {
+    if (candidate.displayName && normalizeStoredSymbol(candidate.displayName) === normalized) {
+      return candidate;
+    }
+    if (candidate.requestSymbol && normalizeStoredSymbol(candidate.requestSymbol) === normalized) {
+      return candidate;
+    }
+  }
+
+  // 3. Match by baseAsset & quoteAsset
+  for (const candidate of ctraderConfig.symbols.values()) {
+    if (candidate.baseAsset && candidate.quoteAsset) {
+      const pair = `${candidate.baseAsset}${candidate.quoteAsset}`.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (pair === normalized) {
+        return candidate;
+      }
     }
   }
 

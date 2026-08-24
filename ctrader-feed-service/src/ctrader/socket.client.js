@@ -213,7 +213,6 @@ async function requestTrendbars(symbolId, period, count, fromTimestamp, toTimest
     ...getAccountIdPayload(),
     symbolId: Number(symbolId),
     period,
-    count,
   };
 
   if (Number.isFinite(fromTimestamp)) {
@@ -222,6 +221,10 @@ async function requestTrendbars(symbolId, period, count, fromTimestamp, toTimest
 
   if (Number.isFinite(toTimestamp)) {
     payload.toTimestamp = toTimestamp;
+  }
+
+  if (Number.isFinite(count)) {
+    payload.count = count;
   }
 
   return protocol.requestMessage(2137, payload);
@@ -270,6 +273,10 @@ async function connectSocket() {
   connectionState.isConnecting = true;
 
   try {
+    if (!connectionState.root) {
+      await loadProtos();
+    }
+
     if (connectionState.ws) {
       connectionState.ws.removeAllListeners();
       connectionState.ws.close();
@@ -394,11 +401,17 @@ async function fetchCtraderKlines({ symbol, interval = '1m', startTime, endTime,
   }[interval] || 60 * 1000;
   const hasExplicitEndTime = endTime !== undefined && endTime !== null && endTime !== '';
   const numericEndTime = hasExplicitEndTime ? Number(endTime) : undefined;
-  const requestEndTime = Number.isFinite(numericEndTime)
-    ? numericEndTime
-    : (Number.isFinite(numericStartTime) ? getClosedHistoryEndTime(interval) : undefined);
-  const requestedRangeCount = Number.isFinite(numericStartTime) && Number.isFinite(requestEndTime)
-    ? Math.ceil((requestEndTime - numericStartTime) / intervalMs) + 5
+  const resolvedStartTime = Number.isFinite(numericStartTime)
+    ? (numericStartTime > 1e11 ? numericStartTime : numericStartTime * 1000)
+    : undefined;
+  const resolvedEndTime = Number.isFinite(numericEndTime)
+    ? (numericEndTime > 1e11 ? numericEndTime : numericEndTime * 1000)
+    : undefined;
+  const requestEndTime = Number.isFinite(resolvedEndTime)
+    ? resolvedEndTime
+    : (Number.isFinite(resolvedStartTime) ? getClosedHistoryEndTime(interval) : Date.now());
+  const requestedRangeCount = Number.isFinite(resolvedStartTime) && Number.isFinite(requestEndTime)
+    ? Math.ceil((requestEndTime - resolvedStartTime) / intervalMs) + 5
     : normalizedLimit;
   const targetCount = Math.min(Math.max(requestedRangeCount, normalizedLimit), 5000);
   const rawTrendbars = [];
@@ -411,7 +424,7 @@ async function fetchCtraderKlines({ symbol, interval = '1m', startTime, endTime,
       period,
       chunkLimit,
       undefined,
-      Number.isFinite(cursorEndTime) ? cursorEndTime : undefined
+      Number.isFinite(cursorEndTime) ? cursorEndTime : Date.now()
     );
     const chunk = trendData?.trendbar || trendData?.trendbars || [];
 
@@ -428,7 +441,7 @@ async function fetchCtraderKlines({ symbol, interval = '1m', startTime, endTime,
     if (!Number.isFinite(oldestMinute)) break;
 
     const oldestOpenTime = oldestMinute * 60 * 1000;
-    if (Number.isFinite(numericStartTime) && oldestOpenTime <= numericStartTime) break;
+    if (Number.isFinite(resolvedStartTime) && oldestOpenTime <= resolvedStartTime) break;
 
     cursorEndTime = oldestOpenTime - 1;
   }
@@ -438,17 +451,34 @@ async function fetchCtraderKlines({ symbol, interval = '1m', startTime, endTime,
     .filter((kline) => {
       const openTime = Number(kline.time) * 1000;
       if (!Number.isFinite(openTime)) return false;
-      if (Number.isFinite(numericStartTime) && openTime < numericStartTime) return false;
+      if (Number.isFinite(resolvedStartTime) && openTime < resolvedStartTime) return false;
       if (Number.isFinite(requestEndTime) && openTime > requestEndTime) return false;
       return true;
     })
     .sort((a, b) => Number(a.time) - Number(b.time));
 
   const normalizedCandles = normalizeCandles(candles);
+  if (!hasExplicitEndTime && normalizedCandles.length > 0) {
+    const latestTick = ctraderConfig.latestTicks.get(symbolId);
+    if (latestTick) {
+      const price = Number(latestTick.last ?? latestTick.bid ?? latestTick.ask);
+      const tickTime = Number(latestTick.time || Math.floor(Date.now() / 1000));
+      const bucketSize = intervalMs / 1000;
+      const currentBucketTime = Math.floor(tickTime / bucketSize) * bucketSize;
+      const lastCandle = normalizedCandles[normalizedCandles.length - 1];
+
+      if (lastCandle && lastCandle[0] === currentBucketTime && Number.isFinite(price) && price > 0) {
+        lastCandle[2] = Math.max(lastCandle[2], price);
+        lastCandle[3] = Math.min(lastCandle[3], price);
+        lastCandle[4] = price;
+      }
+    }
+  }
+
   const symbolInfo = ctraderConfig.symbols.get(symbolId) || null;
 
   return {
-    symbol: symbolInfo,
+    symbol: symbolInfo?.name || symbol,
     interval,
     candles: normalizedCandles,
   };
@@ -580,7 +610,7 @@ async function subscribeSpotsBatch(symbolIds = []) {
   const numericIds = symbolIds.map(Number).filter((id) => Number.isFinite(id) && id > 0);
   if (!numericIds.length) return { subscribed: 0 };
 
-  const raw = await protocol.requestMessage(2127, {
+  protocol.sendMessage(2127, {
     ...getAccountIdPayload(),
     symbolId: numericIds,
     subscribeToSpotTimestamp: true,
@@ -590,7 +620,7 @@ async function subscribeSpotsBatch(symbolIds = []) {
     ctraderConfig.liveTickSubscriptions.add(makeSubscriptionKey(id));
   });
 
-  return { subscribed: numericIds.length, raw: toPlain('ProtoOASubscribeSpotsRes', raw) };
+  return { subscribed: numericIds.length };
 }
 
 async function subscribeAllSymbols(batchSize = 50, delayMs = 60) {
@@ -698,8 +728,8 @@ function handleMessage(data) {
       case 2142:
         handleEvent(decoded, 'ProtoOAErrorRes', (errorData) => {
           const errorCode = errorData.errorCode || '';
-          tokenState.lastRefreshError = errorCode;
-          if (errorCode === 'CH_ACCESS_TOKEN_INVALID') {
+          if (errorCode === 'CH_ACCESS_TOKEN_INVALID' || errorCode === 'OA_AUTH_TOKEN_EXPIRED') {
+            tokenState.lastRefreshError = errorCode;
             console.warn('ctrader.account_auth_failed.invalid_token', 'Access token is invalid. Clearing token and forcing refresh.');
             ctraderConfig.accessToken = '';
             ctraderConfig.expiresAt = 0;
